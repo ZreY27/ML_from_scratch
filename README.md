@@ -1,6 +1,5 @@
 # Projet-Annuel-Ann-e-3
 
-
 # Prérequis
 
 - Version Python et compilateur C/C++ compatible
