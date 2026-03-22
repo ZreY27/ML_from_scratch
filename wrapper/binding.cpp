@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // OBLIGATOIRE pour convertir vector <-> list automatiquement
 #include "../src/LinearModel.hpp"
+#include "../src/ImageLoader.hpp"
 
 namespace py = pybind11;
 
@@ -11,4 +12,6 @@ PYBIND11_MODULE(ML_ESGI, m) {
         .def(py::init<int>())
         .def("train", &LinearModel::train)
         .def("predict", &LinearModel::predict);
+
+    m.def("load_and_resize_image", &load_and_resize_image, "Charge, redimensionne et normalise une image");
 }
