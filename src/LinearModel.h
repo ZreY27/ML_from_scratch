@@ -2,11 +2,10 @@
 #include <vector>
 
 class LinearModel {
-private:
+public:
     std::vector<double> weights; //correspond à un tableau à taille variable, celui du poids du modèle
     double bias;
     std::vector<double> loss_history; // taux d'erreur à chaque epoch
-public:
     // 1. Le Constructeur : Créer le modèle
     // input_size : Nombre d'entrées (ex: 32*32*3 pour une image)
     LinearModel(int input_size);
