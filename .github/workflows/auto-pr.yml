@@ -2,8 +2,8 @@ name: Auto Pull Request
 
 on:
   push:
-    branches:
-      - 'main/**'   # Se déclenche sur toutes les branches feature/...
+    branches-ignore:
+      - deploy   # toutes les branches sauf deploy
 
 jobs:
   create-pr:
