@@ -1,4 +1,4 @@
-# Projet-Annuel-Ann-e-3
+# Machine Learning Framework from scratch
 
 # Prérequis
 
