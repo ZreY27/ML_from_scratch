@@ -19,16 +19,16 @@ std::vector<double> load_and_resize_image(const std::string& filepath, int targe
     std::vector<double> result(target_w * target_h * 3);
 
     // Algorithme de redimensionnement "Nearest Neighbor" (Plus Proche Voisin)
-    double x_ratio = w / (double)target_w;
-    double y_ratio = h / (double)target_h;
+    const double x_ratio = static_cast<double>(w) / target_w;
+    const double y_ratio = static_cast<double>(h) / target_h;
 
-    for (int i = 0; i < target_h; i++) {
-        for (int j = 0; j < target_w; j++) {
-            int px = std::floor(j * x_ratio);
-            int py = std::floor(i * y_ratio);
+    for (int i = 0; i < target_h; ++i) {
+        for (int j = 0; j < target_w; ++j) {
+            const int px = static_cast<int>(j * x_ratio);
+            const int py = static_cast<int>(i * y_ratio);
             
-            int original_idx = (py * w + px) * 3;
-            int target_idx = (i * target_w + j) * 3;
+            const int original_idx = (py * w + px) * 3;
+            const int target_idx = (i * target_w + j) * 3;
             
             // Normalisation des pixels (divisé par 255.0)
             result[target_idx] = img_data[original_idx] / 255.0;         // Rouge
