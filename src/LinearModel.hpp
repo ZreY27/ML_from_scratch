@@ -17,7 +17,8 @@ public:
     double predict_raw(const std::vector<double>& inputs) const;
 
     // Backward pass
-    void train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
+    // Retourne l'historique des erreurs (loss) par epoch
+    std::vector<double> train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
     
     void save(const char* filename);
     void load(const char* filename);
