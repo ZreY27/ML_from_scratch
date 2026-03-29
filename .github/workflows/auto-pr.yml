@@ -17,5 +17,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "PR automatique - ${{ github.ref_name }}"
           body: "PR créée automatiquement depuis la branche ${{ github.ref_name }}"
-          base: main        # branche cible
+          base: deploy        # branche cible
           draft: false
