@@ -32,12 +32,16 @@ double LinearModel::predict(const std::vector<double>& inputs) const {
 // Entraînement du modèle (Algorithme du Perceptron de Rosenblatt).
 // 'inputs' n'est PAS une liste de listes, mais un seul tableau 1D GÉANT contenant 
 // toutes les images mises bout à bout. Cela optimise considérablement la vitesse de lecture en RAM.
-void LinearModel::train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs) {
+std::vector<double> LinearModel::train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs) {
     int input_size = weights.size();
     int num_samples = labels.size();
 
+    std::vector<double> loss_history;
+
     // Répète l'apprentissage un certain nombre de fois (epochs) sur tout le dataset.
     for (int epoch = 0; epoch < epochs; ++epoch) {
+        int errors = 0; // Compteur d'erreurs pour l'epoch courante
+
         for (int i = 0; i < num_samples; ++i) {
             // 1. FORWARD PASS (Prédiction de l'image courante)
             // Le calcul est fait 'inline' plutôt que d'appeler predict() pour éviter
@@ -56,13 +60,18 @@ void LinearModel::train(const std::vector<double>& inputs, const std::vector<dou
             // Si l'erreur n'est pas nulle (le modèle s'est trompé), on corrige les poids en les tirant 
             // vers la bonne direction, proportionnellement au taux d'apprentissage (learning_rate).
             if (error != 0.0) {
+                errors++; // On comptabilise l'erreur
                 for (int j = 0; j < input_size; ++j) {
                     weights[j] += learning_rate * error * inputs[i * input_size + j];
                 }
                 bias += learning_rate * error;
             }
         }
+
+        // Enregistre le ratio d'erreurs de l'epoch (Loss) : 0.0 = parfait, 1.0 = tout faux
+        loss_history.push_back(static_cast<double>(errors) / num_samples);
     }
+    return loss_history;
 }
 
 // Sauvegarde l'état du modèle dans un fichier texte.
