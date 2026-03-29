@@ -12,9 +12,13 @@ public:
 
     // Forward pass
     double predict(const std::vector<double>& inputs) const;
+    
+    // Retourne la somme brute (score de confiance) pour le multi-classe (One-vs-Rest)
+    double predict_raw(const std::vector<double>& inputs) const;
 
     // Backward pass
     void train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
     
     void save(const char* filename);
+    void load(const char* filename);
 };
