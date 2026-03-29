@@ -1,25 +1,25 @@
-#pragma once  // Toujours mettre ça en première ligne pour éviter les inclusions multiples
+#pragma once
 #include <vector>
 
 class LinearModel {
-public:
-    std::vector<double> weights; //correspond à un tableau à taille variable, celui du poids du modèle
+private:
+    std::vector<double> weights;
     double bias;
-    std::vector<double> loss_history; // taux d'erreur à chaque epoch
-    // 1. Le Constructeur : Créer le modèle
+
+public:
     // input_size : Nombre d'entrées (ex: 32*32*3 pour une image)
     LinearModel(int input_size);
 
-    // 2. Prédiction : Estime une valeur (Forward pass)
-    // "const ... &" signifie : "Je lis le vecteur sans le copier" (Optimisation Vitesse)
-    double predict(const std::vector<double>& x) const;
-
-    // 3. Entraînement : Corrige les poids (Backward pass)
-    void train(const std::vector<std::vector<double>> &X,
-               const std::vector<double> &Y,
-               double learning_rate, int epochs);
-    // X datasetcomplet (matrice), Y labels correspondant (-1 ou 1), epochs = nombre de passes complètes sur le dataset
+    // Forward pass
+    double predict(const std::vector<double>& inputs) const;
     
-    // 4. Sauvegarde
+    // Retourne la somme brute (score de confiance) pour le multi-classe (One-vs-Rest)
+    double predict_raw(const std::vector<double>& inputs) const;
+
+    // Backward pass
+    // Retourne l'historique des erreurs (loss) par epoch
+    std::vector<double> train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
+    
     void save(const char* filename);
+    void load(const char* filename);
 };
