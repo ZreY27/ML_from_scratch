@@ -46,6 +46,7 @@ FetchContent_MakeAvailable(stb)
 # --- 4. Compilation du module ---
 set(SOURCES
     src/LinearModel.cpp
+    src/MLP.cpp
     src/ImageLoader.cpp
     wrapper/binding.cpp
 )
