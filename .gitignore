@@ -1,16 +1,26 @@
-# Git files
+# Fichiers Git
 .git
 .gitignore
 
-# Environment folders
+# Environnements virtuels et variables d'environnement
 venv
 .env
 .env.local
 __pycache__/
 build/
 
-# Config files
+# Fichiers de configuration des éditeurs
 .vscode
 .idea
 .DS_Store
 
+# Dossiers de build CMake
+cmake-build-debug/
+cmake-build-release/
+
+# Binaires compilés par pybind11 (spécifiques à chaque OS, ne pas commiter)
+*.so
+*.pyd
+
+# Environnement virtuel créé par CLion
+.venv/

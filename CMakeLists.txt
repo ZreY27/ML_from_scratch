@@ -1,43 +1,68 @@
-cmake_minimum_required(VERSION 3.10) # <-- Cette ligne était manquante !
-project(PROJET_ANNUEL) # <-- Celle-ci aussi !
+cmake_minimum_required(VERSION 3.14)
+project(PROJET_ANNUEL)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# 1. On trouve l'interpréteur Python du venv (grâce à votre config VS Code)
+# --- 1. Python : détection cross-platform (Windows vs Mac/Linux) ---
+if(WIN32)
+    find_program(Python3_EXECUTABLE NAMES python python3)
+else()
+    set(Python3_EXECUTABLE "/usr/bin/python3")
+    if(NOT EXISTS "${Python3_EXECUTABLE}")
+        find_program(Python3_EXECUTABLE NAMES python3.9 python3)
+    endif()
+endif()
+
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
 message(STATUS "Python utilisé : ${Python3_EXECUTABLE}")
 
-# 2. On demande le chemin à pybind11 via une commande Python pure
-# (Cette méthode est plus solide que l'argument --cmake qui a planté chez vous)
+# --- 2. Pybind11 ---
 execute_process(
-    COMMAND "${Python3_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
-    OUTPUT_VARIABLE PYBIND11_CMAKE_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    RESULT_VARIABLE PYBIND11_FOUND_EXIT_CODE
+        COMMAND "${Python3_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
+        OUTPUT_VARIABLE PYBIND11_CMAKE_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE PYBIND11_FOUND_EXIT_CODE
 )
 
-# Vérification si la commande a marché
 if(NOT "${PYBIND11_FOUND_EXIT_CODE}" EQUAL "0")
     message(FATAL_ERROR "Impossible de trouver pybind11. Vérifiez 'pip install pybind11'.")
 endif()
 
 message(STATUS "Pybind11 trouvé ici : ${PYBIND11_CMAKE_DIR}")
-
-# 3. On ajoute pybind11
 list(APPEND CMAKE_PREFIX_PATH "${PYBIND11_CMAKE_DIR}")
 find_package(pybind11 REQUIRED)
 
-# 4. Vos fichiers sources
+# --- 3. Eigen ---
+include(FetchContent)
+FetchContent_Declare(
+        eigen
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG        3.4.0
+)
+FetchContent_MakeAvailable(eigen)
+
+# --- 4. STB (lecture d'images en C++) ---
+FetchContent_Declare(
+        stb
+        GIT_REPOSITORY https://github.com/nothings/stb.git
+        GIT_TAG        master
+)
+FetchContent_MakeAvailable(stb)
+
+# --- 5. Compilation du module ---
 set(SOURCES
-    src/LinearModel.cpp
-    wrapper/binding.cpp
+        src/LinearModel.cpp
+        src/ImageLoader.cpp
+        wrapper/binding.cpp
 )
 
-# 5. Création du module
 pybind11_add_module(mon_module_cpp ${SOURCES})
 
-# 6. Copie automatique vers le dossier scripts
+target_link_libraries(mon_module_cpp PRIVATE Eigen3::Eigen)
+target_include_directories(mon_module_cpp PRIVATE ${stb_SOURCE_DIR})
+
+# Copie automatique du module compilé dans scripts/ après le build
 add_custom_command(TARGET mon_module_cpp POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mon_module_cpp> ${CMAKE_SOURCE_DIR}/scripts/
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mon_module_cpp> ${CMAKE_SOURCE_DIR}/scripts/
 )
