@@ -1,4 +1,4 @@
-#pragma once  // Toujours mettre ça en première ligne pour éviter les inclusions multiples
+#pragma once
 #include <vector>
 
 class LinearModel {
@@ -7,17 +7,19 @@ private:
     double bias;
 
 public:
-    // 1. Le Constructeur : Créer le modèle
     // input_size : Nombre d'entrées (ex: 32*32*3 pour une image)
     LinearModel(int input_size);
 
-    // 2. Prédiction : Estime une valeur (Forward pass)
-    // "const ... &" signifie : "Je lis le vecteur sans le copier" (Optimisation Vitesse)
+    // Forward pass
     double predict(const std::vector<double>& inputs) const;
-
-    // 3. Entraînement : Corrige les poids (Backward pass)
-    void train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
     
-    // 4. Sauvegarde
+    // Retourne la somme brute (score de confiance) pour le multi-classe (One-vs-Rest)
+    double predict_raw(const std::vector<double>& inputs) const;
+
+    // Backward pass
+    // Retourne l'historique des erreurs (loss) par epoch
+    std::vector<double> train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
+    
     void save(const char* filename);
+    void load(const char* filename);
 };
