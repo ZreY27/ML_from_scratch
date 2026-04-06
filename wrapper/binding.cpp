@@ -47,7 +47,18 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("training_steps"),
              py::arg("learning_rate"),
              py::arg("is_classification"),
-             "Entraine le modele MLP via Backpropagation SGD")
+             py::arg("decay") = 0.0,
+             "Entraine le modele MLP via Backpropagation SGD avec Decay et retourne l'historique des erreurs (Loss)")
+        .def("train_from_images", &MLP::train_from_images,
+             py::arg("image_paths"),
+             py::arg("expected_outputs"),
+             py::arg("target_w"),
+             py::arg("target_h"),
+             py::arg("training_steps"),
+             py::arg("learning_rate"),
+             py::arg("is_classification"),
+             py::arg("decay") = 0.0,
+             "Entraine le modele MLP directement depuis une liste d'images avec Decay et retourne la Loss")
         .def("predict", &MLP::predict,
              py::arg("inputs"),
              py::arg("is_classification"),
