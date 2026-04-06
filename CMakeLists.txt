@@ -66,3 +66,11 @@ target_include_directories(mon_module_cpp PRIVATE ${stb_SOURCE_DIR})
 add_custom_command(TARGET mon_module_cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mon_module_cpp> ${CMAKE_SOURCE_DIR}/scripts/
 )
+
+# --- 6. Exécutable de test (main_test.cpp) ---
+add_executable(test_models
+        src/main_test.cpp
+        src/LinearModel.cpp
+        src/MLP.cpp
+)
+target_include_directories(test_models PRIVATE ${CMAKE_SOURCE_DIR}/src)
