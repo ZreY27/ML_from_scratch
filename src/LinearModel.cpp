@@ -40,6 +40,20 @@ void LinearModel::train(const std::vector<std::vector<double>> &X,
         }
 }
 
+double LinearModel::predict_raw(const std::vector<double>& inputs) const {
+    // même logique que predict() mais sans le signe à la fin
+    // retourne la valeur brute — utile pour le multi-classe One-vs-Rest
+    // plus la valeur est haute, plus le modèle est "confiant" pour cette classe
+    double sum = bias;
+    for (int i = 0; i < static_cast<int>(weights.size()); i++)
+        sum += weights[i] * inputs[i];
+    return sum;  // pas de signe ici — on retourne le score brut
+}
+
+void LinearModel::load(const char* filename) {
+    // TODO : charger weights et bias depuis un fichier texte
+}
+
 void LinearModel::save(const char* filename) {
     // TODO : sauvegarder weights et bias dans un fichier texte
 }
