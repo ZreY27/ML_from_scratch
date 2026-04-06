@@ -3,6 +3,7 @@
 #include <random>
 #include <fstream>
 #include <stdexcept>
+#include "ImageLoader.hpp"
 
 // Constructeur : Initialisation du modèle.
 // Les poids et le biais sont initialisés avec des valeurs aléatoires comprises entre -1.0 et 1.0.
@@ -72,6 +73,34 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs, const 
         loss_history.push_back(static_cast<double>(errors) / num_samples);
     }
     return loss_history;
+}
+
+// Entraînement depuis des chemins d'images : Charge, redimensionne et prépare la donnée avant d'entraîner.
+std::vector<double> LinearModel::train_from_images(const std::vector<std::string>& image_paths, const std::vector<double>& labels, 
+                                                   int target_w, int target_h, double learning_rate, int epochs) {
+    std::vector<double> flattened_inputs;
+    std::vector<double> valid_labels;
+
+    for (size_t i = 0; i < image_paths.size(); ++i) {
+        try {
+            // On utilise c_str() au cas où la fonction attendrait un const char* standard
+            std::vector<double> img_data = load_and_resize_image(image_paths[i].c_str(), target_w, target_h);
+            
+            // Ajout des pixels de l'image courante à la fin de l'immense tableau 1D
+            flattened_inputs.insert(flattened_inputs.end(), img_data.begin(), img_data.end());
+            
+            // On conserve le label uniquement si l'image a été chargée avec succès
+            valid_labels.push_back(labels[i]);
+        } catch (const std::exception& e) {
+            std::cerr << "  [C++] Erreur ignorée pour l'image " << image_paths[i] << " : " << e.what() << "\n";
+        }
+    }
+
+    if (valid_labels.empty()) {
+        throw std::runtime_error("Aucune image valide n'a pu être chargée pour l'entraînement.");
+    }
+
+    return train(flattened_inputs, valid_labels, learning_rate, epochs);
 }
 
 // Sauvegarde l'état du modèle dans un fichier texte.

@@ -18,6 +18,14 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("learning_rate"),
              py::arg("epochs"),
              "Entraine le modele sur le dataset et retourne l'historique des erreurs (loss)")
+        .def("train_from_images", &LinearModel::train_from_images,
+             py::arg("image_paths"),
+             py::arg("labels"),
+             py::arg("target_w"),
+             py::arg("target_h"),
+             py::arg("learning_rate"),
+             py::arg("epochs"),
+             "Entraine le modele directement depuis une liste de chemins d'images")
         .def("predict", &LinearModel::predict,
              py::arg("inputs"),
              "Predit la classe (1.0 ou -1.0) pour une image donnee")
