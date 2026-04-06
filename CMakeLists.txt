@@ -73,5 +73,6 @@ add_executable(test_models
         src/main_test.cpp
         src/LinearModel.cpp
         src/MLP.cpp
+        src/ImageLoader.cpp
 )
-target_include_directories(test_models PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(test_models PRIVATE ${CMAKE_SOURCE_DIR}/src ${stb_SOURCE_DIR})
