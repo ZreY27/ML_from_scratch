@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 class LinearModel {
 private:
@@ -20,6 +21,10 @@ public:
     // Retourne l'historique des erreurs (loss) par epoch
     std::vector<double> train(const std::vector<double>& inputs, const std::vector<double>& labels, double learning_rate, int epochs);
     
+    // Entraînement direct depuis une liste de chemins d'images
+    std::vector<double> train_from_images(const std::vector<std::string>& image_paths, const std::vector<double>& labels, 
+                                          int target_w, int target_h, double learning_rate, int epochs);
+
     void save(const char* filename);
     void load(const char* filename);
 };
