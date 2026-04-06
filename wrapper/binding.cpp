@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // OBLIGATOIRE pour convertir vector <-> list automatiquement
-#include "../src/LinearModel.hpp"
+#include "../src/LinearModel.h"
 #include "../src/ImageLoader.hpp"
 
 namespace py = pybind11;
