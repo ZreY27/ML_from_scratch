@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <sstream>
 #include <string>
+#include <iostream>
+#include "ImageLoader.hpp"
 
 // Constructeur : Initialise l'architecture du réseau et alloue la mémoire.
 // 'npl' (Neurons Per Layer) définit le nombre de neurones par couche (ex: {2, 3, 1}).
@@ -84,15 +86,30 @@ std::vector<double> MLP::predict(const std::vector<double>& inputs, bool is_clas
 // Entraînement du modèle (Algorithme de Rétropropagation du Gradient / Backpropagation)
 // Utilise la Descente de Gradient Stochastique (Stochastic Gradient Descent - SGD).
 // Prends des listes 1D aplaties pour des performances optimales (évite les copies mémoire).
-void MLP::train(const std::vector<double>& dataset_inputs, const std::vector<double>& dataset_expected_outputs,
-                int training_steps, double learning_rate, bool is_classification) {
+std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const std::vector<double>& dataset_expected_outputs,
+                               int training_steps, double learning_rate, bool is_classification, double decay) {
                 
     int num_samples = dataset_inputs.size() / d[0];
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist_k(0, num_samples - 1);
+    std::vector<double> loss_history;
 
     for (int step = 0; step < training_steps; ++step) {
+        if (step % (training_steps / 100 > 0 ? training_steps / 100 : 1) == 0 || step == training_steps - 1) {
+            int progress = (int)((float)step / training_steps * 100.0);
+            std::cout << "\rTraining: [";
+            for (int p = 0; p < 50; ++p) {
+                if (p < progress / 2) std::cout << "=";
+                else if (p == progress / 2) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << progress << "% " << std::flush;
+        }
+        
+        // Application du Learning Rate Decay (décroissance du taux d'apprentissage)
+        double current_learning_rate = learning_rate * (1.0 / (1.0 + decay * step));
+
         // 1. Choix d'un échantillon aléatoire (SGD)
         int k = dist_k(gen);
         
@@ -111,13 +128,17 @@ void MLP::train(const std::vector<double>& dataset_inputs, const std::vector<dou
         propagate(inputs_k, is_classification);
 
         // 3. BACKWARD PASS (Étape 1/2) : Calcul de l'erreur (Deltas) sur la DERNIÈRE couche
+        double step_loss = 0.0;
         for (int j = 1; j <= d[L]; ++j) {
-            deltas[L][j] = X[L][j] - y_k[j - 1]; // Erreur basique : (Prédiction - Attendu)
+            double err = X[L][j] - y_k[j - 1]; // Erreur basique : (Prédiction - Attendu)
+            step_loss += err * err; // MSE
+            deltas[L][j] = err; 
             if (is_classification) {
                 // Multiplié par la dérivée de tanh (qui est 1 - tanh^2)
                 deltas[L][j] *= (1.0 - X[L][j] * X[L][j]);
             }
         }
+        loss_history.push_back(step_loss / d[L]);
 
         // 4. BACKWARD PASS (Étape 2/2) : Rétropropagation de l'erreur dans les COUCHES CACHÉES
         for (int l = L; l >= 2; --l) {
@@ -137,12 +158,44 @@ void MLP::train(const std::vector<double>& dataset_inputs, const std::vector<dou
         for (int l = 1; l <= L; ++l) {
             for (int i = 0; i <= d[l - 1]; ++i) {
                 for (int j = 1; j <= d[l]; ++j) {
-                    // Nouveau poids = Ancien poids - (LearningRate * SortieNeuronePrécédent * DeltaNeuroneActuel)
-                    W[l][i][j] -= learning_rate * X[l - 1][i] * deltas[l][j];
+                    // Nouveau poids = Ancien poids - (CurrentLearningRate * SortieNeuronePrécédent * DeltaNeuroneActuel)
+                    W[l][i][j] -= current_learning_rate * X[l - 1][i] * deltas[l][j];
                 }
             }
         }
     }
+    std::cout << std::endl;
+    return loss_history;
+}
+
+// Entraînement direct depuis des chemins d'images : Charge, redimensionne et prépare la donnée avant d'entraîner.
+std::vector<double> MLP::train_from_images(const std::vector<std::string>& image_paths, const std::vector<double>& expected_outputs,
+                                           int target_w, int target_h, int training_steps, double learning_rate, bool is_classification, double decay) {
+    std::vector<double> flattened_inputs;
+    std::vector<double> valid_expected_outputs;
+    int output_size = d[L];
+
+    for (size_t i = 0; i < image_paths.size(); ++i) {
+        try {
+            std::vector<double> img_data = load_and_resize_image(image_paths[i].c_str(), target_w, target_h);
+            
+            // Ajout des pixels de l'image courante
+            flattened_inputs.insert(flattened_inputs.end(), img_data.begin(), img_data.end());
+            
+            // Copie des sorties attendues (labels) correspondantes pour cette image
+            for (int j = 0; j < output_size; ++j) {
+                valid_expected_outputs.push_back(expected_outputs[i * output_size + j]);
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "  [C++] Erreur ignorée pour l'image " << image_paths[i] << " : " << e.what() << "\n";
+        }
+    }
+
+    if (valid_expected_outputs.empty()) {
+        throw std::runtime_error("Aucune image valide n'a pu être chargée pour l'entraînement.");
+    }
+
+    return train(flattened_inputs, valid_expected_outputs, training_steps, learning_rate, is_classification, decay);
 }
 
 // Sauvegarde l'architecture complète du modèle (npl) et ses poids dans un fichier texte.

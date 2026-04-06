@@ -41,6 +41,16 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs, const 
 
     // Répète l'apprentissage un certain nombre de fois (epochs) sur tout le dataset.
     for (int epoch = 0; epoch < epochs; ++epoch) {
+        if (epoch % (epochs / 100 > 0 ? epochs / 100 : 1) == 0 || epoch == epochs - 1) {
+            int progress = (int)((float)epoch / epochs * 100.0);
+            std::cout << "\rTraining: [";
+            for (int p = 0; p < 50; ++p) {
+                if (p < progress / 2) std::cout << "=";
+                else if (p == progress / 2) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << progress << "% " << std::flush;
+        }
         int errors = 0; // Compteur d'erreurs pour l'epoch courante
 
         for (int i = 0; i < num_samples; ++i) {
@@ -72,6 +82,7 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs, const 
         // Enregistre le ratio d'erreurs de l'epoch (Loss) : 0.0 = parfait, 1.0 = tout faux
         loss_history.push_back(static_cast<double>(errors) / num_samples);
     }
+    std::cout << std::endl;
     return loss_history;
 }
 
