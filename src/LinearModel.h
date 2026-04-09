@@ -7,19 +7,31 @@ private:
     double bias;
 
 public:
-    std::vector<double> loss_history;
-    // input_size : Nombre d'entrées (ex: 32*32*3 pour une image)
-    LinearModel(int input_size);
+    // Mode du modèle
+    enum Mode { CLASSIFICATION, REGRESSION };
+    // CLASSIFICATION = retourne -1 ou +1 (Rosenblatt)
+    // REGRESSION     = retourne une valeur continue (descente de gradient MSE)
 
-    // Forward pass
+    std::vector<double> loss_history;
+
+    LinearModel(int input_size, Mode mode = CLASSIFICATION);
+    // mode = CLASSIFICATION par défaut → tes tests actuels marchent sans changer
+
     double predict(const std::vector<double>& inputs) const;
-    
-    // Retourne la somme brute (score de confiance) pour le multi-classe (One-vs-Rest)
+    // en CLASSIFICATION → retourne -1.0 ou +1.0
+    // en REGRESSION     → retourne la valeur brute W·X + b
+
     double predict_raw(const std::vector<double>& inputs) const;
-    // Backward pass
-    // Retourne l'historique des erreurs (loss) par epoch
-    void train(const std::vector<std::vector<double>> &X, const std::vector<double> &Y, double learning_rate, int epochs);
-    
+    // retourne toujours la valeur brute, peu importe le mode
+
+    void train(const std::vector<std::vector<double>>& X,
+               const std::vector<double>& Y,
+               double learning_rate, int epochs);
+
     void save(const char* filename);
     void load(const char* filename);
+
+private:
+    Mode mode;
+    // privé car l'extérieur n'a pas besoin de le modifier après construction
 };

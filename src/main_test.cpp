@@ -3,7 +3,7 @@
 
 int main() {
 
-    // ── TEST 1 : linéairement séparable ───────────────────────────
+    // TEST 1 : lineairement separable
     std::vector<std::vector<double>> X = {
         { 1.0,  1.0},
         { 2.0,  2.0},
@@ -21,14 +21,12 @@ int main() {
         double pred = model.predict(X[i]);
         bool ok = (pred == Y[i]);
         if (ok) correct_1++;
-        std::cout << "  pred=" << pred
-                  << "  attendu=" << Y[i]
+        std::cout << "  pred=" << pred << "  attendu=" << Y[i]
                   << (ok ? "  OK" : "  ERREUR") << "\n";
     }
-    std::cout << "  Accuracy : " << correct_1 << "/4"
-              << "  (attendu : 4/4)\n\n";
+    std::cout << "  Accuracy : " << correct_1 << "/4 (attendu : 4/4)\n\n";
 
-    // ── TEST 2 : XOR sans transformation ──────────────────────────
+    // TEST 2 : XOR sans transformation
     std::vector<std::vector<double>> X_xor = {
         {0.0, 0.0},
         {0.0, 1.0},
@@ -43,17 +41,15 @@ int main() {
     std::cout << "=== TEST 2 : XOR (echec attendu) ===\n";
     int correct_2 = 0;
     for (int i = 0; i < static_cast<int>(X_xor.size()); i++) {
-        double pred = model_xor.predict(X_xor[i]);  // ← model_xor, pas model
+        double pred = model_xor.predict(X_xor[i]);
         bool ok = (pred == Y_xor[i]);
         if (ok) correct_2++;
-        std::cout << "  pred=" << pred
-                  << "  attendu=" << Y_xor[i]
+        std::cout << "  pred=" << pred << "  attendu=" << Y_xor[i]
                   << (ok ? "  OK" : "  ERREUR") << "\n";
     }
-    std::cout << "  Accuracy : " << correct_2 << "/4"
-              << "  (attendu : < 4/4)\n\n";
+    std::cout << "  Accuracy : " << correct_2 << "/4 (attendu : < 4/4)\n\n";
 
-    // ── TEST 3 : XOR avec transformation non-linéaire ─────────────
+    // TEST 3 : XOR avec transformation non-lineaire
     std::vector<std::vector<double>> X_xor_trans;
     for (int i = 0; i < static_cast<int>(X_xor.size()); i++) {
         double x0 = X_xor[i][0];
@@ -70,14 +66,50 @@ int main() {
         double pred = model_trans.predict(X_xor_trans[i]);
         bool ok = (pred == Y_xor[i]);
         if (ok) correct_3++;
-        std::cout << "  pred=" << pred
-                  << "  attendu=" << Y_xor[i]
+        std::cout << "  pred=" << pred << "  attendu=" << Y_xor[i]
                   << (ok ? "  OK" : "  ERREUR") << "\n";
     }
-    std::cout << "  Accuracy : " << correct_3 << "/4"
-              << "  (attendu : 4/4)\n\n";
+    std::cout << "  Accuracy : " << correct_3 << "/4 (attendu : 4/4)\n\n";
 
-    // ── RÉSUMÉ ────────────────────────────────────────────────────
+    // TEST 4 : Regression lineaire y = 2x + 1
+    // Le modele doit trouver weight ~ 2.0, bias ~ 1.0
+    std::vector<std::vector<double>> X_reg = {
+        {1.0}, {2.0}, {3.0}, {4.0}, {5.0}
+    };
+    std::vector<double> Y_reg = {3.0, 5.0, 7.0, 9.0, 11.0};
+
+    LinearModel model_reg(1, LinearModel::REGRESSION);
+    model_reg.train(X_reg, Y_reg, 0.01, 1000);
+
+    std::cout << "=== TEST 4 : Regression lineaire (y = 2x + 1) ===\n";
+    for (int i = 0; i < static_cast<int>(X_reg.size()); i++) {
+        double pred = model_reg.predict(X_reg[i]);
+        std::cout << "  x=" << X_reg[i][0]
+                  << "  pred=" << pred
+                  << "  attendu=" << Y_reg[i] << "\n";
+    }
+    std::cout << "  (les predictions doivent etre proches des attendus)\n\n";
+
+    // TEST 5 : Regression sur y = x2 (echec attendu)
+    // Modele lineaire trop simple pour une courbe
+    std::vector<std::vector<double>> X_quad = {
+        {-2.0}, {-1.0}, {0.0}, {1.0}, {2.0}
+    };
+    std::vector<double> Y_quad = {4.0, 1.0, 0.0, 1.0, 4.0};
+
+    LinearModel model_quad(1, LinearModel::REGRESSION);
+    model_quad.train(X_quad, Y_quad, 0.01, 1000);
+
+    std::cout << "=== TEST 5 : Regression y=x2 (echec attendu) ===\n";
+    for (int i = 0; i < static_cast<int>(X_quad.size()); i++) {
+        double pred = model_quad.predict(X_quad[i]);
+        std::cout << "  x=" << X_quad[i][0]
+                  << "  pred=" << pred
+                  << "  attendu=" << Y_quad[i] << "\n";
+    }
+    std::cout << "  (predictions mauvaises -- modele trop simple)\n\n";
+
+    // RESUME
     std::cout << "=== RESUME ===\n";
     std::cout << "  Separable          : " << correct_1 << "/4\n";
     std::cout << "  XOR sans transform : " << correct_2 << "/4\n";
