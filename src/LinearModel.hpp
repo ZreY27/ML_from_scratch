@@ -8,8 +8,14 @@ private:
     double bias;
 
 public:
+    enum Mode { CLASSIFICATION, REGRESSION };
+
+private:
+    Mode mode;
+
+public:
     // input_size : Nombre d'entrées (ex: 32*32*3 pour une image)
-    LinearModel(int input_size);
+    LinearModel(int input_size, Mode mode = CLASSIFICATION);
 
     // Forward pass
     double predict(const std::vector<double>& inputs) const;
