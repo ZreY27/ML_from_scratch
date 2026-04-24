@@ -35,21 +35,33 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
     int num_samples = labels.size();
 
     for (int e = 0; e < epochs; e++) {
+        // Barre de progression (issue de deploy)
+        if (e % (epochs / 100 > 0 ? epochs / 100 : 1) == 0 || e == epochs - 1) {
+            int progress = (int)((float)e / epochs * 100.0);
+            std::cout << "\rTraining: [";
+            for (int p = 0; p < 50; ++p) {
+                if (p < progress / 2) std::cout << "=";
+                else if (p == progress / 2) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << progress << "% " << std::flush;
+        }
+
         if (mode == CLASSIFICATION) {
             int errors = 0;
             for (int i = 0; i < num_samples; i++) {
-                std::vector<double> sample(input_size);
+                // Calcul inline (optimisation de deploy) pour éviter l'allocation coûteuse
+                double sum = bias;
                 for (int j = 0; j < input_size; j++) {
-                    sample[j] = inputs[i * input_size + j];
+                    sum += weights[j] * inputs[i * input_size + j];
                 }
-                
-                double pred = predict(sample);
+                double pred = (sum >= 0.0) ? 1.0 : -1.0;
                 double error = labels[i] - pred;
                 
                 if (error != 0.0) {
                     errors++;
                     for (int j = 0; j < input_size; j++)
-                        weights[j] += learning_rate * error * sample[j];
+                        weights[j] += learning_rate * error * inputs[i * input_size + j];
                     bias += learning_rate * error;
                 }
             }
@@ -57,22 +69,23 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
         } else {
             double total_loss = 0.0;
             for (int i = 0; i < num_samples; i++) {
-                std::vector<double> sample(input_size);
+                // Calcul inline (optimisation de deploy)
+                double sum = bias;
                 for (int j = 0; j < input_size; j++) {
-                    sample[j] = inputs[i * input_size + j];
+                    sum += weights[j] * inputs[i * input_size + j];
                 }
-
-                double pred = predict_raw(sample);
+                double pred = sum; // valeur brute (régression)
                 double error = labels[i] - pred;
                 total_loss += error * error;
 
                 for (int j = 0; j < input_size; j++)
-                    weights[j] += learning_rate * error * sample[j];
+                    weights[j] += learning_rate * error * inputs[i * input_size + j];
                 bias += learning_rate * error;
             }
             loss_history.push_back(total_loss / num_samples);
         }
     }
+    std::cout << std::endl; // Nouvelle ligne propre à la fin de l'entraînement
     return loss_history;
 }
 
