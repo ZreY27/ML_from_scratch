@@ -10,7 +10,7 @@
 
 // Constructeur : Initialise l'architecture du réseau et alloue la mémoire.
 // 'npl' (Neurons Per Layer) définit le nombre de neurones par couche (ex: {2, 3, 1}).
-MLP::MLP(const std::vector<int>& npl) {
+MLP::MLP(const std::vector<int>& npl, bool is_classification) : is_classification(is_classification) {
     d = npl;
     L = d.size() - 1;
 
@@ -48,7 +48,7 @@ MLP::MLP(const std::vector<int>& npl) {
 
 // Forward Pass (Propagation avant) : Calcule la prédiction du réseau pour une entrée donnée.
 // Traverse les couches une par une, fait la somme pondérée, et applique la fonction d'activation.
-void MLP::propagate(const std::vector<double>& inputs, bool is_classification) {
+void MLP::propagate(const std::vector<double>& inputs) {
     // 1. Assigner les valeurs d'entrée à la première couche (couche 0)
     for (int j = 1; j <= d[0]; ++j) {
         X[0][j] = inputs[j - 1];
@@ -74,8 +74,8 @@ void MLP::propagate(const std::vector<double>& inputs, bool is_classification) {
 
 // Prédiction publique : Appelle propagate() et retourne uniquement le résultat
 // de la dernière couche sous forme de vecteur (utile pour le multi-classes).
-std::vector<double> MLP::predict(const std::vector<double>& inputs, bool is_classification) {
-    propagate(inputs, is_classification);
+std::vector<double> MLP::predict(const std::vector<double>& inputs) {
+    propagate(inputs);
     std::vector<double> result(d[L]);
     for (int j = 1; j <= d[L]; ++j) {
         result[j - 1] = X[L][j];
@@ -87,7 +87,7 @@ std::vector<double> MLP::predict(const std::vector<double>& inputs, bool is_clas
 // Utilise la Descente de Gradient Stochastique (Stochastic Gradient Descent - SGD).
 // Prends des listes 1D aplaties pour des performances optimales (évite les copies mémoire).
 std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const std::vector<double>& dataset_expected_outputs,
-                               int training_steps, double learning_rate, bool is_classification, double decay) {
+                               int training_steps, double learning_rate, double decay) {
                 
     int num_samples = dataset_inputs.size() / d[0];
     std::random_device rd;
@@ -125,7 +125,7 @@ std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const 
         }
 
         // 2. FORWARD PASS : Le réseau tente de deviner
-        propagate(inputs_k, is_classification);
+        propagate(inputs_k);
 
         // 3. BACKWARD PASS (Étape 1/2) : Calcul de l'erreur (Deltas) sur la DERNIÈRE couche
         double step_loss = 0.0;
@@ -170,7 +170,7 @@ std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const 
 
 // Entraînement direct depuis des chemins d'images : Charge, redimensionne et prépare la donnée avant d'entraîner.
 std::vector<double> MLP::train_from_images(const std::vector<std::string>& image_paths, const std::vector<double>& expected_outputs,
-                                           int target_w, int target_h, int training_steps, double learning_rate, bool is_classification, double decay) {
+                                           int target_w, int target_h, int training_steps, double learning_rate, double decay) {
     std::vector<double> flattened_inputs;
     std::vector<double> valid_expected_outputs;
     int output_size = d[L];
@@ -195,7 +195,7 @@ std::vector<double> MLP::train_from_images(const std::vector<std::string>& image
         throw std::runtime_error("Aucune image valide n'a pu être chargée pour l'entraînement.");
     }
 
-    return train(flattened_inputs, valid_expected_outputs, training_steps, learning_rate, is_classification, decay);
+    return train(flattened_inputs, valid_expected_outputs, training_steps, learning_rate, decay);
 }
 
 // Sauvegarde l'architecture complète du modèle (npl) et ses poids dans un fichier texte.
