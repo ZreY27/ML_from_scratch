@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LinearModel.hpp"
+#include "MLP.hpp"
 
 int main() {
 
@@ -111,6 +112,52 @@ int main() {
                   << "  attendu=" << Y_quad[i] << "\n";
     }
     std::cout << "  (predictions mauvaises -- modele trop simple)\n\n";
+
+    // ==========================================
+    // TESTS MLP
+    // ==========================================
+    std::cout << "\n==========================================\n";
+    std::cout << "               TESTS MLP\n";
+    std::cout << "==========================================\n\n";
+
+    // TEST 6 : MLP Classification (XOR)
+    // Contrairement au modele lineaire simple, le MLP peut resoudre le XOR sans transformation
+    std::vector<double> X_xor_mlp = {
+        0.0, 0.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0
+    };
+    std::vector<double> Y_xor_mlp = {-1.0, 1.0, 1.0, -1.0};
+
+    MLP mlp_classif({2, 3, 1}, true); // is_classification = true
+    mlp_classif.train(X_xor_mlp, Y_xor_mlp, 15000, 0.1);
+
+    std::cout << "=== TEST 6 : MLP Classification (XOR) ===\n";
+    for (int i = 0; i < 4; i++) {
+        std::vector<double> sample = {X_xor_mlp[i*2], X_xor_mlp[i*2+1]};
+        std::vector<double> pred = mlp_classif.predict(sample);
+        double class_pred = (pred[0] >= 0.0) ? 1.0 : -1.0;
+        std::cout << "  x={" << sample[0] << "," << sample[1] << "} "
+                  << "pred_brute=" << pred[0] << "\tclasse=" << class_pred 
+                  << "\tattendu=" << Y_xor_mlp[i] << "\n";
+    }
+    std::cout << "  (L'Accuracy doit etre de 4/4)\n\n";
+
+    // TEST 7 : MLP Regression (y = x^2)
+    std::vector<double> X_quad_mlp = {-2.0, -1.0, 0.0, 1.0, 2.0};
+    std::vector<double> Y_quad_mlp = {4.0, 1.0, 0.0, 1.0, 4.0};
+
+    MLP mlp_reg({1, 8, 1}, false); // is_classification = false (1 entree, 8 neurones caches, 1 sortie)
+    mlp_reg.train(X_quad_mlp, Y_quad_mlp, 30000, 0.01);
+
+    std::cout << "=== TEST 7 : MLP Regression (y = x^2) ===\n";
+    for (int i = 0; i < 5; i++) {
+        std::vector<double> sample = {X_quad_mlp[i]};
+        std::vector<double> pred = mlp_reg.predict(sample);
+        std::cout << "  x=" << sample[0] << "\tpred=" << pred[0] << "\t\tattendu=" << Y_quad_mlp[i] << "\n";
+    }
+    std::cout << "  (les predictions doivent etre proches des attendus)\n\n";
 
     // RESUME
     std::cout << "=== RESUME ===\n";

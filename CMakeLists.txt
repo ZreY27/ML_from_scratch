@@ -65,7 +65,7 @@ target_include_directories(ML_ESGI PRIVATE ${stb_SOURCE_DIR})
 
 # Copie automatique du module compilé à la racine (à côté de votre train_test.py) après le build
 add_custom_command(TARGET ML_ESGI POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ML_ESGI> ${CMAKE_SOURCE_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ML_ESGI> ${CMAKE_SOURCE_DIR}/scripts/
 )
 
 # --- 6. Exécutable de test (main_test.cpp) ---

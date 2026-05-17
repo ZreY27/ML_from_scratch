@@ -5,9 +5,8 @@ import sys
 if hasattr(os, 'add_dll_directory'):
     os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
-# Ajoute le dossier parent au chemin Python pour trouver ML_ESGI.pyd
+# Dossier racine du projet (pour accéder aux datasets)
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(ROOT_DIR)
 
 import ML_ESGI
 import matplotlib.pyplot as plt
