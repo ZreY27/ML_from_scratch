@@ -82,7 +82,7 @@ int main() {
     std::vector<double> X_reg = {1.0, 2.0, 3.0, 4.0, 5.0};
     std::vector<double> Y_reg = {3.0, 5.0, 7.0, 9.0, 11.0};
 
-    LinearModel model_reg(1, LinearModel::REGRESSION);
+    LinearModel model_reg(1, false); // is_classification = false
     model_reg.train(X_reg, Y_reg, 0.01, 1000);
 
     std::cout << "=== TEST 4 : Regression lineaire (y = 2x + 1) ===\n";
@@ -100,7 +100,7 @@ int main() {
     std::vector<double> X_quad = {-2.0, -1.0, 0.0, 1.0, 2.0};
     std::vector<double> Y_quad = {4.0, 1.0, 0.0, 1.0, 4.0};
 
-    LinearModel model_quad(1, LinearModel::REGRESSION);
+    LinearModel model_quad(1, false); // is_classification = false
     model_quad.train(X_quad, Y_quad, 0.01, 1000);
 
     std::cout << "=== TEST 5 : Regression y=x2 (echec attendu) ===\n";

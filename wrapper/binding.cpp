@@ -11,7 +11,7 @@ PYBIND11_MODULE(ML_ESGI, m) {
     m.doc() = "Bibliotheque ML C++ - Projet Annuel ESGI (Optimisee)"; // Documentation globale du module
     
     py::class_<LinearModel>(m, "LinearModel")
-        .def(py::init<int>(), py::arg("input_size"), "Initialise le modele avec le nombre d'entrees (ex: pixels)")
+        .def(py::init<int, bool>(), py::arg("input_size"), py::arg("is_classification") = true, "Initialise le modele lineaire (Classification par defaut)")
         .def("train", &LinearModel::train,
              py::arg("inputs"),
              py::arg("labels"),
