@@ -7,11 +7,14 @@ private:
     std::vector<double> weights;
     double bias;
     double C;
+    double epsilon;
 
 public:
+    enum Mode { CLASSIFICATION, REGRESSION };
     std::vector<double> loss_history;
     //C=1 équivaut à la bonne valeur de départ, input_size est le nombre de features d'entree
-    SVM(int input_size, double C = 1.0 );
+    // epsilon : taille du tube SVR (defaut 0.1, uniquement en REGRESSION)
+    SVM(int input_size, double C = 1.0, double epsilon = 0.1, Mode mode = CLASSIFICATION );
     // -1 ou 1
     double predict(const std::vector<double>& x) const;
 
@@ -25,4 +28,6 @@ public:
 
     void save(const char* filename);
     void load(const char* filename);
+private:
+    Mode mode;
 };
