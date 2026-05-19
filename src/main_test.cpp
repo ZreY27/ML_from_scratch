@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LinearModel.hpp"
+#include "SVM.h"
 
 int main() {
 
