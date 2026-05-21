@@ -56,14 +56,13 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
                         bias += learning_rate * Y[i];
                     }
                 }
-
-                    }
-                }
             }
             else {
                 //TODO régréssion
             }
         }
+        total_loss /= static_cast<double>(X.size());
+        loss_history.push_back(total_loss);
     }
 }
 
