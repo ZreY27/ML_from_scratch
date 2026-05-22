@@ -20,7 +20,7 @@ double SVM::predict_raw(const std::vector<double> &x) const {
 double SVM::predict(const std::vector<double> &x) const {
     double raw = predict_raw(x);
     if (mode == CLASSIFICATION) {
-        return predict_raw(x) >= 0.0 ? 1.0 : -1.0;
+        return raw >= 0.0 ? 1.0 : -1.0;
     }
     else {
         return raw;
@@ -53,12 +53,40 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
                     // b = b + lr * y
                     for (int j = 0; j < static_cast<int>(weights.size()); j++) {
                         weights[j] -= learning_rate * (2 * C * weights[j] - Y[i] * X[i][j]);
-                        bias += learning_rate * Y[i];
                     }
+                    bias += learning_rate * Y[i];
                 }
             }
             else {
-                //TODO régréssion
+                // Epsilon-insensitive Loss (SVR)
+                // residual = prediction - valeur_reelle
+                // si |residual| <= epsilon : dans le tube, pas de correction
+                // si |residual| >  epsilon : hors du tube, on corrige
+                double pred = predict_raw(X[i]);
+                double residual = pred - Y[i];
+                double abs_residual = std::abs(residual);
+
+                // Epsilon-insensitive loss pour cet exemple
+                double loss = std::max(0.0, abs_residual - epsilon);
+                total_loss += loss;
+
+                if (abs_residual <= epsilon) {
+                    // Dans le tube : regularisation seulement
+                    for (int j = 0; j < static_cast<int>(weights.size()); j++){
+                        weights[j] -= learning_rate * 2.0 * C * weights[j];
+                    }
+                }
+                else {
+                    // Hors du tube : regularisation + correction
+                    // signe(residual) indique la direction de correction
+                    // si residual > 0 : on predit trop haut, on diminue
+                    // si residual < 0 : on predit trop bas, on augmente
+                    double sign = (residual > 0) ? 1.0 : -1.0;
+                    for (int j = 0; j < static_cast<int>(weights.size()); j++){
+                        weights[j] -= learning_rate * (2.0 * C * weights[j] + sign * X[i][j]);
+                    }
+                    bias -= learning_rate * sign;
+                }
             }
         }
         total_loss /= static_cast<double>(X.size());
