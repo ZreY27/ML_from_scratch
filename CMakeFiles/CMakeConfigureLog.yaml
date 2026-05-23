@@ -1,0 +1,2153 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Windows - 10.0.26200 - AMD64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/"
+    found: "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      Version MSBuild 17.14.40+3e7442088 pour .NET Framework
+      La g├®n├®ration a d├®marr├® 21/05/2026 23:06:11.
+      
+      Projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdC\\CompilerIdC.vcxproj" sur le n┼ôud 1 (cibles par d├®faut).
+      PrepareForBuild:
+        Cr├®ation du r├®pertoire "Debug\\".
+        La sortie structur├®e est activ├®e. La mise en forme du compilateur diagnostics refl├¿te la hi├®rarchie des erreurs. Pour plus dÔÇÖinformations, consultez https://aka.ms/cpp/structured-output.
+        Cr├®ation du r├®pertoire "Debug\\CompilerIdC.tlog\\".
+      InitializeBuildStatus:
+        Cr├®ation de "Debug\\CompilerIdC.tlog\\unsuccessfulbuild", car "AlwaysCreate" a ├®t├® sp├®cifi├®.
+        Mise ├á jour de l'horodatage "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdC\\CompilerIdC.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Suppression du fichier "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
+        Mise ├á jour de l'horodatage "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
+      G├®n├®ration du projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdC\\CompilerIdC.vcxproj" termin├®e (cibles par d├®faut).
+      
+      La g├®n├®ration a r├®ussi.
+          0 Avertissement(s)
+          0 Erreur(s)
+      
+      Temps ├®coul├® 00:00:01.06
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/4.3.1/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:103 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
+      - "C:/Python314/Scripts/lld-link.com"
+      - "C:/Python314/Scripts/lld-link.exe"
+      - "C:/Python314/Scripts/lld-link"
+      - "C:/Python314/lld-link.com"
+      - "C:/Python314/lld-link.exe"
+      - "C:/Python314/lld-link"
+      - "C:/Windows/System32/lld-link.com"
+      - "C:/Windows/System32/lld-link.exe"
+      - "C:/Windows/System32/lld-link"
+      - "C:/Windows/lld-link.com"
+      - "C:/Windows/lld-link.exe"
+      - "C:/Windows/lld-link"
+      - "C:/Windows/System32/wbem/lld-link.com"
+      - "C:/Windows/System32/wbem/lld-link.exe"
+      - "C:/Windows/System32/wbem/lld-link"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link"
+      - "C:/Windows/System32/OpenSSH/lld-link.com"
+      - "C:/Windows/System32/OpenSSH/lld-link.exe"
+      - "C:/Windows/System32/OpenSSH/lld-link"
+      - "C:/Program Files/nodejs/lld-link.com"
+      - "C:/Program Files/nodejs/lld-link.exe"
+      - "C:/Program Files/nodejs/lld-link"
+      - "C:/ProgramData/chocolatey/bin/lld-link.com"
+      - "C:/ProgramData/chocolatey/bin/lld-link.exe"
+      - "C:/ProgramData/chocolatey/bin/lld-link"
+      - "C:/Program Files/Git/cmd/lld-link.com"
+      - "C:/Program Files/Git/cmd/lld-link.exe"
+      - "C:/Program Files/Git/cmd/lld-link"
+      - "C:/Program Files/PuTTY/lld-link.com"
+      - "C:/Program Files/PuTTY/lld-link.exe"
+      - "C:/Program Files/PuTTY/lld-link"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link"
+      - "C:/Program Files/CMake/bin/lld-link.com"
+      - "C:/Program Files/CMake/bin/lld-link.exe"
+      - "C:/Program Files/CMake/bin/lld-link"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link.com"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link.exe"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link.com"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link.exe"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_MT"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "mt"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt"
+      - "C:/Python314/Scripts/mt.com"
+      - "C:/Python314/Scripts/mt.exe"
+      - "C:/Python314/Scripts/mt"
+      - "C:/Python314/mt.com"
+      - "C:/Python314/mt.exe"
+      - "C:/Python314/mt"
+      - "C:/Windows/System32/mt.com"
+      - "C:/Windows/System32/mt.exe"
+      - "C:/Windows/System32/mt"
+      - "C:/Windows/mt.com"
+      - "C:/Windows/mt.exe"
+      - "C:/Windows/mt"
+      - "C:/Windows/System32/wbem/mt.com"
+      - "C:/Windows/System32/wbem/mt.exe"
+      - "C:/Windows/System32/wbem/mt"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt"
+      - "C:/Windows/System32/OpenSSH/mt.com"
+      - "C:/Windows/System32/OpenSSH/mt.exe"
+      - "C:/Windows/System32/OpenSSH/mt"
+      - "C:/Program Files/nodejs/mt.com"
+      - "C:/Program Files/nodejs/mt.exe"
+      - "C:/Program Files/nodejs/mt"
+      - "C:/ProgramData/chocolatey/bin/mt.com"
+      - "C:/ProgramData/chocolatey/bin/mt.exe"
+      - "C:/ProgramData/chocolatey/bin/mt"
+      - "C:/Program Files/Git/cmd/mt.com"
+      - "C:/Program Files/Git/cmd/mt.exe"
+      - "C:/Program Files/Git/cmd/mt"
+      - "C:/Program Files/PuTTY/mt.com"
+      - "C:/Program Files/PuTTY/mt.exe"
+      - "C:/Program Files/PuTTY/mt"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt"
+      - "C:/Program Files/CMake/bin/mt.com"
+      - "C:/Program Files/CMake/bin/mt.exe"
+      - "C:/Program Files/CMake/bin/mt"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/mt"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/mt.com"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/mt.exe"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/mt"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/mt.com"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/mt.exe"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/mt"
+      - "C:/Users/maxim/AppData/Roaming/npm/mt.com"
+      - "C:/Users/maxim/AppData/Roaming/npm/mt.exe"
+      - "C:/Users/maxim/AppData/Roaming/npm/mt"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/mt.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/mt.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/mt"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/mt.com"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/mt.exe"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/mt"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/mt.com"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/mt.exe"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/mt"
+      - "C:/Users/maxim/.platformio/penv/Scripts/mt.com"
+      - "C:/Users/maxim/.platformio/penv/Scripts/mt.exe"
+      - "C:/Users/maxim/.platformio/penv/Scripts/mt"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lib"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/"
+    found: "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      Version MSBuild 17.14.40+3e7442088 pour .NET Framework
+      La g├®n├®ration a d├®marr├® 21/05/2026 23:06:12.
+      
+      Projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" sur le n┼ôud 1 (cibles par d├®faut).
+      PrepareForBuild:
+        Cr├®ation du r├®pertoire "Debug\\".
+        La sortie structur├®e est activ├®e. La mise en forme du compilateur diagnostics refl├¿te la hi├®rarchie des erreurs. Pour plus dÔÇÖinformations, consultez https://aka.ms/cpp/structured-output.
+        Cr├®ation du r├®pertoire "Debug\\CompilerIdCXX.tlog\\".
+      InitializeBuildStatus:
+        Cr├®ation de "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild", car "AlwaysCreate" a ├®t├® sp├®cifi├®.
+        Mise ├á jour de l'horodatage "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Suppression du fichier "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+        Mise ├á jour de l'horodatage "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      G├®n├®ration du projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\4.3.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" termin├®e (cibles par d├®faut).
+      
+      La g├®n├®ration a r├®ussi.
+          0 Avertissement(s)
+          0 Erreur(s)
+      
+      Temps ├®coul├® 00:00:00.66
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/4.3.1/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
+      - "C:/Python314/Scripts/lld-link.com"
+      - "C:/Python314/Scripts/lld-link.exe"
+      - "C:/Python314/Scripts/lld-link"
+      - "C:/Python314/lld-link.com"
+      - "C:/Python314/lld-link.exe"
+      - "C:/Python314/lld-link"
+      - "C:/Windows/System32/lld-link.com"
+      - "C:/Windows/System32/lld-link.exe"
+      - "C:/Windows/System32/lld-link"
+      - "C:/Windows/lld-link.com"
+      - "C:/Windows/lld-link.exe"
+      - "C:/Windows/lld-link"
+      - "C:/Windows/System32/wbem/lld-link.com"
+      - "C:/Windows/System32/wbem/lld-link.exe"
+      - "C:/Windows/System32/wbem/lld-link"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link"
+      - "C:/Windows/System32/OpenSSH/lld-link.com"
+      - "C:/Windows/System32/OpenSSH/lld-link.exe"
+      - "C:/Windows/System32/OpenSSH/lld-link"
+      - "C:/Program Files/nodejs/lld-link.com"
+      - "C:/Program Files/nodejs/lld-link.exe"
+      - "C:/Program Files/nodejs/lld-link"
+      - "C:/ProgramData/chocolatey/bin/lld-link.com"
+      - "C:/ProgramData/chocolatey/bin/lld-link.exe"
+      - "C:/ProgramData/chocolatey/bin/lld-link"
+      - "C:/Program Files/Git/cmd/lld-link.com"
+      - "C:/Program Files/Git/cmd/lld-link.exe"
+      - "C:/Program Files/Git/cmd/lld-link"
+      - "C:/Program Files/PuTTY/lld-link.com"
+      - "C:/Program Files/PuTTY/lld-link.exe"
+      - "C:/Program Files/PuTTY/lld-link"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/lld-link"
+      - "C:/Program Files/CMake/bin/lld-link.com"
+      - "C:/Program Files/CMake/bin/lld-link.exe"
+      - "C:/Program Files/CMake/bin/lld-link"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/lld-link"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/lld-link"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/lld-link"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link.com"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link.exe"
+      - "C:/Users/maxim/AppData/Roaming/npm/lld-link"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/lld-link"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/lld-link"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link.com"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link.exe"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/lld-link"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link.com"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link.exe"
+      - "C:/Users/maxim/.platformio/penv/Scripts/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineRCCompiler.cmake:40 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC.cmake:592 (enable_language)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC.cmake:565 (__windows_compiler_msvc_enable_rc)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC-C.cmake:5 (__windows_compiler_msvc)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCInformation.cmake:48 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_RC_COMPILER"
+    description: "RC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "rc"
+    candidate_directories:
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/"
+    searched_directories:
+      - "C:/Python314/Scripts/rc.com"
+      - "C:/Python314/Scripts/rc.exe"
+      - "C:/Python314/Scripts/rc"
+      - "C:/Python314/rc.com"
+      - "C:/Python314/rc.exe"
+      - "C:/Python314/rc"
+      - "C:/Windows/System32/rc.com"
+      - "C:/Windows/System32/rc.exe"
+      - "C:/Windows/System32/rc"
+      - "C:/Windows/rc.com"
+      - "C:/Windows/rc.exe"
+      - "C:/Windows/rc"
+      - "C:/Windows/System32/wbem/rc.com"
+      - "C:/Windows/System32/wbem/rc.exe"
+      - "C:/Windows/System32/wbem/rc"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc"
+      - "C:/Windows/System32/OpenSSH/rc.com"
+      - "C:/Windows/System32/OpenSSH/rc.exe"
+      - "C:/Windows/System32/OpenSSH/rc"
+      - "C:/Program Files/nodejs/rc.com"
+      - "C:/Program Files/nodejs/rc.exe"
+      - "C:/Program Files/nodejs/rc"
+      - "C:/ProgramData/chocolatey/bin/rc.com"
+      - "C:/ProgramData/chocolatey/bin/rc.exe"
+      - "C:/ProgramData/chocolatey/bin/rc"
+      - "C:/Program Files/Git/cmd/rc.com"
+      - "C:/Program Files/Git/cmd/rc.exe"
+      - "C:/Program Files/Git/cmd/rc"
+      - "C:/Program Files/PuTTY/rc.com"
+      - "C:/Program Files/PuTTY/rc.exe"
+      - "C:/Program Files/PuTTY/rc"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/rc"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/rc.com"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/rc.exe"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/rc"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/rc.com"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/rc.exe"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/rc"
+      - "C:/Users/maxim/AppData/Roaming/npm/rc.com"
+      - "C:/Users/maxim/AppData/Roaming/npm/rc.exe"
+      - "C:/Users/maxim/AppData/Roaming/npm/rc"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/rc.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/rc.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/rc"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/rc.com"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/rc.exe"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/rc"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/rc.com"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/rc.exe"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/rc"
+      - "C:/Users/maxim/.platformio/penv/Scripts/rc.com"
+      - "C:/Users/maxim/.platformio/penv/Scripts/rc.exe"
+      - "C:/Users/maxim/.platformio/penv/Scripts/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/CMake/sbin/rc.com"
+      - "C:/Program Files/CMake/sbin/rc.exe"
+      - "C:/Program Files/CMake/sbin/rc"
+      - "C:/Program Files/CMake/rc.com"
+      - "C:/Program Files/CMake/rc.exe"
+      - "C:/Program Files/CMake/rc"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/rc.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/rc.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/rc"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/rc.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/rc.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/rc"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/rc.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/rc.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/rc"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-70ewtu"
+      binary: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-70ewtu"
+    cmakeVariables:
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-70ewtu'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_d6674.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Version MSBuild 17.14.40+3e7442088 pour .NET Framework
+        La g├®n├®ration a d├®marr├® 21/05/2026 23:06:13.
+        
+        Projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-70ewtu\\cmTC_d6674.vcxproj" sur le n┼ôud 1 (cibles par d├®faut).
+        PrepareForBuild:
+          La sortie structur├®e est activ├®e. La mise en forme du compilateur diagnostics refl├¿te la hi├®rarchie des erreurs. Pour plus dÔÇÖinformations, consultez https://aka.ms/cpp/structured-output.
+          Cr├®ation du r├®pertoire "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-70ewtu\\Debug\\".
+          Cr├®ation du r├®pertoire "cmTC_d6674.dir\\Debug\\cmTC_d6674.tlog\\".
+        InitializeBuildStatus:
+          Cr├®ation de "cmTC_d6674.dir\\Debug\\cmTC_d6674.tlog\\unsuccessfulbuild", car "AlwaysCreate" a ├®t├® sp├®cifi├®.
+          Mise ├á jour de l'horodatage "cmTC_d6674.dir\\Debug\\cmTC_d6674.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_d6674.dir\\Debug\\\\" /Fd"cmTC_d6674.dir\\Debug\\vc143.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
+          Compilateur d'optimisation Microsoft (R) C/C++ version┬á19.44.35222 pour x64
+          Copyright (C) Microsoft Corporation. Tous droits r├®serv├®s.
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_d6674.dir\\Debug\\\\" /Fd"cmTC_d6674.dir\\Debug\\vc143.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
+          CMakeCCompilerABI.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-70ewtu\\Debug\\cmTC_d6674.exe" /INCREMENTAL /ILK:"cmTC_d6674.dir\\Debug\\cmTC_d6674.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-70ewtu/Debug/cmTC_d6674.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-70ewtu/Debug/cmTC_d6674.lib" /MACHINE:X64  /machine:x64 cmTC_d6674.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_d6674.vcxproj -> C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-70ewtu\\Debug\\cmTC_d6674.exe
+        FinalizeBuildStatus:
+          Suppression du fichier "cmTC_d6674.dir\\Debug\\cmTC_d6674.tlog\\unsuccessfulbuild".
+          Mise ├á jour de l'horodatage "cmTC_d6674.dir\\Debug\\cmTC_d6674.tlog\\cmTC_d6674.lastbuildstate".
+        G├®n├®ration du projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-70ewtu\\cmTC_d6674.vcxproj" termin├®e (cibles par d├®faut).
+        
+        La g├®n├®ration a r├®ussi.
+            0 Avertissement(s)
+            0 Erreur(s)
+        
+        Temps ├®coul├® 00:00:00.58
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'C': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Running the C compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.44.35222.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-tee2mb"
+      binary: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-tee2mb"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-tee2mb'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_0815e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Version MSBuild 17.14.40+3e7442088 pour .NET Framework
+        La g├®n├®ration a d├®marr├® 21/05/2026 23:06:14.
+        
+        Projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-tee2mb\\cmTC_0815e.vcxproj" sur le n┼ôud 1 (cibles par d├®faut).
+        PrepareForBuild:
+          La sortie structur├®e est activ├®e. La mise en forme du compilateur diagnostics refl├¿te la hi├®rarchie des erreurs. Pour plus dÔÇÖinformations, consultez https://aka.ms/cpp/structured-output.
+          Cr├®ation du r├®pertoire "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-tee2mb\\Debug\\".
+          Cr├®ation du r├®pertoire "cmTC_0815e.dir\\Debug\\cmTC_0815e.tlog\\".
+        InitializeBuildStatus:
+          Cr├®ation de "cmTC_0815e.dir\\Debug\\cmTC_0815e.tlog\\unsuccessfulbuild", car "AlwaysCreate" a ├®t├® sp├®cifi├®.
+          Mise ├á jour de l'horodatage "cmTC_0815e.dir\\Debug\\cmTC_0815e.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_0815e.dir\\Debug\\\\" /Fd"cmTC_0815e.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
+          Compilateur d'optimisation Microsoft (R) C/C++ version┬á19.44.35222 pour x64
+          Copyright (C) Microsoft Corporation. Tous droits r├®serv├®s.
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_0815e.dir\\Debug\\\\" /Fd"cmTC_0815e.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
+          CMakeCXXCompilerABI.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-tee2mb\\Debug\\cmTC_0815e.exe" /INCREMENTAL /ILK:"cmTC_0815e.dir\\Debug\\cmTC_0815e.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-tee2mb/Debug/cmTC_0815e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-tee2mb/Debug/cmTC_0815e.lib" /MACHINE:X64  /machine:x64 cmTC_0815e.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_0815e.vcxproj -> C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-tee2mb\\Debug\\cmTC_0815e.exe
+        FinalizeBuildStatus:
+          Suppression du fichier "cmTC_0815e.dir\\Debug\\cmTC_0815e.tlog\\unsuccessfulbuild".
+          Mise ├á jour de l'horodatage "cmTC_0815e.dir\\Debug\\cmTC_0815e.tlog\\cmTC_0815e.lastbuildstate".
+        G├®n├®ration du projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-tee2mb\\cmTC_0815e.vcxproj" termin├®e (cibles par d├®faut).
+        
+        La g├®n├®ration a r├®ussi.
+            0 Avertissement(s)
+            0 Erreur(s)
+        
+        Temps ├®coul├® 00:00:00.58
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'CXX': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Running the CXX compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.44.35222.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "find-v1"
+    backtrace:
+      - "CMakeLists.txt:9 (find_program)"
+    mode: "program"
+    variable: "Python3_EXECUTABLE"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python"
+      - "python3"
+    candidate_directories:
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/"
+    searched_directories:
+      - "C:/Python314/Scripts/python.com"
+      - "C:/Python314/Scripts/python.exe"
+      - "C:/Python314/Scripts/python"
+      - "C:/Python314/python.com"
+    found: "C:/Python314/python.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:2563 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Python314/"
+    searched_directories:
+      - "C:/Python314/python3.14_d.com"
+      - "C:/Python314/python3.14_d.exe"
+      - "C:/Python314/python3.14_d"
+      - "C:/Python314/python3_d.com"
+      - "C:/Python314/python3_d.exe"
+      - "C:/Python314/python3_d"
+      - "C:/Python314/python_d.com"
+      - "C:/Python314/python_d.exe"
+      - "C:/Python314/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:3331 (find_library)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "library"
+    variable: "_Python3_LIBRARY_RELEASE"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: false
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python314"
+      - "python3.14"
+    candidate_directories:
+      - "C:/Python314/lib/"
+      - "C:/Python314/libs/"
+      - "C:/Python314/lib/python3.14/config-3.14/"
+      - "C:/Python314/"
+    searched_directories:
+      - "C:/Python314/lib/"
+      - "C:/Python314/lib/"
+    found: "C:/Python314/libs/python314.lib"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "C:/Program Files (x86)/PROJET_ANNUEL/bin"
+        - "C:/Program Files/CMake/bin"
+        - "/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:3519 (find_library)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "library"
+    variable: "_Python3_LIBRARY_DEBUG"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python314_d"
+    candidate_directories:
+      - "C:/Python314/libs/"
+    searched_directories:
+      - "C:/Python314/libs/"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "C:/Program Files (x86)/PROJET_ANNUEL/bin"
+        - "C:/Program Files/CMake/bin"
+        - "/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:1483 (find_library)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:3537 (_python_find_runtime_library)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "library"
+    variable: "_Python3_RUNTIME_LIBRARY_RELEASE"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python314"
+      - "python3.14"
+    candidate_directories:
+      - "C:/Python314/libs/bin/"
+      - "C:/Python314/libs/"
+      - "C:/Python314/bin/"
+      - "C:/Python314/"
+      - "C:/Python314/Scripts/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Windows/System32/bin/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/bin/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/bin/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/bin/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/bin/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/bin/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/bin/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/bin/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/bin/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/bin/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/bin/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+      - "C:/Program Files/lib/bin/"
+      - "C:/Program Files/lib/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/lib/bin/"
+      - "C:/Program Files (x86)/lib/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/lib/bin/"
+      - "C:/Program Files/CMake/lib/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/lib/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/lib/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/"
+      - "/bin/bin/"
+      - "/bin/"
+    searched_directories:
+      - "C:/Python314/libs/bin/"
+      - "C:/Python314/libs/bin/"
+      - "C:/Python314/libs/"
+      - "C:/Python314/libs/"
+      - "C:/Python314/bin/"
+      - "C:/Python314/bin/"
+    found: "C:/Python314/python314.dll"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "C:/Program Files (x86)/PROJET_ANNUEL/bin"
+        - "C:/Program Files/CMake/bin"
+        - "/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:3846 (find_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "path"
+    variable: "_Python3_INCLUDE_DIR"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: false
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "Python.h"
+    candidate_directories:
+      - "C:/Python314/Include/"
+    found: "C:/Python314/Include/"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CheckCXXCompilerFlag.cmake:103 (cmake_check_compiler_flag)"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/pybind11Common.cmake:332 (check_cxx_compiler_flag)"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/pybind11Common.cmake:404 (_pybind11_return_if_cxx_and_linker_flags_work)"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/pybind11Common.cmake:438 (_pybind11_generate_lto)"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/pybind11Config.cmake:257 (include)"
+      - "CMakeLists.txt:34 (find_package)"
+    checks:
+      - "Performing Test HAS_MSVC_GL_LTCG"
+    directories:
+      source: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-44tiw1"
+      binary: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-44tiw1"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "HAS_MSVC_GL_LTCG"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-44tiw1'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_ea895.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Version MSBuild 17.14.40+3e7442088 pour .NET Framework
+        La g├®n├®ration a d├®marr├® 21/05/2026 23:06:16.
+        
+        Projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\cmTC_ea895.vcxproj" sur le n┼ôud 1 (cibles par d├®faut).
+        PrepareForBuild:
+          La sortie structur├®e est activ├®e. La mise en forme du compilateur diagnostics refl├¿te la hi├®rarchie des erreurs. Pour plus dÔÇÖinformations, consultez https://aka.ms/cpp/structured-output.
+          Cr├®ation du r├®pertoire "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\Debug\\".
+          Cr├®ation du r├®pertoire "cmTC_ea895.dir\\Debug\\cmTC_ea895.tlog\\".
+        InitializeBuildStatus:
+          Cr├®ation de "cmTC_ea895.dir\\Debug\\cmTC_ea895.tlog\\unsuccessfulbuild", car "AlwaysCreate" a ├®t├® sp├®cifi├®.
+          Mise ├á jour de l'horodatage "cmTC_ea895.dir\\Debug\\cmTC_ea895.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /std:c++17 /Fo"cmTC_ea895.dir\\Debug\\\\" /Fd"cmTC_ea895.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\src.cxx"
+          Compilateur d'optimisation Microsoft (R) C/C++ version┬á19.44.35222 pour x64
+          Copyright (C) Microsoft Corporation. Tous droits r├®serv├®s.
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /std:c++17 /Fo"cmTC_ea895.dir\\Debug\\\\" /Fd"cmTC_ea895.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\src.cxx"
+          src.cxx
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\Debug\\cmTC_ea895.exe" /INCREMENTAL /ILK:"cmTC_ea895.dir\\Debug\\cmTC_ea895.ilk" /NOLOGO "-LTCG" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-44tiw1/Debug/cmTC_ea895.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/CMakeScratch/TryCompile-44tiw1/Debug/cmTC_ea895.lib" /MACHINE:X64  /machine:x64 cmTC_ea895.dir\\Debug\\src.obj
+        LINK : warning LNK4075: ' /INCREMENTAL' ignor├® ├á cause de la sp├®cification '/LTCG' [C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\cmTC_ea895.vcxproj]
+          G├®n├®ration de code en cours
+          Fin de la g├®n├®ration du code
+          cmTC_ea895.vcxproj -> C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\Debug\\cmTC_ea895.exe
+        FinalizeBuildStatus:
+          Suppression du fichier "cmTC_ea895.dir\\Debug\\cmTC_ea895.tlog\\unsuccessfulbuild".
+          Mise ├á jour de l'horodatage "cmTC_ea895.dir\\Debug\\cmTC_ea895.tlog\\cmTC_ea895.lastbuildstate".
+        G├®n├®ration du projet "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\cmTC_ea895.vcxproj" termin├®e (cibles par d├®faut).
+        
+        La g├®n├®ration a r├®ussi.
+        
+        "C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\cmTC_ea895.vcxproj" (cible par d├®faut) (1) ->
+        (Link cible) -> 
+          LINK : warning LNK4075: ' /INCREMENTAL' ignor├® ├á cause de la sp├®cification '/LTCG' [C:\\Users\\maxim\\OneDrive\\Bureau\\ESGI\\PAI3ABD2\\CMakeFiles\\CMakeScratch\\TryCompile-44tiw1\\cmTC_ea895.vcxproj]
+        
+            1 Avertissement(s)
+            0 Erreur(s)
+        
+        Temps ├®coul├® 00:00:00.61
+        
+      exitCode: 0
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "CMakeLists.txt:34 (find_package)"
+    name: "pybind11"
+    configs:
+      -
+        filename: "pybind11.cps"
+        kind: "cps"
+      -
+        filename: "pybind11Config.cmake"
+        kind: "cmake"
+      -
+        filename: "pybind11-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "pybind11"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: true
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/pkgRedirects/pybind11Config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/pkgRedirects/pybind11-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/pkgRedirects/lib/cps/pybind11.cps"
+        mode: "cps"
+        reason: "no_exist"
+      -
+        path: "C:/Users/maxim/OneDrive/Bureau/ESGI/PAI3ABD2/CMakeFiles/pkgRedirects/share/cps/pybind11.cps"
+        mode: "cps"
+        reason: "no_exist"
+    found:
+      path: "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/pybind11Config.cmake"
+      mode: "config"
+      version: "3.0.2"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:\\Users\\maxim\\AppData\\Roaming\\Python\\Python314\\site-packages\\pybind11\\share\\cmake\\pybind11"
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindGit.cmake:111 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FetchContent.cmake:1887 (find_package)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FetchContent.cmake:1622 (__FetchContent_populateSubbuild)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FetchContent.cmake:2158:EVAL:2 (__FetchContent_doPopulation)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FetchContent.cmake:2158 (cmake_language)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FetchContent.cmake:2399 (__FetchContent_Populate)"
+      - "CMakeLists.txt:43 (FetchContent_MakeAvailable)"
+    mode: "program"
+    variable: "GIT_EXECUTABLE"
+    description: "Git command line client"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "git.cmd"
+      - "git"
+    candidate_directories:
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/PuTTY/"
+      - "C:/Program Files/Docker/Docker/resources/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/"
+      - "C:/Users/maxim/AppData/Roaming/npm/"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/"
+      - "C:/Users/maxim/.platformio/penv/Scripts/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/"
+      - "C:/Users/maxim/AppData/Local/Atlassian/SourceTree/git_local/bin/"
+    searched_directories:
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git.cmd.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git.cmd"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git.cmd.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git.cmd"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git.cmd.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git.cmd"
+      - "C:/Python314/Scripts/git.cmd.com"
+      - "C:/Python314/Scripts/git.cmd.exe"
+      - "C:/Python314/Scripts/git.cmd"
+      - "C:/Python314/git.cmd.com"
+      - "C:/Python314/git.cmd.exe"
+      - "C:/Python314/git.cmd"
+      - "C:/Windows/System32/git.cmd.com"
+      - "C:/Windows/System32/git.cmd.exe"
+      - "C:/Windows/System32/git.cmd"
+      - "C:/Windows/git.cmd.com"
+      - "C:/Windows/git.cmd.exe"
+      - "C:/Windows/git.cmd"
+      - "C:/Windows/System32/wbem/git.cmd.com"
+      - "C:/Windows/System32/wbem/git.cmd.exe"
+      - "C:/Windows/System32/wbem/git.cmd"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd"
+      - "C:/Windows/System32/OpenSSH/git.cmd.com"
+      - "C:/Windows/System32/OpenSSH/git.cmd.exe"
+      - "C:/Windows/System32/OpenSSH/git.cmd"
+      - "C:/Program Files/nodejs/git.cmd.com"
+      - "C:/Program Files/nodejs/git.cmd.exe"
+      - "C:/Program Files/nodejs/git.cmd"
+      - "C:/ProgramData/chocolatey/bin/git.cmd.com"
+      - "C:/ProgramData/chocolatey/bin/git.cmd.exe"
+      - "C:/ProgramData/chocolatey/bin/git.cmd"
+      - "C:/Program Files/Git/cmd/git.cmd.com"
+      - "C:/Program Files/Git/cmd/git.cmd.exe"
+      - "C:/Program Files/Git/cmd/git.cmd"
+      - "C:/Program Files/PuTTY/git.cmd.com"
+      - "C:/Program Files/PuTTY/git.cmd.exe"
+      - "C:/Program Files/PuTTY/git.cmd"
+      - "C:/Program Files/Docker/Docker/resources/bin/git.cmd.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/git.cmd.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/git.cmd"
+      - "C:/Program Files/CMake/bin/git.cmd.com"
+      - "C:/Program Files/CMake/bin/git.cmd.exe"
+      - "C:/Program Files/CMake/bin/git.cmd"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/git.cmd.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WindowsApps/git.cmd"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/git.cmd.com"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Local/Programs/Microsoft VS Code/bin/git.cmd"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/git.cmd.com"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/git.cmd.exe"
+      - "C:/Program Files/JetBrains/CLion 2025.3.2/bin/git.cmd"
+      - "C:/Users/maxim/AppData/Roaming/npm/git.cmd.com"
+      - "C:/Users/maxim/AppData/Roaming/npm/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Roaming/npm/git.cmd"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/git.cmd.com"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Local/Microsoft/WinGet/Links/git.cmd"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/git.cmd.com"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/git.cmd.exe"
+      - "C:/Program Files/JetBrains/PyCharm 2025.3.2.1/bin/git.cmd"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/git.cmd.com"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/git.cmd.exe"
+      - "C:/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/bin/git.cmd"
+      - "C:/Users/maxim/.platformio/penv/Scripts/git.cmd.com"
+      - "C:/Users/maxim/.platformio/penv/Scripts/git.cmd.exe"
+      - "C:/Users/maxim/.platformio/penv/Scripts/git.cmd"
+      - "C:/Program Files/bin/git.cmd.com"
+      - "C:/Program Files/bin/git.cmd.exe"
+      - "C:/Program Files/bin/git.cmd"
+      - "C:/Program Files/sbin/git.cmd.com"
+      - "C:/Program Files/sbin/git.cmd.exe"
+      - "C:/Program Files/sbin/git.cmd"
+      - "C:/Program Files/git.cmd.com"
+      - "C:/Program Files/git.cmd.exe"
+      - "C:/Program Files/git.cmd"
+      - "C:/Program Files (x86)/bin/git.cmd.com"
+      - "C:/Program Files (x86)/bin/git.cmd.exe"
+      - "C:/Program Files (x86)/bin/git.cmd"
+      - "C:/Program Files (x86)/sbin/git.cmd.com"
+      - "C:/Program Files (x86)/sbin/git.cmd.exe"
+      - "C:/Program Files (x86)/sbin/git.cmd"
+      - "C:/Program Files (x86)/git.cmd.com"
+      - "C:/Program Files (x86)/git.cmd.exe"
+      - "C:/Program Files (x86)/git.cmd"
+      - "C:/Program Files/CMake/bin/git.cmd.com"
+      - "C:/Program Files/CMake/bin/git.cmd.exe"
+      - "C:/Program Files/CMake/bin/git.cmd"
+      - "C:/Program Files/CMake/sbin/git.cmd.com"
+      - "C:/Program Files/CMake/sbin/git.cmd.exe"
+      - "C:/Program Files/CMake/sbin/git.cmd"
+      - "C:/Program Files/CMake/git.cmd.com"
+      - "C:/Program Files/CMake/git.cmd.exe"
+      - "C:/Program Files/CMake/git.cmd"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/git.cmd.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/git.cmd.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/bin/git.cmd"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/git.cmd.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/git.cmd.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/sbin/git.cmd"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/git.cmd.com"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/git.cmd.exe"
+      - "C:/Program Files (x86)/PROJET_ANNUEL/git.cmd"
+      - "C:/Users/maxim/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd.com"
+      - "C:/Users/maxim/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd.exe"
+      - "C:/Users/maxim/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/bin/git"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/sbin/git"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git.com"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git.exe"
+      - "C:/Users/maxim/AppData/Roaming/Python/Python314/site-packages/pybind11/share/cmake/pybind11/git"
+      - "C:/Python314/Scripts/git.com"
+      - "C:/Python314/Scripts/git.exe"
+      - "C:/Python314/Scripts/git"
+      - "C:/Python314/git.com"
+      - "C:/Python314/git.exe"
+      - "C:/Python314/git"
+      - "C:/Windows/System32/git.com"
+      - "C:/Windows/System32/git.exe"
+      - "C:/Windows/System32/git"
+      - "C:/Windows/git.com"
+      - "C:/Windows/git.exe"
+      - "C:/Windows/git"
+      - "C:/Windows/System32/wbem/git.com"
+      - "C:/Windows/System32/wbem/git.exe"
+      - "C:/Windows/System32/wbem/git"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git"
+      - "C:/Windows/System32/OpenSSH/git.com"
+      - "C:/Windows/System32/OpenSSH/git.exe"
+      - "C:/Windows/System32/OpenSSH/git"
+      - "C:/Program Files/nodejs/git.com"
+      - "C:/Program Files/nodejs/git.exe"
+      - "C:/Program Files/nodejs/git"
+      - "C:/ProgramData/chocolatey/bin/git.com"
+      - "C:/ProgramData/chocolatey/bin/git.exe"
+      - "C:/ProgramData/chocolatey/bin/git"
+      - "C:/Program Files/Git/cmd/git.com"
+    found: "C:/Program Files/Git/cmd/git.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:\\Users\\maxim\\AppData\\Roaming\\Python\\Python314\\site-packages\\pybind11\\share\\cmake\\pybind11"
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython/Support.cmake:2563 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/FindPython3.cmake:671 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.15_d"
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3.9_d"
+      - "python3.8_d"
+      - "python3.7_d"
+      - "python3.6_d"
+      - "python3.5_d"
+      - "python3.4_d"
+      - "python3.3_d"
+      - "python3.2_d"
+      - "python3.1_d"
+      - "python3.0_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Python314/"
+    searched_directories:
+      - "C:/Python314/python3.15_d.com"
+      - "C:/Python314/python3.15_d.exe"
+      - "C:/Python314/python3.15_d"
+      - "C:/Python314/python3.14_d.com"
+      - "C:/Python314/python3.14_d.exe"
+      - "C:/Python314/python3.14_d"
+      - "C:/Python314/python3.13_d.com"
+      - "C:/Python314/python3.13_d.exe"
+      - "C:/Python314/python3.13_d"
+      - "C:/Python314/python3.12_d.com"
+      - "C:/Python314/python3.12_d.exe"
+      - "C:/Python314/python3.12_d"
+      - "C:/Python314/python3.11_d.com"
+      - "C:/Python314/python3.11_d.exe"
+      - "C:/Python314/python3.11_d"
+      - "C:/Python314/python3.10_d.com"
+      - "C:/Python314/python3.10_d.exe"
+      - "C:/Python314/python3.10_d"
+      - "C:/Python314/python3.9_d.com"
+      - "C:/Python314/python3.9_d.exe"
+      - "C:/Python314/python3.9_d"
+      - "C:/Python314/python3.8_d.com"
+      - "C:/Python314/python3.8_d.exe"
+      - "C:/Python314/python3.8_d"
+      - "C:/Python314/python3.7_d.com"
+      - "C:/Python314/python3.7_d.exe"
+      - "C:/Python314/python3.7_d"
+      - "C:/Python314/python3.6_d.com"
+      - "C:/Python314/python3.6_d.exe"
+      - "C:/Python314/python3.6_d"
+      - "C:/Python314/python3.5_d.com"
+      - "C:/Python314/python3.5_d.exe"
+      - "C:/Python314/python3.5_d"
+      - "C:/Python314/python3.4_d.com"
+      - "C:/Python314/python3.4_d.exe"
+      - "C:/Python314/python3.4_d"
+      - "C:/Python314/python3.3_d.com"
+      - "C:/Python314/python3.3_d.exe"
+      - "C:/Python314/python3.3_d"
+      - "C:/Python314/python3.2_d.com"
+      - "C:/Python314/python3.2_d.exe"
+      - "C:/Python314/python3.2_d"
+      - "C:/Python314/python3.1_d.com"
+      - "C:/Python314/python3.1_d.exe"
+      - "C:/Python314/python3.1_d"
+      - "C:/Python314/python3.0_d.com"
+      - "C:/Python314/python3.0_d.exe"
+      - "C:/Python314/python3.0_d"
+      - "C:/Python314/python3_d.com"
+      - "C:/Python314/python3_d.exe"
+      - "C:/Python314/python3_d"
+      - "C:/Python314/python_d.com"
+      - "C:/Python314/python_d.exe"
+      - "C:/Python314/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\maxim\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Program Files\\JetBrains\\CLion 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\AppData\\Roaming\\npm"
+        - "C:\\Users\\maxim\\AppData\\Local\\Microsoft\\WinGet\\Links"
+        - "C:\\Program Files\\JetBrains\\PyCharm 2025.3.2.1\\bin"
+        - "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\bin"
+        - "C:\\Users\\maxim\\.platformio\\penv\\Scripts"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/PROJET_ANNUEL"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/PROJET_ANNUEL"
+...

@@ -179,8 +179,8 @@ int main() {
     std::cout << "  Accuracy : " << correct_7 << "/4 (attendu : < 4/4)\n\n";
 
     // TEST 8 : SVM XOR transforme
-    SVM svm_xor_t(3, 1.0);
-    svm_xor_t.train(X_xor_trans_2d, Y_xor, 0.01, 1000);
+    SVM svm_xor_t(3, 0.01);  // C petit
+    svm_xor_t.train(X_xor_trans_2d, Y_xor, 0.01, 5000);
 
     std::cout << "=== TEST 8 : SVM XOR transforme ===\n";
     int correct_8 = 0;
@@ -194,9 +194,8 @@ int main() {
     std::cout << "  Accuracy : " << correct_8 << "/4 (attendu : 4/4)\n\n";
 
     // TEST 9 : SVR lineaire y = 2x + 1
-    SVM svr(1, SVM::REGRESSION, 1.0, 0.1);
-    svr.train(X_reg_2d, Y_reg, 0.01, 1000);
-
+    SVM svr(1, 0.001, 0.01, SVM::REGRESSION);
+    svr.train(X_reg_2d, Y_reg, 0.001, 10000);
     std::cout << "=== TEST 9 : SVR lineaire (y = 2x + 1) ===\n";
     for (int i = 0; i < static_cast<int>(X_reg_2d.size()); i++) {
         double pred = svr.predict(X_reg_2d[i]);
@@ -207,8 +206,8 @@ int main() {
     std::cout << "  (predictions proches des attendus)\n\n";
 
     // TEST 10 : SVR y = x2 (echec attendu)
-    SVM svr_quad(1, SVM::REGRESSION, 1.0, 0.1);
-    svr_quad.train(X_quad_2d, Y_quad, 0.01, 1000);
+    SVM svr_quad(1, 0.001, 0.1, SVM::REGRESSION);
+    svr_quad.train(X_quad_2d, Y_quad, 0.010, 10000);
 
     std::cout << "=== TEST 10 : SVR y=x2 (echec attendu) ===\n";
     for (int i = 0; i < static_cast<int>(X_quad_2d.size()); i++) {
