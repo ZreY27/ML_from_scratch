@@ -1,2 +1,10 @@
+# --- Serveur Web (FastAPI) ---
+fastapi
+uvicorn
+python-multipart
+jinja2
+
+# --- Outils C++ & Entraînement ---
 pybind11
+numpy
 matplotlib
