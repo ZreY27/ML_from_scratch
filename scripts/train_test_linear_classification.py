@@ -5,9 +5,8 @@ import sys
 if hasattr(os, 'add_dll_directory'):
     os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
-# Ajoute le dossier parent au chemin Python pour trouver ML_ESGI.pyd
+# Dossier racine du projet (pour accéder aux datasets)
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(ROOT_DIR)
 
 import ML_ESGI
 import matplotlib.pyplot as plt
@@ -55,15 +54,17 @@ else:
                 labels.extend([-1.0] * len(images_dict[cat])) # Reste = -1.0
                 
         # Création et Entraînement
-        model = ML_ESGI.LinearModel(INPUT_SIZE)
+        model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
         loss_history = model.train_from_images(all_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT, LEARNING_RATE, EPOCHS)
         
-        # Sauvegarde du modèle en mémoire
+        # Sauvegarde du modèle en mémoire et sur le disque
         trained_models[target_cat] = model
+        save_path = os.path.join(ROOT_DIR, f"modele_lineaire_{target_cat.lower()}.txt")
+        model.save(save_path)
         
         # Ajout de la courbe au graphique global
         plt.plot(loss_history, label=f"{target_cat} vs Rest")
-        print(f"Entraînement de {target_cat} terminé !")
+        print(f"Entraînement de {target_cat} terminé ! Modèle sauvegardé dans '{save_path}'.")
 
     # 4. Affichage du graphique final avec les 3 courbes
     plt.title("Évolution des erreurs (Stratégie One-vs-Rest)")

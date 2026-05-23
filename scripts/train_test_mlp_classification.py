@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 if hasattr(os, 'add_dll_directory'):
     os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
-# Ajoute le dossier parent au chemin Python pour trouver ML_ESGI.pyd
+# Dossier racine du projet (pour accéder aux datasets)
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(ROOT_DIR)
 
 import ML_ESGI
 
@@ -50,7 +49,7 @@ else:
     
     # 4. Création du modèle MLP
     # Entrée: 3072, Couche cachée: 128 (arbitraire, peut être modifié), Sortie: 3
-    model = ML_ESGI.MLP([INPUT_SIZE, 128, 3])
+    model = ML_ESGI.MLP([INPUT_SIZE, 128, 3], is_classification=True)
     
     print("Début de l'entraînement...")
     loss_history = model.train_from_images(
@@ -60,7 +59,6 @@ else:
         target_h=IMAGE_HEIGHT,
         training_steps=TRAINING_STEPS,
         learning_rate=LEARNING_RATE,
-        is_classification=True,
         decay=DECAY
     )
     
