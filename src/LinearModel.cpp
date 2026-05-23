@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <filesystem>
 
 LinearModel::LinearModel(int input_size, bool is_classification) : bias(0.0), is_classification(is_classification) {
     // on stocke le mode passé en paramètre
@@ -114,8 +115,13 @@ std::vector<double> LinearModel::train_from_images(const std::vector<std::string
 }
 
 void LinearModel::save(const char* filename) {
-    // TODO
-    std::ofstream file(filename);
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
+    std::filesystem::create_directories("models");
+
+    std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save LinearModel");
     
     // On sauvegarde le mode, le biais, puis les poids
@@ -129,9 +135,13 @@ void LinearModel::save(const char* filename) {
 }
 
 void LinearModel::load(const char* filename) {
-    // TODO
-    std::ifstream file(filename);
-    if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + filename);
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
+
+    std::ifstream file(path);
+    if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + path);
 
     bool mode_val;
     if (file >> mode_val) {

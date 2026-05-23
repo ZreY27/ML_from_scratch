@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 SVM::SVM(int input_size, double C, double epsilon, Mode mode) : bias(0.0), C(C), epsilon(epsilon), mode(mode){
     weights.resize(input_size);
@@ -95,10 +96,43 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
 }
 
 void SVM::save(const char *filename) {
-    //TODO
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
+    std::filesystem::create_directories("models");
+
+    std::ofstream file(path);
+    if (!file.is_open()) throw std::runtime_error("Erreur save SVM");
+
+    file << mode << "\n";
+    file << bias << "\n";
+    file << C << "\n";
+    file << epsilon << "\n";
+    for (size_t i = 0; i < weights.size(); i++) {
+        file << weights[i] << (i == weights.size() - 1 ? "" : " ");
+    }
+    file << "\n";
+    file.close();
 }
 
 void SVM::load(const char *filename) {
-    //TODO
-}
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
 
+    std::ifstream file(path);
+    if (!file.is_open()) throw std::runtime_error("Erreur load SVM : " + path);
+
+    int m;
+    if (file >> m) mode = static_cast<Mode>(m);
+    file >> bias >> C >> epsilon;
+
+    weights.clear();
+    double w;
+    while (file >> w) {
+        weights.push_back(w);
+    }
+    file.close();
+}

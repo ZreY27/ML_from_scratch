@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "ImageLoader.hpp"
+#include <filesystem>
 
 // Constructeur : Initialise l'architecture du réseau et alloue la mémoire.
 // 'npl' (Neurons Per Layer) définit le nombre de neurones par couche (ex: {2, 3, 1}).
@@ -201,7 +202,13 @@ std::vector<double> MLP::train_from_images(const std::vector<std::string>& image
 // Sauvegarde l'architecture complète du modèle (npl) et ses poids dans un fichier texte.
 // La ligne 1 contient l'architecture (ex: "2 3 1"). Les lignes suivantes contiennent les poids.
 void MLP::save(const char* filename) {
-    std::ofstream file(filename);
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
+    std::filesystem::create_directories("models");
+
+    std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save MLP");
     for (int size : d) file << size << " ";
     file << "\n";
@@ -220,8 +227,13 @@ void MLP::save(const char* filename) {
 // Détruit l'architecture courante, lit l'architecture sauvegardée sur la ligne 1,
 // réalloue la bonne quantité de mémoire, puis injecte les poids.
 void MLP::load(const char* filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + filename);
+    std::string path = filename;
+    if (path.find("models/") != 0) {
+        path = "models/" + path;
+    }
+
+    std::ifstream file(path);
+    if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + path);
 
     // 1. Lire la première ligne pour reconstruire l'architecture (tableau d)
     std::string line;
