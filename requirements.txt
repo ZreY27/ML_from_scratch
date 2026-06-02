@@ -1,5 +1,6 @@
 # --- Serveur Web (FastAPI) ---
 fastapi
+fastapi[standard]
 uvicorn
 python-multipart
 jinja2
