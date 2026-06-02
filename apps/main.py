@@ -12,9 +12,9 @@ if hasattr(os, 'add_dll_directory'):
 import ML_ESGI
 
 app = FastAPI()
-templates = Jinja2Templates(directory="web/templates")
+templates = Jinja2Templates(directory="apps")
 
-CONFIG_PATH = "web/config.json"
+CONFIG_PATH = "apps/config.json"
 MODELS_DIR = "models"
 
 # Cache pour stocker les modèles déjà chargés en mémoire (optimisation de vitesse)
@@ -54,7 +54,7 @@ def get_or_load_model(model_config):
 @app.get("/")
 def read_root(request: Request):
     models = get_models_config()
-    return templates.TemplateResponse("index.html", {"request": request, "models": models})
+    return templates.TemplateResponse(request=request, name="index.html", context={"request": request, "models": models})
 
 @app.post("/predict")
 async def predict(model_id: str = Form(...), file: UploadFile = File(...)):
