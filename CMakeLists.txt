@@ -53,18 +53,20 @@ FetchContent_MakeAvailable(stb)
 # --- 5. Compilation du module ---
 set(SOURCES
         src/LinearModel.cpp
+        src/MLP.cpp
+        src/RBF.cpp
         src/ImageLoader.cpp
         wrapper/binding.cpp
 )
 
-pybind11_add_module(mon_module_cpp ${SOURCES})
+pybind11_add_module(ML_ESGI ${SOURCES})
 
-target_link_libraries(mon_module_cpp PRIVATE Eigen3::Eigen)
-target_include_directories(mon_module_cpp PRIVATE ${stb_SOURCE_DIR})
+target_link_libraries(ML_ESGI PRIVATE Eigen3::Eigen)
+target_include_directories(ML_ESGI PRIVATE ${stb_SOURCE_DIR})
 
 # Copie automatique du module compilé dans scripts/ après le build
-add_custom_command(TARGET mon_module_cpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mon_module_cpp> ${CMAKE_SOURCE_DIR}/scripts/
+add_custom_command(TARGET ML_ESGI POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ML_ESGI> ${CMAKE_SOURCE_DIR}/scripts/
 )
 
 # --- 6. Exécutable de test (main_test.cpp) ---

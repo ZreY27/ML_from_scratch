@@ -1,8 +1,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // OBLIGATOIRE pour convertir vector <-> list automatiquement
+#include "../src/ImageLoader.hpp"
 #include "../src/LinearModel.hpp"
 #include "../src/MLP.hpp"
-#include "../src/ImageLoader.hpp"
+#include "../src/RBF.hpp"
 
 namespace py = pybind11;
 
@@ -50,6 +51,38 @@ PYBIND11_MODULE(ML_ESGI, m) {
         .def("load", &MLP::load,
              py::arg("filename"),
              "Charge les poids du modele");
+
+    py::class_<RBF>(m, "RBF")
+        .def(py::init<int, int, int, double, bool>(),
+             py::arg("input_size"),
+             py::arg("num_centers"),
+             py::arg("output_size") = 1,
+             py::arg("sigma") = 0.0,
+             py::arg("is_classification") = true,
+             "Initialise le reseau RBF (taille entree, nombre de centres, taille sortie, sigma, mode classif)")
+        .def("train", &RBF::train,
+             py::arg("inputs"),
+             py::arg("labels"),
+             py::arg("num_samples"),
+             "Entraine le RBF : K-Means pour les centres puis moindres carres pour les poids")
+        .def("train_from_images", &RBF::train_from_images,
+             py::arg("image_paths"),
+             py::arg("labels"),
+             py::arg("target_w"),
+             py::arg("target_h"),
+             "Entraine le RBF directement depuis une liste de chemins d'images")
+        .def("predict", &RBF::predict,
+             py::arg("inputs"),
+             "Predit la sortie pour une donnee (signe/argmax en classif, valeur brute en regression)")
+        .def("predict_raw", &RBF::predict_raw,
+             py::arg("inputs"),
+             "Retourne les sorties brutes avant signe/argmax")
+        .def("save", &RBF::save,
+             py::arg("filename"),
+             "Sauvegarde les centres, sigma et les poids du modele")
+        .def("load", &RBF::load,
+             py::arg("filename"),
+             "Charge un modele RBF depuis un fichier");
 
     m.def("load_and_resize_image", &load_and_resize_image,
           py::arg("filepath"),
