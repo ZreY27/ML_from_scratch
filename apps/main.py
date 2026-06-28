@@ -49,6 +49,8 @@ def models_for_template():
                     "created": m.get("created", ""),
                     "width": m["width"],
                     "height": m["height"],
+                    # accuracy (test) si présente dans les métriques du manifeste, sinon None
+                    "accuracy": (m.get("metrics") or {}).get("accuracy"),
                 }
                 # versions de la plus récente à la plus ancienne
                 for m in sorted(versions, key=lambda x: x["version"], reverse=True)

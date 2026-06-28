@@ -51,7 +51,8 @@
                     const opt = document.createElement('option');
                     opt.value = v.version;
                     const date = v.created ? ' (' + v.created + ')' : '';
-                    opt.textContent = 'v' + v.version + date + ' — ' + v.width + 'x' + v.height;
+                    const acc = (v.accuracy != null) ? ' — acc ' + (v.accuracy * 100).toFixed(1) + '%' : '';
+                    opt.textContent = 'v' + v.version + date + ' — ' + v.width + 'x' + v.height + acc;
                     versionSel.appendChild(opt);
                 });
             }
