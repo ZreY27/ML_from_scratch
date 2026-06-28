@@ -1,7 +1,7 @@
 import os
 import glob
 import matplotlib.pyplot as plt
-from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter  # torch non installé : tensorboardX (même API), aligné sur les autres scripts
 
 # Autorise Python à charger les DLLs du compilateur C++ (MSYS2)
 if hasattr(os, 'add_dll_directory'):
