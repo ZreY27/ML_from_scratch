@@ -25,8 +25,8 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 HIDDEN = 128
 LEARNING_RATE = 0.01
-DECAY = 0.001
-TRAINING_STEPS = 15000
+DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
+TRAINING_STEPS = 60000   # ~83 passes sur 720 images (15000 = ~20 passes : sous-entraînement)
 MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
@@ -77,12 +77,19 @@ def main():
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
-    # Sauvegarde versionnée + métriques dans le manifeste
+    # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
+    hyperparams = {
+        "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
+        "architecture": [INPUT_SIZE, HIDDEN, len(classes)], "hidden": HIDDEN,
+        "learning_rate": LEARNING_RATE, "decay": DECAY, "training_steps": TRAINING_STEPS,
+        "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
+    }
     version, manifest = reg.save_single(
         model, "mlp_genres", "MLP - Genres", "mlp", classes,
         IMAGE_WIDTH, IMAGE_HEIGHT, models_dir=MODELS_DIR,
+        hyperparams=hyperparams,
         metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
-                 "counts": tu.counts(data), "max_per_class": MAX_PER_CLASS,
+                 "counts": tu.counts(data),
                  "final_loss": loss[-1] if loss else None},
     )
     print(f"\nMLP sauvegardé : version v{version}\n  -> {manifest}")
