@@ -20,8 +20,12 @@ Schéma d'un manifeste :
   "width": 32, "height": 32,
   "classes": ["Fighter", "Racing", "Platformer"],
   "weights": "linear_genres_v3.txt"  # str (modèle simple) OU {classe: fichier} (onevsrest)
-  "metrics": { ... }                  # optionnel
+  "hyperparameters": { ... }          # optionnel : ce qu'on a RÉGLÉ (lr, epochs, decay, archi, C, max_per_class…)
+  "metrics": { ... }                  # optionnel : ce qu'on a MESURÉ (accuracy, counts, final_loss…)
 }
+
+Garder `hyperparameters` (réglages) et `metrics` (résultats) séparés permet de tracer
+l'évolution de l'accuracy en fonction des hyperparamètres ET du volume de dataset.
 """
 
 import os
@@ -85,9 +89,10 @@ def _now():
 
 
 def save_single(model, model_id, name, model_type, classes, width, height,
-                models_dir=DEFAULT_MODELS_DIR, metrics=None):
+                models_dir=DEFAULT_MODELS_DIR, metrics=None, hyperparams=None):
     """Sauve un modèle simple (mlp/linear/svm/rbf) + son manifeste.
 
+    hyperparams : dict des réglages d'entraînement (lr, epochs, archi, max_per_class…), optionnel.
     Retourne (version, chemin_du_manifeste).
     """
     version = next_version(model_id, models_dir)
@@ -99,16 +104,19 @@ def save_single(model, model_id, name, model_type, classes, width, height,
         "type": model_type, "width": width, "height": height,
         "classes": list(classes), "weights": weights_file,
     }
+    if hyperparams:
+        manifest["hyperparameters"] = hyperparams
     if metrics:
         manifest["metrics"] = metrics
     return version, _write_manifest(models_dir, model_id, version, manifest)
 
 
 def save_onevsrest(models_by_class, model_id, name, base_type, width, height,
-                   models_dir=DEFAULT_MODELS_DIR, metrics=None):
+                   models_dir=DEFAULT_MODELS_DIR, metrics=None, hyperparams=None):
     """Sauve N modèles binaires (un par classe) regroupés en 1 classifieur One-vs-Rest.
 
     models_by_class : dict {nom_de_classe: modèle_binaire_entraîné} (ordre = ordre des classes).
+    hyperparams : dict des réglages d'entraînement (lr, epochs, C, max_per_class…), optionnel.
     Retourne (version, chemin_du_manifeste).
     """
     version = next_version(model_id, models_dir)
@@ -125,13 +133,16 @@ def save_onevsrest(models_by_class, model_id, name, base_type, width, height,
         "width": width, "height": height,
         "classes": list(models_by_class.keys()), "weights": weights,
     }
+    if hyperparams:
+        manifest["hyperparameters"] = hyperparams
     if metrics:
         manifest["metrics"] = metrics
     return version, _write_manifest(models_dir, model_id, version, manifest)
 
 
 def register_existing(model_id, name, model_type, classes, width, height, weights,
-                      models_dir=DEFAULT_MODELS_DIR, base_type=None, version=None, metrics=None):
+                      models_dir=DEFAULT_MODELS_DIR, base_type=None, version=None,
+                      metrics=None, hyperparams=None):
     """Crée un manifeste pour des fichiers de poids DÉJÀ présents (sans model.save()).
 
     weights : nom de fichier (modèle simple) ou dict {classe: fichier} (onevsrest).
@@ -147,6 +158,8 @@ def register_existing(model_id, name, model_type, classes, width, height, weight
     }
     if base_type:
         manifest["base_type"] = base_type
+    if hyperparams:
+        manifest["hyperparameters"] = hyperparams
     if metrics:
         manifest["metrics"] = metrics
     return version, _write_manifest(models_dir, model_id, version, manifest)

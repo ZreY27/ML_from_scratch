@@ -76,12 +76,18 @@ def main():
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
-    # Sauvegarde versionnée + métriques dans le manifeste
+    # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
+    hyperparams = {
+        "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
+        "learning_rate": LEARNING_RATE, "epochs": EPOCHS,
+        "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO, "strategy": "onevsrest",
+    }
     version, manifest = reg.save_onevsrest(
         models, "linear_genres", "Perceptron - Genres (One-vs-Rest)",
         base_type="linear", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+        hyperparams=hyperparams,
         metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
-                 "counts": tu.counts(data), "max_per_class": MAX_PER_CLASS},
+                 "counts": tu.counts(data)},
     )
     print(f"\nClassifieur One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")
 
