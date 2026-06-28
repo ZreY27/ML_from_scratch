@@ -19,7 +19,7 @@ IMAGE_HEIGHT = 32
 INPUT_SIZE   = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072 pixels
 
 # Hyperparamètres RBF
-NUM_CENTERS = 200   # Nombre de centres K-Means
+NUM_CENTERS = 50   # Nombre de centres K-Means
 SIGMA       = 0.0  # 0.0 = estimation automatique depuis les centres
 
 # 2. Définition des catégories et de leurs labels (One-Hot Encoding)
@@ -31,8 +31,9 @@ category_labels = {
     "Platformer": [-1.0, -1.0,  1.0]
 }
 
-all_paths      = []
+all_paths       = []
 all_labels_flat = []
+all_classes     = []  # catégorie réelle de chaque image, pour l'évaluation par classe
 
 # 3. Parcours des dossiers pour lister toutes les images
 for cat in categories:
@@ -43,6 +44,7 @@ for cat in categories:
     for img_path in imgs:
         all_paths.append(img_path)
         all_labels_flat.extend(category_labels[cat])
+        all_classes.append(cat)
 
 if len(all_paths) == 0:
     print("Aucune image trouvée. Vérifiez les dossiers 'datasets/Fighter', etc.")
@@ -91,6 +93,26 @@ else:
         print(f"MSE finale    : {mse:.4f}")
         print(f"Taux d'erreur : {error_rate:.1f}%")
         print(f"Précision     : {100.0 - error_rate:.1f}%")
+
+        # Précision par catégorie
+        print("\nPrécision par catégorie :")
+        for cat in categories:
+            correct = 0
+            total   = 0
+            for i, path in enumerate(all_paths):
+                if all_classes[i] != cat:
+                    continue
+                try:
+                    img = ML_ESGI.load_and_resize_image(path, IMAGE_WIDTH, IMAGE_HEIGHT)
+                    pred = model.predict(img)
+                    pred_class = categories[pred.index(max(pred))]
+                    if pred_class == cat:
+                        correct += 1
+                    total += 1
+                except Exception:
+                    pass
+            if total > 0:
+                print(f"  {cat:<12} : {correct}/{total} ({100.0 * correct / total:.1f}%)")
 
         precision = 100.0 - error_rate
         plt.pie(
