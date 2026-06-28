@@ -12,13 +12,21 @@ PYBIND11_MODULE(ML_ESGI, m) {
     m.doc() = "Bibliotheque ML C++ - Projet Annuel ESGI (Optimisee)"; // Documentation globale du module
     
     py::class_<LinearModel>(m, "LinearModel")
-        .def(py::init<int>(), py::arg("input_size"), "Initialise le modele avec le nombre d'entrees (ex: pixels)")
+        .def(py::init<int, bool>(), py::arg("input_size"), py::arg("is_classification") = true, "Initialise le modele lineaire (Classification par defaut)")
         .def("train", &LinearModel::train,
              py::arg("inputs"),
              py::arg("labels"),
              py::arg("learning_rate"),
              py::arg("epochs"),
              "Entraine le modele sur le dataset et retourne l'historique des erreurs (loss)")
+        .def("train_from_images", &LinearModel::train_from_images,
+             py::arg("image_paths"),
+             py::arg("labels"),
+             py::arg("target_w"),
+             py::arg("target_h"),
+             py::arg("learning_rate"),
+             py::arg("epochs"),
+             "Entraine le modele directement depuis une liste de chemins d'images")
         .def("predict", &LinearModel::predict,
              py::arg("inputs"),
              "Predit la classe (1.0 ou -1.0) pour une image donnee")
@@ -33,17 +41,25 @@ PYBIND11_MODULE(ML_ESGI, m) {
              "Charge les poids et le biais du modele depuis un fichier texte");
 
     py::class_<MLP>(m, "MLP")
-        .def(py::init<const std::vector<int>&>(), py::arg("npl"), "Initialise le MLP avec une architecture (ex: [2, 3, 1])")
+        .def(py::init<const std::vector<int>&, bool>(), py::arg("npl"), py::arg("is_classification") = true, "Initialise le MLP avec une architecture et un mode (Classification par defaut)")
         .def("train", &MLP::train,
              py::arg("dataset_inputs"),
              py::arg("dataset_expected_outputs"),
              py::arg("training_steps"),
              py::arg("learning_rate"),
-             py::arg("is_classification"),
-             "Entraine le modele MLP via Backpropagation SGD")
+             py::arg("decay") = 0.0,
+             "Entraine le modele MLP via Backpropagation SGD avec Decay et retourne l'historique des erreurs (Loss)")
+        .def("train_from_images", &MLP::train_from_images,
+             py::arg("image_paths"),
+             py::arg("expected_outputs"),
+             py::arg("target_w"),
+             py::arg("target_h"),
+             py::arg("training_steps"),
+             py::arg("learning_rate"),
+             py::arg("decay") = 0.0,
+             "Entraine le modele MLP directement depuis une liste d'images avec Decay et retourne la Loss")
         .def("predict", &MLP::predict,
              py::arg("inputs"),
-             py::arg("is_classification"),
              "Predit les valeurs pour une donnee et retourne la derniere couche")
         .def("save", &MLP::save,
              py::arg("filename"),

@@ -24,3 +24,7 @@ cmake-build-release/
 
 # Environnement virtuel créé par CLion
 .venv/
+
+*.pdf
+*.png
+*.txt

@@ -54,7 +54,7 @@ else:
                 labels.extend([-1.0] * len(images_dict[cat])) # Reste = -1.0
                 
         # Création et Entraînement
-        model = ML_ESGI.LinearModel(INPUT_SIZE)
+        model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
         loss_history = model.train_from_images(all_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT, LEARNING_RATE, EPOCHS)
         
         # Sauvegarde du modèle en mémoire et sur le disque
