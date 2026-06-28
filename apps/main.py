@@ -1,86 +1,90 @@
 import os
-import json
+import sys
 import tempfile
 import shutil
+
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.templating import Jinja2Templates
 
+# Chemins absolus -> l'app est lançable quel que soit le répertoire courant
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(APP_DIR)
+MODELS_DIR = os.path.join(ROOT, "models")
+sys.path.insert(0, ROOT)  # pour importer model_registry (situé à la racine)
+
 # Autorise Python à charger les DLLs du compilateur C++ (MSYS2) sous Windows
-if hasattr(os, 'add_dll_directory'):
+if hasattr(os, "add_dll_directory"):
     os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
 import ML_ESGI
+import model_registry as registry
 
 app = FastAPI()
-templates = Jinja2Templates(directory="apps")
+templates = Jinja2Templates(directory=APP_DIR)
 
-CONFIG_PATH = "apps/config.json"
-MODELS_DIR = "models"
+# Cache des modèles déjà chargés en mémoire : clé = (id, version)
+_predictors = {}
 
-# Cache pour stocker les modèles déjà chargés en mémoire (optimisation de vitesse)
-loaded_models = {}
 
-def get_models_config():
-    """Charge la liste des modèles disponibles depuis le fichier JSON"""
-    if os.path.exists(CONFIG_PATH):
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+def get_predictor(manifest):
+    """Renvoie un Predictor (chargé une seule fois par couple id/version)."""
+    key = (manifest["id"], manifest["version"])
+    if key not in _predictors:
+        _predictors[key] = registry.load_predictor(manifest, MODELS_DIR)
+    return _predictors[key]
 
-def get_or_load_model(model_config):
-    """Instancie et charge les poids du modèle C++ s'il n'est pas déjà en mémoire"""
-    model_id = model_config["id"]
-    if model_id in loaded_models:
-        return loaded_models[model_id]
-    
-    m_type = model_config["type"]
-    filepath = os.path.join(MODELS_DIR, model_config["file"])
-    
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Le fichier de poids {filepath} est introuvable.")
 
-    if m_type == "mlp":
-        model = ML_ESGI.MLP([1, 1], True) # Architecture bidon temporaire (écrasée par load())
-        model.load(filepath)
-    elif m_type == "linear":
-        model = ML_ESGI.LinearModel(1, True) # Dimension bidon temporaire
-        model.load(filepath)
-    else:
-        raise ValueError(f"Support du type de modèle '{m_type}' non implémenté.")
-        
-    loaded_models[model_id] = model
-    return model
+def models_for_template():
+    """Modèles disponibles (groupés par id), chacun avec ses versions, pour l'UI."""
+    models = []
+    for mid, versions in sorted(registry.list_models(MODELS_DIR).items()):
+        most_recent = versions[-1]
+        models.append({
+            "id": mid,
+            "name": most_recent["name"],
+            "type": most_recent["type"],
+            "versions": [
+                {
+                    "version": m["version"],
+                    "created": m.get("created", ""),
+                    "width": m["width"],
+                    "height": m["height"],
+                }
+                # versions de la plus récente à la plus ancienne
+                for m in sorted(versions, key=lambda x: x["version"], reverse=True)
+            ],
+        })
+    return models
+
 
 @app.get("/")
 def read_root(request: Request):
-    models = get_models_config()
-    return templates.TemplateResponse(request=request, name="index.html", context={"request": request, "models": models})
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"request": request, "models": models_for_template()},
+    )
+
 
 @app.post("/predict")
-async def predict(model_id: str = Form(...), file: UploadFile = File(...)):
-    models = get_models_config()
-    model_config = next((m for m in models if m["id"] == model_id), None)
-    
-    if not model_config:
-        return {"error": "Modèle introuvable dans la configuration."}
-    
+async def predict(model_id: str = Form(...), version: str = Form(...), file: UploadFile = File(...)):
+    versions = registry.list_models(MODELS_DIR).get(model_id)
+    if not versions:
+        return {"error": f"Modèle '{model_id}' introuvable."}
+
+    # Version demandée (sinon : la plus récente)
+    manifest = next((m for m in versions if str(m["version"]) == str(version)), versions[-1])
+
     # Sauvegarde temporaire de l'image pour que le C++ puisse la lire
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+    suffix = os.path.splitext(file.filename or "")[1] or ".jpg"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         shutil.copyfileobj(file.file, tmp)
         tmp_path = tmp.name
-        
+
     try:
-        img_data = ML_ESGI.load_and_resize_image(tmp_path, model_config["width"], model_config["height"])
-        model = get_or_load_model(model_config)
-        
-        prediction = model.predict(img_data)
-        
-        if model_config["type"] == "mlp":
-            max_idx = max(range(len(prediction)), key=lambda i: prediction[i])
-            return {"prediction": model_config["classes"][max_idx]}
-        elif model_config["type"] == "linear":
-            return {"prediction": model_config["classes"][0] if prediction > 0 else model_config["classes"][1]}
-            
+        img_data = ML_ESGI.load_and_resize_image(tmp_path, manifest["width"], manifest["height"])
+        prediction = get_predictor(manifest).predict(img_data)
+        return {"prediction": prediction, "model": manifest["name"], "version": manifest["version"]}
     except Exception as e:
         return {"error": str(e)}
     finally:

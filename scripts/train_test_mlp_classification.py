@@ -9,8 +9,10 @@ if hasattr(os, 'add_dll_directory'):
 
 # Dossier racine du projet (pour accéder aux datasets)
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
 
 import ML_ESGI
+import model_registry as reg
 
 # 1. Paramètres du modèle et de l'entraînement
 IMAGE_WIDTH = 32
@@ -62,10 +64,13 @@ else:
         decay=DECAY
     )
     
-    # 5. Sauvegarde du modèle entraîné
-    save_path = os.path.join(ROOT_DIR, "models", "mon_mlp_images.txt")
-    model.save(save_path)
-    print(f"\nEntraînement terminé ! Modèle sauvegardé avec succès dans '{save_path}'")
+    # 5. Sauvegarde du modèle entraîné (versionné : poids + manifeste)
+    version, manifest_path = reg.save_single(
+        model, "mlp_genres", "MLP - Genres", "mlp", categories,
+        IMAGE_WIDTH, IMAGE_HEIGHT, models_dir=os.path.join(ROOT_DIR, "models"),
+        metrics={"final_loss": loss_history[-1] if loss_history else None},
+    )
+    print(f"\nEntraînement terminé ! Modèle MLP sauvegardé : version v{version}\n  -> {manifest_path}")
 
     # 6. Affichage de la courbe d'apprentissage
     # Le SGD est très bruité (une image aléatoire à la fois), on lisse la courbe pour le rapport
