@@ -3,90 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA ESGI - Prédiction d'Images</title>
-    <!-- Intégration de Bootstrap 5 pour un design rapide et épuré -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>IA ESGI - Prédiction d'images</title>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">🔮 Prédiction d'Images par IA</h1>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-7">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <form id="predictForm">
-                            
-                            <!-- Liste (Rows) des modèles -->
-                            <label class="form-label">🤖 <strong>1. Choisir le Modèle :</strong></label>
-                            <div class="list-group mb-4">
-                                {% for model in models %}
-                                <label class="list-group-item d-flex gap-2">
-                                    <input class="form-check-input flex-shrink-0" type="radio" name="model_id" value="{{ model.id }}" required {% if loop.first %}checked{% endif %}>
-                                    <span>
-                                        <strong>{{ model.name }}</strong>
-                                        <small class="d-block text-muted">Algorithme: {{ model.type | upper }} | Résolution Cible: {{ model.width }}x{{ model.height }}</small>
-                                    </span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                            
-                            <!-- Zone d'Upload -->
-                            <label class="form-label">🖼️ <strong>2. Charger une Image :</strong></label>
-                            <input class="form-control mb-3" type="file" name="file" id="file" accept="image/jpeg, image/png" required>
-                            
-                            <!-- Aperçu visuel de l'image -->
-                            <div class="text-center">
-                                <img id="imagePreview" style="max-height: 250px; display: none;" class="mb-3 rounded border shadow-sm">
-                            </div>
+<body style="font-family: sans-serif; max-width: 640px; margin: 2em auto; padding: 0 1em;">
+    <h1>Prédiction d'images par IA</h1>
 
-                            <button type="submit" class="btn btn-primary w-100 btn-lg">🧠 Analyser l'image</button>
-                        </form>
-                        
-                        <!-- Résultat de la prédiction -->
-                        <div id="resultBox" class="alert mt-4 d-none text-center">
-                            <h4 class="mb-0" id="resultText"></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% if not models %}
+        <p><strong>Aucun modèle trouvé dans <code>models/</code>.</strong></p>
+        <p>Lance un entraînement (ex. <code>python scripts/train_test_mlp_classification.py</code>)
+           pour générer un modèle + son manifeste, puis recharge cette page.</p>
+    {% else %}
+        <form id="form">
+            <p>
+                <label>Modèle :
+                    <select id="model_id" name="model_id">
+                        {% for m in models %}
+                        <option value="{{ m.id }}">{{ m.name }} ({{ m.type }})</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </p>
+            <p>
+                <label>Version :
+                    <select id="version" name="version"></select>
+                </label>
+            </p>
+            <p>
+                <label>Image : <input type="file" id="file" name="file" accept="image/*" required></label>
+            </p>
+            <p><img id="preview" alt="" style="max-height: 200px; display: none; border: 1px solid #ccc;"></p>
+            <button type="submit">Analyser l'image</button>
+        </form>
 
-    <script>
-        const fileInput = document.getElementById('file');
-        const imagePreview = document.getElementById('imagePreview');
-        const resultBox = document.getElementById('resultBox');
-        const resultText = document.getElementById('resultText');
-        
-        // Gestion de l'aperçu d'image
-        fileInput.addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'inline-block';
-                    resultBox.classList.add('d-none'); // Cache le précédent résultat
-                }
-                reader.readAsDataURL(e.target.files[0]);
+        <h2 id="result"></h2>
+
+        <script>
+            // Données injectées par le serveur : [{id, name, type, versions:[{version, created, width, height}]}]
+            const MODELS = {{ models | tojson }};
+            const modelSel = document.getElementById('model_id');
+            const versionSel = document.getElementById('version');
+
+            // Remplit le sélecteur de version selon le modèle choisi
+            function fillVersions() {
+                const m = MODELS.find(x => x.id === modelSel.value);
+                versionSel.innerHTML = '';
+                (m ? m.versions : []).forEach(v => {
+                    const opt = document.createElement('option');
+                    opt.value = v.version;
+                    const date = v.created ? ' (' + v.created + ')' : '';
+                    const acc = (v.accuracy != null) ? ' — acc ' + (v.accuracy * 100).toFixed(1) + '%' : '';
+                    opt.textContent = 'v' + v.version + date + ' — ' + v.width + 'x' + v.height + acc;
+                    versionSel.appendChild(opt);
+                });
             }
-        });
+            modelSel.addEventListener('change', fillVersions);
+            fillVersions();
 
-        // Soumission du formulaire (AJAX)
-        document.getElementById('predictForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            resultBox.classList.remove('d-none', 'alert-success', 'alert-danger');
-            resultBox.classList.add('alert-info');
-            resultText.textContent = "⏳ Calcul en cours...";
-            
-            const response = await fetch('/predict', { method: 'POST', body: new FormData(e.target) });
-            const data = await response.json();
-            
-            resultBox.classList.remove('alert-info');
-            resultBox.classList.add(data.error ? 'alert-danger' : 'alert-success');
-            resultText.textContent = data.error ? "❌ Erreur : " + data.error : "✅ Prédiction : " + data.prediction;
-        });
-    </script>
+            // Aperçu de l'image choisie
+            const fileInput = document.getElementById('file');
+            const preview = document.getElementById('preview');
+            fileInput.addEventListener('change', e => {
+                const f = e.target.files[0];
+                if (f) {
+                    preview.src = URL.createObjectURL(f);
+                    preview.style.display = 'inline';
+                }
+            });
+
+            // Envoi et affichage du résultat
+            document.getElementById('form').addEventListener('submit', async e => {
+                e.preventDefault();
+                const result = document.getElementById('result');
+                result.textContent = 'Calcul en cours...';
+                const resp = await fetch('/predict', { method: 'POST', body: new FormData(e.target) });
+                const data = await resp.json();
+                result.textContent = data.error
+                    ? 'Erreur : ' + data.error
+                    : 'Prédiction : ' + data.prediction + '  [' + data.model + ' v' + data.version + ']';
+            });
+        </script>
+    {% endif %}
 </body>
 </html>

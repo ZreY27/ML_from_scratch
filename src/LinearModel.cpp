@@ -1,5 +1,6 @@
 #include "LinearModel.hpp"
 #include "ImageLoader.hpp"
+#include "ModelPath.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -98,28 +99,25 @@ std::vector<double> LinearModel::train_from_images(const std::vector<std::string
                                                    const std::vector<double>& labels, 
                                                    int target_w, int target_h, 
                                                    double learning_rate, int epochs) {
-    int num_samples = labels.size();
     std::vector<double> flattened_inputs;
+    std::vector<double> valid_labels;
 
-    for (int i = 0; i < num_samples; i++) {
+    for (size_t i = 0; i < image_paths.size(); i++) {
         try {
             std::vector<double> sample = load_and_resize_image(image_paths[i], target_w, target_h);
             flattened_inputs.insert(flattened_inputs.end(), sample.begin(), sample.end());
+            valid_labels.push_back(labels[i]); // on ne garde le label que si l'image a bien chargé
         } catch (const std::exception& e) {
             std::cerr << "  [C++] Erreur ignorée pour l'image " << image_paths[i] << " : " << e.what() << "\n";
         }
     }
-    
-    // Appel de l'entraînement optimal (toutes les images sont chargées une seule fois)
-    return train(flattened_inputs, labels, learning_rate, epochs);
+
+    // Entraînement (images et labels restent alignés : une image ignorée l'est des deux côtés)
+    return train(flattened_inputs, valid_labels, learning_rate, epochs);
 }
 
 void LinearModel::save(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
-    std::filesystem::create_directories("models");
+    std::string path = resolve_model_path(filename, true);
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save LinearModel");
@@ -135,10 +133,7 @@ void LinearModel::save(const char* filename) {
 }
 
 void LinearModel::load(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
+    std::string path = resolve_model_path(filename);
 
     std::ifstream file(path);
     if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + path);

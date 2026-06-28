@@ -9,3 +9,7 @@ jinja2
 pybind11
 numpy
 matplotlib
+
+# --- Visualisation des entraînements (TensorBoard) ---
+tensorboardX
+tensorboard

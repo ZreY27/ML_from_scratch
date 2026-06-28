@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "ImageLoader.hpp"
+#include "ModelPath.hpp"
 #include <filesystem>
 
 // Constructeur : Initialise l'architecture du réseau et alloue la mémoire.
@@ -202,14 +203,13 @@ std::vector<double> MLP::train_from_images(const std::vector<std::string>& image
 // Sauvegarde l'architecture complète du modèle (npl) et ses poids dans un fichier texte.
 // La ligne 1 contient l'architecture (ex: "2 3 1"). Les lignes suivantes contiennent les poids.
 void MLP::save(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
-    std::filesystem::create_directories("models");
+    std::string path = resolve_model_path(filename, true);
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save MLP");
+    // En-tête : persiste le mode (classification / régression) sur sa propre ligne,
+    // AVANT l'architecture. Voir load() pour la compatibilité avec les anciens fichiers.
+    file << "mode " << is_classification << "\n";
     for (int size : d) file << size << " ";
     file << "\n";
     for (int l = 1; l <= L; ++l) {
@@ -227,25 +227,36 @@ void MLP::save(const char* filename) {
 // Détruit l'architecture courante, lit l'architecture sauvegardée sur la ligne 1,
 // réalloue la bonne quantité de mémoire, puis injecte les poids.
 void MLP::load(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
+    std::string path = resolve_model_path(filename);
 
     std::ifstream file(path);
     if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + path);
 
-    // 1. Lire la première ligne pour reconstruire l'architecture (tableau d)
+    // 1. Lire l'en-tête. Format actuel : une ligne "mode <0|1>" précède l'architecture.
+    //    Compat ascendante : les anciens fichiers commencent directement par l'architecture
+    //    (pas de "mode") → on conserve alors le is_classification courant (celui du constructeur).
     std::string line;
-    if (std::getline(file, line)) {
-        std::stringstream ss(line);
-        d.clear();
-        int size;
-        while (ss >> size) {
-            d.push_back(size);
+    std::getline(file, line);
+    {
+        std::stringstream head(line);
+        std::string tok;
+        head >> tok;
+        if (tok == "mode") {
+            int m = 1;
+            head >> m;
+            is_classification = (m != 0);
+            std::getline(file, line); // la ligne suivante contient l'architecture (npl)
         }
     }
-    
+
+    // 2. Reconstruire l'architecture (tableau d) depuis la ligne npl
+    std::stringstream ss(line);
+    d.clear();
+    int size;
+    while (ss >> size) {
+        d.push_back(size);
+    }
+
     L = d.size() - 1;
 
     // 2. Réallouer la mémoire pour l'architecture chargée

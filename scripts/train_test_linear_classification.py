@@ -1,74 +1,101 @@
+"""
+Entraînement One-vs-Rest de perceptrons linéaires pour classer les images par genre.
+
+- Classes auto-détectées depuis les sous-dossiers de datasets/.
+- Équilibrage par plafond MAX_PER_CLASS (sinon une classe majoritaire écrase tout
+  et l'argmax retombe toujours sur elle).
+- Split train/test -> accuracy mesurée sur des données NON vues, stockée dans le manifeste.
+- Sauvegarde versionnée via model_registry (One-vs-Rest : 1 binaire par classe).
+"""
+
 import os
 import sys
 
-# Autorise Python à charger les DLLs du compilateur C++ (MSYS2)
-if hasattr(os, 'add_dll_directory'):
-    os.add_dll_directory(r"C:\msys64\ucrt64\bin")
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
 
-# Dossier racine du projet (pour accéder aux datasets)
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+import training_utils as tu
+tu.enable_cpp_dlls()  # AVANT d'importer ML_ESGI
 
 import ML_ESGI
+import model_registry as reg
 import matplotlib.pyplot as plt
-import glob
 
-# 1. Paramètres de l'image (doivent correspondre aux entrées du modèle)
-IMAGE_WIDTH = 32
-IMAGE_HEIGHT = 32
-INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3
+# --- Hyperparamètres ---
+IMAGE_WIDTH = IMAGE_HEIGHT = 32
+INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 LEARNING_RATE = 0.01
 EPOCHS = 500
+MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
+TEST_RATIO = 0.2
+SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
-# 2. Définition des 3 dossiers
-categories = ["Fighter", "Racing", "Platformer"]
-images_dict = {}
-all_paths = []
+DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
+MODELS_DIR = os.path.join(ROOT_DIR, "models")
 
-# Parcours automatique des dossiers
-for cat in categories:
-    # Utilisation du chemin absolu pour trouver les images indépendamment du répertoire d'exécution du script
-    search_path_jpg = os.path.join(ROOT_DIR, "datasets", cat, "*.jpg")
-    search_path_png = os.path.join(ROOT_DIR, "datasets", cat, "*.png")
-    imgs = glob.glob(search_path_jpg) + glob.glob(search_path_png)
-    images_dict[cat] = imgs
-    all_paths.extend(imgs)
 
-if len(all_paths) == 0:
-    print("Veuillez placer les images dans les dossiers datasets/Fighter, datasets/Racing, etc.")
-else:
-    print(f"{len(all_paths)} images trouvées. Début du Multi-classes (One-vs-Rest)...")
-    
-    # Dictionnaire pour stocker les 3 modèles entraînés
-    trained_models = {}
+def main():
+    classes = tu.discover_classes(DATASETS_DIR)
+    if len(classes) < 2:
+        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
+        return
 
-    # 3. Boucle principale : Un modèle par catégorie
-    for target_cat in categories:
-        print(f"\n--- Modèle : {target_cat.upper()} vs RESTE ---")
-        
-        # Création des labels dynamiquement pour ce modèle spécifique
-        labels = []
-        for cat in categories:
-            if cat == target_cat:
-                labels.extend([1.0] * len(images_dict[cat])) # Cible = 1.0
-            else:
-                labels.extend([-1.0] * len(images_dict[cat])) # Reste = -1.0
-                
-        # Création et Entraînement
+    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
+    print(f"Classes : {classes}")
+    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
+
+    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
+
+    # Liste ordonnée (chemin, classe réelle) pour le train
+    train_paths, train_classes = [], []
+    for cls in classes:
+        for path in train[cls]:
+            train_paths.append(path)
+            train_classes.append(cls)
+    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
+
+    # Un perceptron binaire par classe (One-vs-Rest)
+    models = {}
+    losses_by_class = {}
+    for cls in classes:
+        print(f"\n--- {cls} vs RESTE ---")
+        labels = [1.0 if c == cls else -1.0 for c in train_classes]
         model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
-        loss_history = model.train_from_images(all_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT, LEARNING_RATE, EPOCHS)
-        
-        # Sauvegarde du modèle en mémoire et sur le disque
-        trained_models[target_cat] = model
-        save_path = os.path.join(ROOT_DIR, f"modele_lineaire_{target_cat.lower()}.txt")
-        model.save(save_path)
-        
-        # Ajout de la courbe au graphique global
-        plt.plot(loss_history, label=f"{target_cat} vs Rest")
-        print(f"Entraînement de {target_cat} terminé ! Modèle sauvegardé dans '{save_path}'.")
+        loss = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
+                                       LEARNING_RATE, EPOCHS)
+        models[cls] = model
+        losses_by_class[cls] = loss
+        if SHOW_PLOT:
+            plt.plot(loss, label=f"{cls} vs Rest")
 
-    # 4. Affichage du graphique final avec les 3 courbes
-    plt.title("Évolution des erreurs (Stratégie One-vs-Rest)")
-    plt.xlabel("Epochs")
-    plt.ylabel("Ratio d'erreurs")
-    plt.legend()
-    plt.show()
+    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
+    predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
+                              sub_models=[models[c] for c in classes])
+    accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+    print(f"\nAccuracy test (One-vs-Rest) : {accuracy:.1%}")
+    for c, a in per_class.items():
+        print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
+
+    # Sauvegarde versionnée + métriques dans le manifeste
+    version, manifest = reg.save_onevsrest(
+        models, "linear_genres", "Perceptron - Genres (One-vs-Rest)",
+        base_type="linear", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+                 "counts": tu.counts(data), "max_per_class": MAX_PER_CLASS},
+    )
+    print(f"\nClassifieur One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")
+
+    # Log TensorBoard (1 courbe de loss par classe + accuracy)
+    tu.log_to_tensorboard(f"linear_genres_v{version}", losses=losses_by_class,
+                          scalars={"accuracy": accuracy})
+
+    if SHOW_PLOT:
+        plt.title("Erreurs d'entraînement (One-vs-Rest)")
+        plt.xlabel("Epochs")
+        plt.ylabel("Ratio d'erreurs")
+        plt.legend()
+        plt.show()
+
+
+if __name__ == "__main__":
+    main()
