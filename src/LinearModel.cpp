@@ -1,5 +1,6 @@
 #include "LinearModel.hpp"
 #include "ImageLoader.hpp"
+#include "ModelPath.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -115,11 +116,7 @@ std::vector<double> LinearModel::train_from_images(const std::vector<std::string
 }
 
 void LinearModel::save(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
-    std::filesystem::create_directories("models");
+    std::string path = resolve_model_path(filename, true);
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save LinearModel");
@@ -135,10 +132,7 @@ void LinearModel::save(const char* filename) {
 }
 
 void LinearModel::load(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
+    std::string path = resolve_model_path(filename);
 
     std::ifstream file(path);
     if (!file.is_open()) throw std::runtime_error(std::string("Erreur : Impossible de charger le fichier ") + path);

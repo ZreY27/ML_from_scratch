@@ -63,7 +63,7 @@ else:
     )
     
     # 5. Sauvegarde du modèle entraîné
-    save_path = os.path.join(ROOT_DIR, "mon_mlp_images.txt")
+    save_path = os.path.join(ROOT_DIR, "models", "mon_mlp_images.txt")
     model.save(save_path)
     print(f"\nEntraînement terminé ! Modèle sauvegardé avec succès dans '{save_path}'")
 

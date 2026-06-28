@@ -1,4 +1,5 @@
 #include "SVM.h"
+#include "ModelPath.hpp"
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
@@ -96,11 +97,7 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
 }
 
 void SVM::save(const char *filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
-    std::filesystem::create_directories("models");
+    std::string path = resolve_model_path(filename, true);
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save SVM");
@@ -117,10 +114,7 @@ void SVM::save(const char *filename) {
 }
 
 void SVM::load(const char *filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0) {
-        path = "models/" + path;
-    }
+    std::string path = resolve_model_path(filename);
 
     std::ifstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur load SVM : " + path);

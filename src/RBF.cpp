@@ -1,5 +1,6 @@
 #include "RBF.hpp"
 #include "ImageLoader.hpp"
+#include "ModelPath.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -397,10 +398,7 @@ std::vector<double> RBF::predict(const std::vector<double>& inputs) const {
 }
 
 void RBF::save(const char* filename) const {
-    std::string path = filename;
-    // On préfixe models/ seulement si c'est un nom de fichier simple (pas un chemin absolu ou relatif)
-    if (path.find('/') == std::string::npos)
-        path = "models/" + path;
+    std::string path = resolve_model_path(filename, true);
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save RBF : impossible d'ouvrir " + path);
@@ -428,9 +426,7 @@ void RBF::save(const char* filename) const {
 }
 
 void RBF::load(const char* filename) {
-    std::string path = filename;
-    if (path.find("models/") != 0)
-        path = "models/" + path;
+    std::string path = resolve_model_path(filename);
 
     std::ifstream file(path);
     if (!file.is_open())

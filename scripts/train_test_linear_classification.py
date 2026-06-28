@@ -59,7 +59,7 @@ else:
         
         # Sauvegarde du modèle en mémoire et sur le disque
         trained_models[target_cat] = model
-        save_path = os.path.join(ROOT_DIR, f"modele_lineaire_{target_cat.lower()}.txt")
+        save_path = os.path.join(ROOT_DIR, "models", f"modele_lineaire_{target_cat.lower()}.txt")
         model.save(save_path)
         
         # Ajout de la courbe au graphique global
