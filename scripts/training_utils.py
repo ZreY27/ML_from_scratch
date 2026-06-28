@@ -73,6 +73,41 @@ def counts(images_by_class):
     return {cls: len(paths) for cls, paths in images_by_class.items()}
 
 
+def log_to_tensorboard(run_name, losses=None, scalars=None, logdir="runs"):
+    """Logge un entraînement dans TensorBoard (via tensorboardX, écriture 100% Python).
+
+    Visualisation : `tensorboard --logdir runs` puis http://localhost:6006.
+    Chaque entraînement = un sous-dossier runs/<run_name>/ → les versions se superposent dans l'UI.
+
+    run_name : ex. 'mlp_genres_v3'.
+    losses   : liste de loss (→ courbe 'loss') OU dict {nom: liste} (→ courbes 'loss/<nom>').
+    scalars  : dict {nom: nombre} de valeurs finales (ex. {'accuracy': 0.82}).
+
+    Note : le C++ ne renvoie le `loss_history` qu'à la fin de l'entraînement → log post-entraînement
+    (courbe complète d'un coup), pas en direct pas-à-pas. Suffisant pour comparer des runs.
+    Si tensorboardX n'est pas installé : avertit et ne fait rien (non bloquant).
+    """
+    try:
+        from tensorboardX import SummaryWriter
+    except ImportError:
+        print("[TensorBoard] tensorboardX non installé (pip install tensorboardX) — log ignoré.")
+        return
+
+    writer = SummaryWriter(os.path.join(logdir, run_name))
+    if isinstance(losses, dict):
+        for name, history in losses.items():
+            for step, value in enumerate(history):
+                writer.add_scalar(f"loss/{name}", value, step)
+    elif losses:
+        for step, value in enumerate(losses):
+            writer.add_scalar("loss", value, step)
+    for key, value in (scalars or {}).items():
+        if isinstance(value, (int, float)):
+            writer.add_scalar(key, value, 0)
+    writer.close()
+    print(f"[TensorBoard] run loggé : {os.path.join(logdir, run_name)}  (visualiser : tensorboard --logdir {logdir})")
+
+
 def evaluate(predictor, test_by_class, width, height):
     """Accuracy globale + par classe sur le set de test.
 

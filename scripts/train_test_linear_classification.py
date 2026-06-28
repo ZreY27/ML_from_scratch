@@ -28,6 +28,7 @@ LEARNING_RATE = 0.01
 EPOCHS = 500
 MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
 TEST_RATIO = 0.2
+SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
 DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
 MODELS_DIR = os.path.join(ROOT_DIR, "models")
@@ -55,6 +56,7 @@ def main():
 
     # Un perceptron binaire par classe (One-vs-Rest)
     models = {}
+    losses_by_class = {}
     for cls in classes:
         print(f"\n--- {cls} vs RESTE ---")
         labels = [1.0 if c == cls else -1.0 for c in train_classes]
@@ -62,7 +64,9 @@ def main():
         loss = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
                                        LEARNING_RATE, EPOCHS)
         models[cls] = model
-        plt.plot(loss, label=f"{cls} vs Rest")
+        losses_by_class[cls] = loss
+        if SHOW_PLOT:
+            plt.plot(loss, label=f"{cls} vs Rest")
 
     # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
     predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
@@ -81,11 +85,16 @@ def main():
     )
     print(f"\nClassifieur One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")
 
-    plt.title("Erreurs d'entraînement (One-vs-Rest)")
-    plt.xlabel("Epochs")
-    plt.ylabel("Ratio d'erreurs")
-    plt.legend()
-    plt.show()
+    # Log TensorBoard (1 courbe de loss par classe + accuracy)
+    tu.log_to_tensorboard(f"linear_genres_v{version}", losses=losses_by_class,
+                          scalars={"accuracy": accuracy})
+
+    if SHOW_PLOT:
+        plt.title("Erreurs d'entraînement (One-vs-Rest)")
+        plt.xlabel("Epochs")
+        plt.ylabel("Ratio d'erreurs")
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":

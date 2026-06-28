@@ -29,6 +29,7 @@ DECAY = 0.001
 TRAINING_STEPS = 15000
 MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
 TEST_RATIO = 0.2
+SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
 DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
 MODELS_DIR = os.path.join(ROOT_DIR, "models")
@@ -86,13 +87,17 @@ def main():
     )
     print(f"\nMLP sauvegardé : version v{version}\n  -> {manifest}")
 
-    plt.plot(smooth(loss), color="blue", label="MSE lissé (99%)")
-    plt.plot(loss, color="lightblue", alpha=0.2, label="MSE brut")
-    plt.title("Courbe d'apprentissage du MLP")
-    plt.xlabel("Étapes d'entraînement (SGD)")
-    plt.ylabel("Erreur quadratique moyenne (MSE)")
-    plt.legend()
-    plt.show()
+    # Log TensorBoard (courbe de loss + accuracy)
+    tu.log_to_tensorboard(f"mlp_genres_v{version}", losses=loss, scalars={"accuracy": accuracy})
+
+    if SHOW_PLOT:
+        plt.plot(smooth(loss), color="blue", label="MSE lissé (99%)")
+        plt.plot(loss, color="lightblue", alpha=0.2, label="MSE brut")
+        plt.title("Courbe d'apprentissage du MLP")
+        plt.xlabel("Étapes d'entraînement (SGD)")
+        plt.ylabel("Erreur quadratique moyenne (MSE)")
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":
