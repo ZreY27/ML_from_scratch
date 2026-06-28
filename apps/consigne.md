@@ -28,6 +28,7 @@ Rien à coder côté app : **il suffit d'entraîner**.
 ```bash
 python scripts/train_test_mlp_classification.py       # MLP multi-classe
 python scripts/train_test_linear_classification.py    # One-vs-Rest (perceptrons)
+python scripts/train_test_svm_classification.py       # One-vs-Rest (SVM, Hinge loss)
 ```
 
 Chaque entraînement :
