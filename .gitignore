@@ -28,3 +28,12 @@ cmake-build-release/
 *.pdf
 *.png
 *.txt
+
+datasets/
+
+# Modèles entraînés : manifestes JSON (les poids *.txt sont déjà ignorés ci-dessus).
+# Modèles locaux à chaque machine -> ne pas committer.
+models/*.json
+
+# Logs TensorBoard (générés à chaque entraînement)
+runs/
