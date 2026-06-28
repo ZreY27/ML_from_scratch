@@ -2,6 +2,12 @@
 .git
 .gitignore
 
+# Dataset (trop lourd pour git, à partager autrement)
+datasets/
+
+# Logs TensorBoard (générés automatiquement à chaque entraînement)
+scripts/runs/
+
 # Environnements virtuels et variables d'environnement
 venv
 .env

@@ -1,4 +1,5 @@
 import os
+import time
 import glob
 import matplotlib.pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
@@ -18,7 +19,7 @@ IMAGE_HEIGHT = 32
 INPUT_SIZE   = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072 pixels
 
 # Hyperparamètres RBF
-NUM_CENTERS = 50   # Nombre de centres K-Means
+NUM_CENTERS = 200   # Nombre de centres K-Means
 SIGMA       = 0.0  # 0.0 = estimation automatique depuis les centres
 
 # 2. Définition des catégories et de leurs labels (One-Hot Encoding)
@@ -56,12 +57,16 @@ else:
     model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=3, sigma=SIGMA, is_classification=True)
 
     print("Début de l'entraînement (K-Means puis moindres carrés)...")
+    start_time = time.time()
     loss_history = model.train_from_images(
         image_paths=all_paths,
         labels=all_labels_flat,
         target_w=IMAGE_WIDTH,
         target_h=IMAGE_HEIGHT
     )
+
+    elapsed = time.time() - start_time
+    print(f"Temps d'entraînement : {elapsed:.2f} secondes")
 
     # 5. Envoi des résultats à TensorBoard
     writer = SummaryWriter("runs/rbf")
@@ -71,10 +76,9 @@ else:
         writer.add_scalar("Résultats/Taux_erreur", loss_history[1] * 100.0, 0)
         writer.add_scalar("Résultats/Précision", 100.0 - loss_history[1] * 100.0, 0)
     writer.close()
-    print("Résultats envoyés à TensorBoard. Lance : tensorboard --logdir=runs")
 
     # 6. Sauvegarde du modèle entraîné
-    save_path = os.path.join(ROOT_DIR, "mon_rbf_images.txt")
+    save_path = os.path.join(ROOT_DIR, "models", "rbf_params.txt")
     model.save(save_path)
     print(f"\nEntraînement terminé ! Modèle sauvegardé dans '{save_path}'")
 
@@ -97,6 +101,9 @@ else:
             startangle=90
         )
         plt.title("Résultats du RBF après entraînement")
+        result_path = os.path.join(ROOT_DIR, "results", "rbf_resultat.png")
+        plt.savefig(result_path)
+        print(f"Graphique sauvegardé dans '{result_path}'")
         plt.show()
     else:
         print(f"MSE finale : {mse:.4f}")
