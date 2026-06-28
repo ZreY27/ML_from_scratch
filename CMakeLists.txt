@@ -54,6 +54,7 @@ FetchContent_MakeAvailable(stb)
 set(SOURCES
         src/LinearModel.cpp
         src/MLP.cpp
+        src/RBF.cpp
         src/SVM.cpp
         src/ImageLoader.cpp
         wrapper/binding.cpp
