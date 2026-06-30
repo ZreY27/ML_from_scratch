@@ -78,5 +78,6 @@ add_executable(test_models
         src/MLP.cpp
         src/SVM.cpp
         src/ImageLoader.cpp
+        src/RBF.cpp
 )
 target_include_directories(test_models PRIVATE ${CMAKE_SOURCE_DIR}/src ${stb_SOURCE_DIR})
