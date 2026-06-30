@@ -164,9 +164,9 @@ std::vector<double> RBF::compute_phi(const std::vector<double>& x) const {
 // On résout (Phi^T * Phi) * W = Phi^T * Y au lieu de faire une descente de gradient.
 void RBF::fit_weights_least_squares(const std::vector<std::vector<double>>& Phi,
                                     const std::vector<std::vector<double>>& Y) {
-    int n = Phi.size();          // num_samples
-    int m = Phi[0].size();       // num_centers + 1
-    int q = Y[0].size();         // output_size
+    int n = static_cast<int>(Phi.size());          // num_samples
+    int m = static_cast<int>(Phi[0].size());       // num_centers + 1
+    int q = static_cast<int>(Y[0].size());         // output_size
 
     // --- Calcul de A = Phi^T * Phi  [m x m] ---
     std::vector<std::vector<double>> A(m, std::vector<double>(m, 0.0));
@@ -311,8 +311,8 @@ std::vector<double> RBF::train(const std::vector<double>& inputs,
             } else {
                 // Cas multi-classe : on compare la classe gagnante (l'index du plus grand),
                 // pas la valeur. C'est la même logique que dans predict().
-                int pred_class = std::distance(raw.begin(), std::max_element(raw.begin(), raw.end()));
-                int true_class = std::distance(Y[i].begin(), std::max_element(Y[i].begin(), Y[i].end()));
+                int pred_class = static_cast<int>(std::distance(raw.begin(), std::max_element(raw.begin(), raw.end())));
+                int true_class = static_cast<int>(std::distance(Y[i].begin(), std::max_element(Y[i].begin(), Y[i].end())));
                 if (pred_class != true_class) errors++;
             }
         }
