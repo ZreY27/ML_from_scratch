@@ -1,3 +1,8 @@
+// ============================================================================
+// MLP — Perceptron Multi-Couches entraîné par rétropropagation du gradient
+// stochastique (cf. slides 87-95 du cours "Apprendre : Modèle Linéaire et PMC").
+// Auteur : Antoine (partie individuelle : PMC / MLP)
+// ============================================================================
 #include "MLP.hpp"
 #include <cmath>
 #include <random>
@@ -51,6 +56,12 @@ MLP::MLP(const std::vector<int>& npl, bool is_classification) : is_classificatio
 // Forward Pass (Propagation avant) : Calcule la prédiction du réseau pour une entrée donnée.
 // Traverse les couches une par une, fait la somme pondérée, et applique la fonction d'activation.
 void MLP::propagate(const std::vector<double>& inputs) {
+    // Garde-fou : une entrée de mauvaise taille provoquerait une lecture hors
+    // limites ; pybind11 convertit l'exception en erreur Python lisible.
+    if (static_cast<int>(inputs.size()) != d[0])
+        throw std::invalid_argument("predict : l'entree a " + std::to_string(inputs.size()) +
+                                    " valeurs mais le reseau en attend " + std::to_string(d[0]));
+
     // 1. Assigner les valeurs d'entrée à la première couche (couche 0)
     for (int j = 1; j <= d[0]; ++j) {
         X[0][j] = inputs[j - 1];
@@ -91,7 +102,18 @@ std::vector<double> MLP::predict(const std::vector<double>& inputs) {
 std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const std::vector<double>& dataset_expected_outputs,
                                int training_steps, double learning_rate, double decay) {
                 
-    int num_samples = dataset_inputs.size() / d[0];
+    int num_samples = static_cast<int>(dataset_inputs.size()) / d[0];
+
+    // Garde-fous : tailles cohérentes avant d'entraîner (sinon accès hors limites)
+    if (num_samples == 0)
+        throw std::invalid_argument("train : dataset vide ou plus petit qu'un seul exemple");
+    if (dataset_inputs.size() % d[0] != 0)
+        throw std::invalid_argument("train : inputs contient " + std::to_string(dataset_inputs.size()) +
+                                    " valeurs, non divisible par la taille d'entree " + std::to_string(d[0]));
+    if (dataset_expected_outputs.size() != static_cast<size_t>(num_samples) * static_cast<size_t>(d[L]))
+        throw std::invalid_argument("train : outputs contient " + std::to_string(dataset_expected_outputs.size()) +
+                                    " valeurs, attendu " + std::to_string(num_samples) + " x " + std::to_string(d[L]));
+
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist_k(0, num_samples - 1);
@@ -176,6 +198,12 @@ std::vector<double> MLP::train_from_images(const std::vector<std::string>& image
     std::vector<double> flattened_inputs;
     std::vector<double> valid_expected_outputs;
     int output_size = d[L];
+
+    // Garde-fou : output_size labels par image, sinon l'accès expected_outputs[i * output_size + j] déborde.
+    if (expected_outputs.size() != image_paths.size() * static_cast<size_t>(output_size))
+        throw std::invalid_argument("train_from_images : " + std::to_string(image_paths.size()) +
+                                    " images mais " + std::to_string(expected_outputs.size()) +
+                                    " labels (attendu " + std::to_string(output_size) + " par image)");
 
     for (size_t i = 0; i < image_paths.size(); ++i) {
         try {

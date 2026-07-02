@@ -112,10 +112,10 @@ PYBIND11_MODULE(ML_ESGI, m) {
 
     svm.def(py::init<int, double, double, SVM::Mode>(),
             py::arg("input_size"),
-            py::arg("C") = 1.0,
+            py::arg("lambda_reg") = 0.001,
             py::arg("epsilon") = 0.1,
             py::arg("mode") = SVM::CLASSIFICATION,
-            "Initialise le SVM (input_size, C = regularisation, epsilon = tube SVR, mode)")
+            "Initialise le SVM (input_size, lambda_reg = regularisation L2, epsilon = tube SVR, mode)")
        .def("train", &SVM::train,
             py::arg("X"),
             py::arg("Y"),
@@ -130,7 +130,7 @@ PYBIND11_MODULE(ML_ESGI, m) {
             "Retourne le score brut W.X + b (utile pour le multi-classe One-vs-Rest)")
        .def("save", &SVM::save,
             py::arg("filename"),
-            "Sauvegarde mode, biais, C, epsilon et les poids dans un fichier texte")
+            "Sauvegarde mode, biais, lambda_reg, epsilon et les poids dans un fichier texte")
        .def("load", &SVM::load,
             py::arg("filename"),
             "Charge le modele depuis un fichier texte")

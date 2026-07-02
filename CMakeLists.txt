@@ -33,16 +33,12 @@ message(STATUS "Pybind11 trouvé ici : ${PYBIND11_CMAKE_DIR}")
 list(APPEND CMAKE_PREFIX_PATH "${PYBIND11_CMAKE_DIR}")
 find_package(pybind11 REQUIRED)
 
-# --- 3. Eigen ---
+# --- 3. STB (lecture d'images en C++) ---
+# NB : aucune bibliothèque d'algèbre linéaire ou de ML n'est utilisée :
+# tous les algorithmes (perceptron, MLP, RBF avec Gauss maison, SVM) sont
+# implémentés à la main, conformément au syllabus. STB ne sert qu'à LIRE
+# les fichiers image (décodage jpg/png), pas à faire du Machine Learning.
 include(FetchContent)
-FetchContent_Declare(
-        eigen
-        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-        GIT_TAG        3.4.0
-)
-FetchContent_MakeAvailable(eigen)
-
-# --- 4. STB (lecture d'images en C++) ---
 FetchContent_Declare(
         stb
         GIT_REPOSITORY https://github.com/nothings/stb.git
@@ -62,7 +58,6 @@ set(SOURCES
 
 pybind11_add_module(ML_ESGI ${SOURCES})
 
-target_link_libraries(ML_ESGI PRIVATE Eigen3::Eigen)
 target_include_directories(ML_ESGI PRIVATE ${stb_SOURCE_DIR})
 
 # Copie automatique du module compilé à la racine (à côté de votre train_test.py) après le build

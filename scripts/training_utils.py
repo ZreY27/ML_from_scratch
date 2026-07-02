@@ -11,15 +11,24 @@ import os
 import glob
 import random
 
-# Chemin des DLL du runtime gcc (MSYS2) — requis sous Windows avant d'importer ML_ESGI.
-MSYS2_BIN = r"C:\msys64\ucrt64\bin"
+# Dossiers candidats pour les DLL du runtime gcc (libstdc++, libgcc...) — requis
+# sous Windows avant d'importer ML_ESGI. Surchargables via la variable
+# d'environnement ML_ESGI_DLL_DIR (utile pour la démo sur une autre machine).
+CPP_DLL_DIRS = [
+    os.environ.get("ML_ESGI_DLL_DIR", ""),
+    r"C:\msys64\ucrt64\bin",
+    r"C:\Program Files\JetBrains\CLion 2025.3.2\bin\mingw\bin",
+]
 IMAGE_EXTS = ("*.jpg", "*.jpeg", "*.png")
 
 
 def enable_cpp_dlls():
     """À appeler AVANT `import ML_ESGI` (charge les DLL du compilateur C++ sous Windows)."""
-    if hasattr(os, "add_dll_directory") and os.path.isdir(MSYS2_BIN):
-        os.add_dll_directory(MSYS2_BIN)
+    if not hasattr(os, "add_dll_directory"):
+        return  # non-Windows : rien à faire
+    for path in CPP_DLL_DIRS:
+        if path and os.path.isdir(path):
+            os.add_dll_directory(path)
 
 
 def _list_images(folder):

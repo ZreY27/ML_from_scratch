@@ -2,6 +2,15 @@
 #include <vector>
 #include <string>
 
+// ============================================================================
+// LinearModel — Modèle linéaire du cours :
+//   - Classification : Perceptron, règle de Rosenblatt (slide 65 du cours
+//     "Apprendre : Modèle Linéaire et PMC") avec sorties -1 / +1.
+//   - Régression     : minimisation de l'erreur quadratique par descente de
+//     gradient (le cours présente aussi la pseudo-inverse, slide 66).
+// Auteur : Maxime Clément — partie individuelle : Modèle Linéaire, SVM,
+//          cas de tests, scripts Python d'interfaçage.
+// ============================================================================
 class LinearModel {
 private:
     std::vector<double> weights;

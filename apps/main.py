@@ -1,3 +1,6 @@
+# apps/main.py — Serveur FastAPI : héberge les modèles pré-entraînés (C++)
+# et expose /predict pour l'application cliente (index.html).
+# Auteur : Antoine (application client/serveur).
 import os
 import sys
 import tempfile
@@ -12,9 +15,12 @@ ROOT = os.path.dirname(APP_DIR)
 MODELS_DIR = os.path.join(ROOT, "models")
 sys.path.insert(0, ROOT)  # pour importer model_registry (situé à la racine)
 
-# Autorise Python à charger les DLLs du compilateur C++ (MSYS2) sous Windows
-if hasattr(os, "add_dll_directory"):
-    os.add_dll_directory(r"C:\msys64\ucrt64\bin")
+# Autorise Python à charger les DLLs du runtime C++ sous Windows.
+# On réutilise la logique partagée de scripts/training_utils.py (liste de
+# dossiers candidats + variable d'environnement ML_ESGI_DLL_DIR).
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import training_utils
+training_utils.enable_cpp_dlls()
 
 import ML_ESGI
 import model_registry as registry

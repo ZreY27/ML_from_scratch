@@ -1,5 +1,6 @@
 """
 model_registry.py — Gestion des modèles entraînés via des manifestes JSON.
+Auteur : Antoine (interfaçage app / registre de modèles).
 
 Idée : un fichier de poids (.txt) ne décrit pas le modèle (classes, taille image, type,
 et pour le One-vs-Rest : quels fichiers vont ensemble). On pose donc à côté de chaque modèle

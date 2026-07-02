@@ -1,3 +1,9 @@
+// ============================================================================
+// main_test.cpp — Cas de tests C++ des 4 modèles (validation avant application
+// au dataset réel, comme exigé par le syllabus).
+// Auteur : Maxime Clément (cas de tests) ; modèles testés : LinearModel & SVM
+// (Maxime Clément), MLP (Antoine), RBF (équipe).
+// ============================================================================
 #include <iostream>
 #include "LinearModel.hpp"
 #include "MLP.hpp"
@@ -220,8 +226,9 @@ int main() {
     std::cout << "  Accuracy : " << correct_7 << "/4 (attendu : < 4/4)\n\n";
 
     // TEST 8 : SVM XOR transforme
-    // FIX : C=1.0 -> C=0.001. Avec C=1.0, la regularisation (2*lr*C*w a chaque pas)
-    // ecrasait les poids avant que le gradient de la hinge loss ne puisse les faire grandir.
+    // lambda_reg = 0.001 : avec une regularisation forte (ex: 1.0), le terme
+    // 2*lr*lambda*w ecrasait les poids avant que le sous-gradient de la hinge
+    // loss ne puisse les faire grandir -> il faut un lambda faible ici.
     SVM svm_xor_t(3, 0.001);
     svm_xor_t.train(X_xor_trans_2d, Y_xor, 0.1, 5000);
 
