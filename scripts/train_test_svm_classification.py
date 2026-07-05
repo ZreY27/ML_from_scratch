@@ -29,7 +29,7 @@ LAMBDA_REG = 0.001    # force de régularisation L2 (w -= lr·2·λ·w à chaque
                       # NB : ne pas confondre avec le C du soft-margin du cours (C ~ 1/λ : il pénalise les violations de marge, pas les poids)
 LEARNING_RATE = 0.001
 EPOCHS = 500
-MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
+MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False     # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -84,7 +84,7 @@ def main():
     for cls in classes:
         print(f"\n--- {cls} vs RESTE ---")
         Y = [1.0 if c == cls else -1.0 for c in train_classes]
-        svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG, mode=ML_ESGI.SVM.Mode.CLASSIFICATION)
+        svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG)
         svm.train(X_train, Y, LEARNING_RATE, EPOCHS)
         models[cls] = svm
         losses_by_class[cls] = list(svm.loss_history)

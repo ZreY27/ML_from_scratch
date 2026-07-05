@@ -26,8 +26,8 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 HIDDEN = 128
 LEARNING_RATE = 0.01
 DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
-TRAINING_STEPS = 60000   # ~83 passes sur 720 images (15000 = ~20 passes : sous-entraînement)
-MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
+TRAINING_STEPS = 450000  # ~83 passes sur 2160 images (60000 n'en ferait plus que ~28 avec le plafond à 900)
+MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 

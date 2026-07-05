@@ -7,6 +7,7 @@
 #include <cmath>
 #include <random>
 #include <fstream>
+#include <iomanip>   // std::setprecision (sauvegarde sans perte)
 #include <stdexcept>
 #include <sstream>
 #include <string>
@@ -235,6 +236,9 @@ void MLP::save(const char* filename) {
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save MLP");
+    // 17 chiffres significatifs : un double est restitue a l\'identique au load()
+    // (la precision par defaut de C++ est de 6 chiffres -> poids legerement degrades)
+    file << std::setprecision(17);
     // En-tête : persiste le mode (classification / régression) sur sa propre ligne,
     // AVANT l'architecture. Voir load() pour la compatibilité avec les anciens fichiers.
     file << "mode " << is_classification << "\n";

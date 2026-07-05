@@ -1,135 +1,108 @@
+"""
+Entraînement d'un réseau RBF multi-classe (K-Means + moindres carrés) pour classer
+les images par genre.
+
+- Aligné sur le pattern des autres scripts (linear/mlp/svm) : classes auto-détectées,
+  équilibrage par plafond, split train/test, accuracy mesurée sur données NON vues,
+  sauvegarde versionnée via model_registry (manifeste JSON -> visible dans l'app).
+- Spécificité RBF : un SEUL modèle à 3 sorties (one-hot ±1), entraîné en une passe
+  (Phase 1 : K-Means pour placer les centres, Phase 2 : moindres carrés pour les poids).
+  Pas de courbe de loss par epoch : on logge la MSE et le taux d'erreur finaux.
+
+Auteurs : équipe (modèle RBF) — script harmonisé avec les autres entraînements.
+"""
+
 import os
-import time
-import glob
-import matplotlib.pyplot as plt
-from tensorboardX import SummaryWriter  # torch non installé : tensorboardX (même API), aligné sur les autres scripts
+import sys
 
-# Autorise Python à charger les DLLs du compilateur C++ (MSYS2)
-if hasattr(os, 'add_dll_directory'):
-    os.add_dll_directory(r"C:\msys64\ucrt64\bin")
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
 
-# Dossier racine du projet (pour accéder aux datasets)
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+import training_utils as tu
+tu.enable_cpp_dlls()  # AVANT d'importer ML_ESGI
 
 import ML_ESGI
+import model_registry as reg
 
-# 1. Paramètres du modèle
-IMAGE_WIDTH  = 32
-IMAGE_HEIGHT = 32
-INPUT_SIZE   = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072 pixels
+# --- Hyperparamètres ---
+IMAGE_WIDTH = IMAGE_HEIGHT = 32
+INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
+NUM_CENTERS = 50      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
+SIGMA = 0.0           # 0.0 = estimation automatique depuis les centres (d_max / sqrt(2K))
+MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+TEST_RATIO = 0.2
 
-# Hyperparamètres RBF
-NUM_CENTERS = 50   # Nombre de centres K-Means
-SIGMA       = 0.0  # 0.0 = estimation automatique depuis les centres
+DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
+MODELS_DIR = os.path.join(ROOT_DIR, "models")
 
-# 2. Définition des catégories et de leurs labels (One-Hot Encoding)
-# Même convention que le MLP : un neurone par catégorie, +1 pour la gagnante, -1 pour les autres
-categories = ["Fighter", "Racing", "Platformer"]
-category_labels = {
-    "Fighter":    [ 1.0, -1.0, -1.0],
-    "Racing":     [-1.0,  1.0, -1.0],
-    "Platformer": [-1.0, -1.0,  1.0]
-}
 
-all_paths       = []
-all_labels_flat = []
-all_classes     = []  # catégorie réelle de chaque image, pour l'évaluation par classe
+def main():
+    classes = tu.discover_classes(DATASETS_DIR)
+    if len(classes) < 2:
+        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
+        return
 
-# 3. Parcours des dossiers pour lister toutes les images
-for cat in categories:
-    search_path_jpg = os.path.join(ROOT_DIR, "datasets", cat, "*.jpg")
-    search_path_png = os.path.join(ROOT_DIR, "datasets", cat, "*.png")
-    imgs = glob.glob(search_path_jpg) + glob.glob(search_path_png)
+    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
+    print(f"Classes : {classes}")
+    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
 
-    for img_path in imgs:
-        all_paths.append(img_path)
-        all_labels_flat.extend(category_labels[cat])
-        all_classes.append(cat)
+    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
 
-if len(all_paths) == 0:
-    print("Aucune image trouvée. Vérifiez les dossiers 'datasets/Fighter', etc.")
-else:
-    print(f"{len(all_paths)} images trouvées. Préparation de l'entraînement RBF...")
+    # Chemins + labels one-hot (±1) alignés, aplatis comme attendu par le C++
+    train_paths, labels_flat = [], []
+    for k, cls in enumerate(classes):
+        onehot = [-1.0] * len(classes)
+        onehot[k] = 1.0
+        for path in train[cls]:
+            train_paths.append(path)
+            labels_flat.extend(onehot)
+    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
 
-    # 4. Création du modèle RBF
-    # input_size  : taille d'une image aplatie (3072)
-    # num_centers : nombre de centres (= neurones cachés)
-    # output_size : 3 sorties, une par catégorie
-    # sigma       : 0.0 pour que le modèle le choisisse tout seul
-    model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=3, sigma=SIGMA, is_classification=True)
+    if NUM_CENTERS > len(train_paths):
+        print(f"NUM_CENTERS ({NUM_CENTERS}) > images de train ({len(train_paths)}) : impossible.")
+        return
 
-    print("Début de l'entraînement (K-Means puis moindres carrés)...")
-    start_time = time.time()
-    loss_history = model.train_from_images(
-        image_paths=all_paths,
-        labels=all_labels_flat,
-        target_w=IMAGE_WIDTH,
-        target_h=IMAGE_HEIGHT
+    # Un seul RBF multi-sorties (une sortie par classe, prédiction = argmax)
+    model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=len(classes),
+                        sigma=SIGMA, is_classification=True)
+
+    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto)...")
+    # loss_history = [MSE finale] + [taux d'erreur train] (pas d'epochs : une seule passe)
+    loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
+    mse = loss_history[0]
+    erreur_train = loss_history[1] if len(loss_history) > 1 else None
+
+    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
+    predictor = reg.Predictor({"type": "rbf", "classes": classes}, model=model)
+    accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+    print(f"\nAccuracy test (RBF) : {accuracy:.1%}")
+    for c, a in per_class.items():
+        print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
+
+    # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
+    hyperparams = {
+        "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
+        "num_centers": NUM_CENTERS, "sigma": SIGMA,
+        "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
+    }
+    metrics = {"accuracy": accuracy, "accuracy_per_class": per_class,
+               "mse_train": mse, "counts": tu.counts(data)}
+    if erreur_train is not None:
+        metrics["error_rate_train"] = erreur_train
+
+    version, manifest = reg.save_single(
+        model, "rbf_genres", "RBF - Genres (K-Means + moindres carrés)",
+        model_type="rbf", classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT,
+        models_dir=MODELS_DIR, hyperparams=hyperparams, metrics=metrics,
     )
+    print(f"\nRBF sauvegardé : version v{version}\n  -> {manifest}")
 
-    elapsed = time.time() - start_time
-    print(f"Temps d'entraînement : {elapsed:.2f} secondes")
+    # Log TensorBoard (valeurs finales : le RBF n'a pas de courbe par epoch)
+    scalars = {"accuracy": accuracy, "mse_train": mse}
+    if erreur_train is not None:
+        scalars["error_rate_train"] = erreur_train
+    tu.log_to_tensorboard(f"rbf_genres_v{version}", scalars=scalars)
 
-    # 5. Envoi des résultats à TensorBoard
-    writer = SummaryWriter("runs/rbf")
-    mse = loss_history[0]
-    writer.add_scalar("Résultats/MSE", mse, 0)
-    if len(loss_history) > 1:
-        writer.add_scalar("Résultats/Taux_erreur", loss_history[1] * 100.0, 0)
-        writer.add_scalar("Résultats/Précision", 100.0 - loss_history[1] * 100.0, 0)
-    writer.close()
 
-    # 6. Sauvegarde du modèle entraîné
-    save_path = os.path.join(ROOT_DIR, "models", "rbf_params.txt")
-    model.save(save_path)
-    print(f"\nEntraînement terminé ! Modèle sauvegardé dans '{save_path}'")
-
-    # 6. Affichage du résultat
-    # Le RBF n'a pas d'historique par epoch (il s'entraîne en une seule passe),
-    # donc on affiche juste la MSE finale et le taux d'erreur sous forme de texte.
-    mse = loss_history[0]
-    if len(loss_history) > 1:
-        error_rate = loss_history[1] * 100.0
-        print(f"MSE finale    : {mse:.4f}")
-        print(f"Taux d'erreur : {error_rate:.1f}%")
-        print(f"Précision     : {100.0 - error_rate:.1f}%")
-
-        # Précision par catégorie
-        print("\nPrécision par catégorie :")
-        for cat in categories:
-            correct = 0
-            total   = 0
-            for i, path in enumerate(all_paths):
-                if all_classes[i] != cat:
-                    continue
-                try:
-                    img = ML_ESGI.load_and_resize_image(path, IMAGE_WIDTH, IMAGE_HEIGHT)
-                    pred = model.predict(img)
-                    pred_class = categories[pred.index(max(pred))]
-                    if pred_class == cat:
-                        correct += 1
-                    total += 1
-                except Exception:
-                    pass
-            if total > 0:
-                print(f"  {cat:<12} : {correct}/{total} ({100.0 * correct / total:.1f}%)")
-
-        precision = 100.0 - error_rate
-        plt.pie(
-            [precision, error_rate],
-            labels=[f"Réussite ({precision:.1f}%)", f"Erreur ({error_rate:.1f}%)"],
-            colors=["mediumseagreen", "tomato"],
-            autopct="%1.1f%%",
-            startangle=90
-        )
-        plt.title("Résultats du RBF après entraînement")
-        result_path = os.path.join(ROOT_DIR, "results", "rbf_resultat.png")
-        plt.savefig(result_path)
-        print(f"Graphique sauvegardé dans '{result_path}'")
-        plt.show()
-    else:
-        print(f"MSE finale : {mse:.4f}")
-        plt.bar(["MSE"], [mse], color=["steelblue"])
-        plt.title("Résultat du RBF (régression)")
-        plt.ylabel("MSE")
-        plt.show()
+if __name__ == "__main__":
+    main()

@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip>   // std::setprecision (sauvegarde sans perte)
 #include <stdexcept>
 #include <filesystem>
 #include <random>     // std::mt19937 (mélange des exemples à chaque epoch)
@@ -167,6 +168,9 @@ void LinearModel::save(const char* filename) {
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save LinearModel");
+    // 17 chiffres significatifs : un double est restitue a l\'identique au load()
+    // (la precision par defaut de C++ est de 6 chiffres -> poids legerement degrades)
+    file << std::setprecision(17);
     
     // On sauvegarde le mode, le biais, puis les poids
     file << is_classification << "\n";

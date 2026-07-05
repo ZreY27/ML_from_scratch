@@ -4,7 +4,7 @@
 #include "../src/LinearModel.hpp"
 #include "../src/MLP.hpp"
 #include "../src/RBF.hpp"
-#include "../src/SVM.h"
+#include "../src/SVM.hpp"
 
 namespace py = pybind11;
 
@@ -101,39 +101,31 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("filename"),
              "Charge un modele RBF depuis un fichier");
 
-    // SVM : Hinge loss (classification) ou epsilon-insensible / SVR (regression).
+    // SVM lineaire (classification) : Hinge loss + regularisation L2.
     // ⚠ Contrairement aux autres modeles, train() prend X en 2D (liste de listes), pas en 1D aplati.
-    py::class_<SVM> svm(m, "SVM");
-
-    py::enum_<SVM::Mode>(svm, "Mode")
-        .value("CLASSIFICATION", SVM::CLASSIFICATION)
-        .value("REGRESSION", SVM::REGRESSION)
-        .export_values();
-
-    svm.def(py::init<int, double, double, SVM::Mode>(),
+    py::class_<SVM>(m, "SVM")
+        .def(py::init<int, double>(),
             py::arg("input_size"),
             py::arg("lambda_reg") = 0.001,
-            py::arg("epsilon") = 0.1,
-            py::arg("mode") = SVM::CLASSIFICATION,
-            "Initialise le SVM (input_size, lambda_reg = regularisation L2, epsilon = tube SVR, mode)")
+            "Initialise le SVM (input_size, lambda_reg = regularisation L2)")
        .def("train", &SVM::train,
             py::arg("X"),
             py::arg("Y"),
             py::arg("learning_rate"),
             py::arg("epochs"),
-            "Entraine le SVM. X = liste de listes (2D), Y = labels -1/+1 (classif) ou valeurs (regression). La loss est dans loss_history.")
+            "Entraine le SVM. X = liste de listes (2D), Y = labels -1/+1. La loss est dans loss_history.")
        .def("predict", &SVM::predict,
             py::arg("x"),
-            "Predit la classe (-1.0 / +1.0) ou la valeur continue (regression)")
+            "Predit la classe (-1.0 / +1.0)")
        .def("predict_raw", &SVM::predict_raw,
             py::arg("x"),
             "Retourne le score brut W.X + b (utile pour le multi-classe One-vs-Rest)")
        .def("save", &SVM::save,
             py::arg("filename"),
-            "Sauvegarde mode, biais, lambda_reg, epsilon et les poids dans un fichier texte")
+            "Sauvegarde biais, lambda_reg et les poids dans un fichier texte")
        .def("load", &SVM::load,
             py::arg("filename"),
-            "Charge le modele depuis un fichier texte")
+            "Charge le modele depuis un fichier texte (gere aussi l'ancien format avec mode/epsilon)")
        .def_readonly("loss_history", &SVM::loss_history,
             "Historique de la loss par epoch (rempli pendant train)");
 

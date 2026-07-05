@@ -13,7 +13,7 @@ uvicorn apps.main:app --reload
 ```
 Puis ouvrir 👉 **http://127.0.0.1:8000**
 
-> ⚠️ Le module C++ `ML_ESGI` doit être compilé au préalable (voir `README.md` / `CLAUDE.md`).
+> ⚠️ Le module C++ `ML_ESGI` doit être compilé au préalable (voir `README.md`).
 > Sous Windows, l'app charge automatiquement les DLL du runtime gcc (MSYS2).
 
 ## 🧠 Utilisation

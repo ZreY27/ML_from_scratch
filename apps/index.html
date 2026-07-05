@@ -4,53 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IA ESGI - Prédiction d'images</title>
-</head>
-<body style="font-family: sans-serif; max-width: 640px; margin: 2em auto; padding: 0 1em;">
-    <h1>Prédiction d'images par IA</h1>
+    <style>
+        /* ------- Thème (variables CSS : une seule source de vérité pour les couleurs) ------- */
+        :root {
+            --fond: #0f1220;
+            --carte: #181c30;
+            --carte-2: #1f2440;
+            --bordure: #2c3358;
+            --texte: #e8eaf6;
+            --texte-2: #9aa3c7;
+            --accent: #7c5cff;
+            --accent-2: #38e1c6;
+            --erreur: #ff5c7a;
+        }
 
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            color: var(--texte);
+            background: radial-gradient(1200px 600px at 80% -10%, #23306b55, transparent),
+                        radial-gradient(900px 500px at -10% 110%, #144d4455, transparent),
+                        var(--fond);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem 1rem;
+        }
+
+        header { text-align: center; margin-bottom: 1.8rem; }
+        header h1 {
+            margin: 0 0 .4rem;
+            font-size: 1.9rem;
+            letter-spacing: .5px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        header p { margin: 0; color: var(--texte-2); font-size: .95rem; }
+
+        .carte {
+            width: 100%;
+            max-width: 560px;
+            background: var(--carte);
+            border: 1px solid var(--bordure);
+            border-radius: 16px;
+            padding: 1.6rem;
+            box-shadow: 0 20px 60px #00000055;
+        }
+
+        label { display: block; font-size: .85rem; color: var(--texte-2); margin: 1rem 0 .35rem; }
+
+        select {
+            width: 100%;
+            padding: .65rem .8rem;
+            border-radius: 10px;
+            border: 1px solid var(--bordure);
+            background: var(--carte-2);
+            color: var(--texte);
+            font-size: .95rem;
+            outline: none;
+        }
+        select:focus { border-color: var(--accent); }
+
+        /* ------- Zone de dépôt d'image (clic OU glisser-déposer) ------- */
+        #dropzone {
+            margin-top: 1.2rem;
+            border: 2px dashed var(--bordure);
+            border-radius: 12px;
+            padding: 1.4rem;
+            text-align: center;
+            color: var(--texte-2);
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+        }
+        #dropzone.actif { border-color: var(--accent-2); background: #38e1c611; }
+        #dropzone img {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: 8px;
+            display: none;
+            margin: 0 auto .6rem;
+        }
+        #dropzone .indication strong { color: var(--texte); }
+
+        button {
+            margin-top: 1.4rem;
+            width: 100%;
+            padding: .85rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(90deg, var(--accent), #5c8aff);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: filter .15s, transform .05s;
+        }
+        button:hover { filter: brightness(1.12); }
+        button:active { transform: scale(.99); }
+        button:disabled { filter: grayscale(.6); cursor: wait; }
+
+        /* ------- Résultat ------- */
+        #result {
+            margin-top: 1.3rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.05rem;
+            display: none;
+        }
+        #result.ok { display: block; background: #38e1c61a; border: 1px solid #38e1c655; }
+        #result.ko { display: block; background: #ff5c7a1a; border: 1px solid #ff5c7a55; color: var(--erreur); }
+        #result .classe { font-size: 1.5rem; font-weight: 700; color: var(--accent-2); display: block; margin-top: .2rem; }
+        #result .detail { color: var(--texte-2); font-size: .8rem; display: block; margin-top: .35rem; }
+
+        /* Spinner pendant l'appel à l'API */
+        .spinner {
+            display: inline-block;
+            width: 1em; height: 1em;
+            border: 2px solid #ffffff55;
+            border-top-color: #fff;
+            border-radius: 50%;
+            vertical-align: -0.15em;
+            animation: rot .7s linear infinite;
+        }
+        @keyframes rot { to { transform: rotate(360deg); } }
+
+        footer { margin-top: 1.6rem; color: var(--texte-2); font-size: .78rem; text-align: center; }
+        footer code { background: var(--carte-2); padding: .1rem .35rem; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Prédiction d'images par IA</h1>
+        <p>Modèles Machine Learning implémentés en C++ (Projet Annuel 3IABD)</p>
+    </header>
+
+    <div class="carte">
     {% if not models %}
         <p><strong>Aucun modèle trouvé dans <code>models/</code>.</strong></p>
-        <p>Lance un entraînement (ex. <code>python scripts/train_test_mlp_classification.py</code>)
+        <p style="color: var(--texte-2)">Lance un entraînement (ex.
+           <code>python scripts/train_test_mlp_classification.py</code>)
            pour générer un modèle + son manifeste, puis recharge cette page.</p>
     {% else %}
         <form id="form">
-            <p>
-                <label>Modèle :
-                    <select id="model_id" name="model_id">
-                        {% for m in models %}
-                        <option value="{{ m.id }}">{{ m.name }} ({{ m.type }})</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </p>
-            <p>
-                <label>Version :
-                    <select id="version" name="version"></select>
-                </label>
-            </p>
-            <p>
-                <label>Image : <input type="file" id="file" name="file" accept="image/*" required></label>
-            </p>
-            <p><img id="preview" alt="" style="max-height: 200px; display: none; border: 1px solid #ccc;"></p>
-            <button type="submit">Analyser l'image</button>
+            <label for="model_id">Modèle</label>
+            <select id="model_id" name="model_id">
+                {% for m in models %}
+                <option value="{{ m.id }}">{{ m.name }} ({{ m.type }})</option>
+                {% endfor %}
+            </select>
+
+            <label for="version">Version</label>
+            <select id="version" name="version"></select>
+
+            <!-- Zone cliquable ET compatible glisser-déposer ; l'input reste la source de vérité du formulaire -->
+            <div id="dropzone">
+                <img id="preview" alt="Aperçu de l'image choisie">
+                <div class="indication">
+                    <strong>Clique</strong> ou <strong>glisse une image</strong> ici<br>
+                    <small>jpg / png — elle sera redimensionnée par le C++</small>
+                </div>
+                <input type="file" id="file" name="file" accept="image/*" required hidden>
+            </div>
+
+            <button type="submit" id="bouton">Analyser l'image</button>
         </form>
 
-        <h2 id="result"></h2>
+        <div id="result"></div>
 
         <script>
-            // Données injectées par le serveur : [{id, name, type, versions:[{version, created, width, height}]}]
+            // Données injectées par le serveur : [{id, name, type, versions:[{version, created, width, height, accuracy}]}]
             const MODELS = {{ models | tojson }};
             const modelSel = document.getElementById('model_id');
             const versionSel = document.getElementById('version');
 
-            // Remplit le sélecteur de version selon le modèle choisi
+            // Remplit le sélecteur de version selon le modèle choisi (la plus récente d'abord)
             function fillVersions() {
                 const m = MODELS.find(x => x.id === modelSel.value);
                 versionSel.innerHTML = '';
                 (m ? m.versions : []).forEach(v => {
                     const opt = document.createElement('option');
                     opt.value = v.version;
-                    const date = v.created ? ' (' + v.created + ')' : '';
+                    const date = v.created ? ' (' + v.created.slice(0, 10) + ')' : '';
                     const acc = (v.accuracy != null) ? ' — acc ' + (v.accuracy * 100).toFixed(1) + '%' : '';
                     opt.textContent = 'v' + v.version + date + ' — ' + v.width + 'x' + v.height + acc;
                     versionSel.appendChild(opt);
@@ -59,29 +199,73 @@
             modelSel.addEventListener('change', fillVersions);
             fillVersions();
 
-            // Aperçu de l'image choisie
+            // ------- Choix de l'image : clic sur la zone, ou glisser-déposer -------
+            const dropzone = document.getElementById('dropzone');
             const fileInput = document.getElementById('file');
             const preview = document.getElementById('preview');
-            fileInput.addEventListener('change', e => {
-                const f = e.target.files[0];
-                if (f) {
-                    preview.src = URL.createObjectURL(f);
-                    preview.style.display = 'inline';
+
+            function montrerApercu(f) {
+                if (!f) return;
+                preview.src = URL.createObjectURL(f);
+                preview.style.display = 'block';
+            }
+
+            dropzone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', e => montrerApercu(e.target.files[0]));
+
+            // Glisser-déposer : on injecte le fichier déposé DANS l'input du formulaire
+            // (DataTransfer) pour que FormData l'envoie comme un fichier choisi normalement.
+            ['dragover', 'dragenter'].forEach(ev =>
+                dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('actif'); }));
+            ['dragleave', 'drop'].forEach(ev =>
+                dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('actif'); }));
+            dropzone.addEventListener('drop', e => {
+                const f = e.dataTransfer.files[0];
+                if (f && f.type.startsWith('image/')) {
+                    const dt = new DataTransfer();
+                    dt.items.add(f);
+                    fileInput.files = dt.files;
+                    montrerApercu(f);
                 }
             });
 
-            // Envoi et affichage du résultat
-            document.getElementById('form').addEventListener('submit', async e => {
+            // ------- Envoi au serveur et affichage du résultat -------
+            const form = document.getElementById('form');
+            const bouton = document.getElementById('bouton');
+            const result = document.getElementById('result');
+
+            form.addEventListener('submit', async e => {
                 e.preventDefault();
-                const result = document.getElementById('result');
-                result.textContent = 'Calcul en cours...';
-                const resp = await fetch('/predict', { method: 'POST', body: new FormData(e.target) });
-                const data = await resp.json();
-                result.textContent = data.error
-                    ? 'Erreur : ' + data.error
-                    : 'Prédiction : ' + data.prediction + '  [' + data.model + ' v' + data.version + ']';
+                bouton.disabled = true;
+                bouton.innerHTML = '<span class="spinner"></span>&nbsp; Calcul en cours…';
+                result.className = '';
+                try {
+                    const resp = await fetch('/predict', { method: 'POST', body: new FormData(form) });
+                    const data = await resp.json();
+                    if (data.error) {
+                        result.className = 'ko';
+                        result.textContent = 'Erreur : ' + data.error;
+                    } else {
+                        result.className = 'ok';
+                        result.innerHTML = 'Classe prédite' +
+                            '<span class="classe">' + data.prediction + '</span>' +
+                            '<span class="detail">' + data.model + ' — version ' + data.version + '</span>';
+                    }
+                } catch (err) {
+                    result.className = 'ko';
+                    result.textContent = 'Erreur réseau : ' + err;
+                } finally {
+                    bouton.disabled = false;
+                    bouton.textContent = "Analyser l'image";
+                }
             });
         </script>
     {% endif %}
+    </div>
+
+    <footer>
+        Bibliothèque <code>ML_ESGI</code> (C++ / pybind11) — Modèle linéaire · MLP · RBF · SVM<br>
+        Les modèles et versions listés proviennent des manifestes <code>models/*.json</code>
+    </footer>
 </body>
 </html>

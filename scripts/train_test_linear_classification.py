@@ -26,7 +26,7 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 LEARNING_RATE = 0.01
 EPOCHS = 500
-MAX_PER_CLASS = 300   # plafond par classe (équilibrage) ; mettre None pour tout prendre
+MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 

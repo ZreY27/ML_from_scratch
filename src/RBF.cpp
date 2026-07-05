@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip>   // std::setprecision (sauvegarde sans perte)
 #include <stdexcept>
 #include <limits>
 #include <algorithm>
@@ -440,6 +441,9 @@ void RBF::save(const char* filename) const {
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save RBF : impossible d'ouvrir " + path);
+    // 17 chiffres significatifs : un double est restitue a l\'identique au load()
+    // (la precision par defaut de C++ est de 6 chiffres -> poids legerement degrades)
+    file << std::setprecision(17);
 
     // Métadonnées
     file << is_classification << "\n";
