@@ -1,3 +1,4 @@
+// Auteur : Maxime Clément (voir LinearModel.hpp pour le détail de la partie individuelle)
 #include "LinearModel.hpp"
 #include "ImageLoader.hpp"
 #include "ModelPath.hpp"
@@ -5,17 +6,29 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip>   // std::setprecision (sauvegarde sans perte)
 #include <stdexcept>
 #include <filesystem>
+#include <random>     // std::mt19937 (mélange des exemples à chaque epoch)
+#include <algorithm>  // std::shuffle
 
 LinearModel::LinearModel(int input_size, bool is_classification) : bias(0.0), is_classification(is_classification) {
-    // on stocke le mode passé en paramètre
+    // Initialisation des poids : le cours (slide 65) autorise "random(-1,1) ou 0".
+    // On prend un aléatoire petit (-0.01, 0.01) : même esprit, mais mieux adapté
+    // à des entrées de grande dimension (3072 pixels normalisés entre 0 et 1).
     weights.resize(input_size);
     for (int i = 0; i < input_size; i++)
         weights[i] = (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) * 0.02 - 0.01;
 }
 
 double LinearModel::predict_raw(const std::vector<double>& inputs) const {
+    // Garde-fou : une taille d'entrée incohérente (souvent une erreur côté Python)
+    // provoquerait une lecture hors limites. pybind11 convertit cette exception
+    // C++ en exception Python lisible au lieu d'un crash du process.
+    if (inputs.size() != weights.size())
+        throw std::invalid_argument("predict : l'entree a " + std::to_string(inputs.size()) +
+                                    " valeurs mais le modele en attend " + std::to_string(weights.size()));
+
     // valeur brute W·X + b — utilisée en interne par predict() et train()
     double sum = bias;
     for (int i = 0; i < static_cast<int>(weights.size()); i++)
@@ -35,10 +48,29 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
                                        const std::vector<double>& labels,
                                        double learning_rate, int epochs) {
     std::vector<double> loss_history;
-    int input_size = weights.size();
-    int num_samples = labels.size();
+    int input_size = static_cast<int>(weights.size());
+    int num_samples = static_cast<int>(labels.size());
+
+    // Garde-fous : évite les lectures hors limites si les tableaux venus de
+    // Python sont incohérents (X aplati doit contenir exactement
+    // num_samples * input_size valeurs).
+    if (num_samples == 0)
+        throw std::invalid_argument("train : dataset vide (aucun label)");
+    if (inputs.size() != static_cast<size_t>(num_samples) * static_cast<size_t>(input_size))
+        throw std::invalid_argument("train : inputs contient " + std::to_string(inputs.size()) +
+                                    " valeurs, attendu " + std::to_string(num_samples) + " x " +
+                                    std::to_string(input_size));
+
+    // Ordre de passage des exemples, re-mélangé à chaque epoch.
+    // C'est l'esprit du cours (slide 65 : "prendre un exemple ... au hasard") :
+    // un ordre fixe peut créer des cycles de mises à jour qui se compensent.
+    // Graine fixe (42) -> résultats reproductibles d'une exécution à l'autre.
+    std::vector<int> order(num_samples);
+    for (int i = 0; i < num_samples; i++) order[i] = i;
+    std::mt19937 rng(42);
 
     for (int e = 0; e < epochs; e++) {
+        std::shuffle(order.begin(), order.end(), rng);
         // Barre de progression (issue de deploy)
         if (e % (epochs / 100 > 0 ? epochs / 100 : 1) == 0 || e == epochs - 1) {
             int progress = (int)((float)e / epochs * 100.0);
@@ -53,41 +85,51 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
 
         if (is_classification) {
             int errors = 0;
-            for (int i = 0; i < num_samples; i++) {
-                // Calcul inline (optimisation de deploy) pour éviter l'allocation coûteuse
+            for (int i : order) {
+                // Somme pondérée calculée inline (évite une allocation de vecteur par exemple)
                 double sum = bias;
                 for (int j = 0; j < input_size; j++) {
                     sum += weights[j] * inputs[i * input_size + j];
                 }
-                double pred = (sum >= 0.0) ? 1.0 : -1.0;
-                double error = labels[i] - pred;
-                
-                // Règle de Rosenblatt : Mise à jour des poids uniquement en cas d'erreur
+                double pred = (sum >= 0.0) ? 1.0 : -1.0;  // g(Xk) = Sign(W.X + b)
+                double error = labels[i] - pred;          // (Yk - g(Xk)) : vaut 0, +2 ou -2 en labels -1/+1
+
+                // Règle de Rosenblatt (slide 65) : W <- W + alpha * (Yk - g(Xk)) * Xk
+                // Si l'exemple est bien classé, (Yk - g(Xk)) = 0 : aucune mise à jour.
                 if (error != 0.0) {
                     errors++;
-                    // Formule de Rosenblatt : W = W + learning_rate * (Y_attendu - Y_predit) * X
                     for (int j = 0; j < input_size; j++)
                         weights[j] += learning_rate * error * inputs[i * input_size + j];
+                    // Le biais correspond au poids w0 associé à l'entrée fictive x0 = 1
+                    // (cf. slide 63 : "en prenant soin d'ajouter le biais x0 = 1").
                     bias += learning_rate * error;
                 }
             }
+            // Loss de classification = proportion d'exemples mal classés cette epoch (E_in)
             loss_history.push_back(static_cast<double>(errors) / num_samples);
         } else {
+            // Régression : on minimise l'erreur quadratique moyenne par descente de
+            // gradient (règle delta). Le cours (slide 66) présente la pseudo-inverse
+            // W = (X^T X)^-1 X^T Y qui donne la solution exacte "en un coup" ; on a
+            // choisi la version itérative car elle évite d'inverser une matrice
+            // 3073x3073 pour des images, sans bibliothèque d'algèbre linéaire externe.
             double total_loss = 0.0;
-            for (int i = 0; i < num_samples; i++) {
-                // Calcul inline (optimisation de deploy)
+            for (int i : order) {
                 double sum = bias;
                 for (int j = 0; j < input_size; j++) {
                     sum += weights[j] * inputs[i * input_size + j];
                 }
-                double pred = sum; // valeur brute (régression)
+                double pred = sum; // sortie brute (pas de fonction signe en régression)
                 double error = labels[i] - pred;
                 total_loss += error * error;
 
+                // Gradient de (y - W.X)^2 par rapport à W : -2 * error * X
+                // (le facteur 2 est absorbé dans le learning_rate)
                 for (int j = 0; j < input_size; j++)
                     weights[j] += learning_rate * error * inputs[i * input_size + j];
                 bias += learning_rate * error;
             }
+            // Loss de régression = erreur quadratique moyenne (MSE) de l'epoch
             loss_history.push_back(total_loss / num_samples);
         }
     }
@@ -97,8 +139,13 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
 
 std::vector<double> LinearModel::train_from_images(const std::vector<std::string>& image_paths, 
                                                    const std::vector<double>& labels, 
-                                                   int target_w, int target_h, 
+                                                   int target_w, int target_h,
                                                    double learning_rate, int epochs) {
+    // Garde-fou : un label par image, sinon l'accès labels[i] déborde.
+    if (image_paths.size() != labels.size())
+        throw std::invalid_argument("train_from_images : " + std::to_string(image_paths.size()) +
+                                    " images mais " + std::to_string(labels.size()) + " labels");
+
     std::vector<double> flattened_inputs;
     std::vector<double> valid_labels;
 
@@ -121,6 +168,9 @@ void LinearModel::save(const char* filename) {
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save LinearModel");
+    // 17 chiffres significatifs : un double est restitue a l\'identique au load()
+    // (la precision par defaut de C++ est de 6 chiffres -> poids legerement degrades)
+    file << std::setprecision(17);
     
     // On sauvegarde le mode, le biais, puis les poids
     file << is_classification << "\n";

@@ -1,3 +1,12 @@
+// ============================================================================
+// RBF — Radial Basis Function Network, version "K centres" du cours :
+//   Phase 1 : K-Means (algorithme de Lloyd, slide 111) pour placer les centres.
+//   Phase 2 : moindres carrés W = (Phi^T Phi)^-1 Phi^T Y (slide 112), résolus
+//             par élimination de Gauss maison (aucune bibliothèque externe).
+//   NB : le cours écrit phi = exp(-gamma * ||x - mu||^2) ; ici on utilise
+//   exp(-d^2 / (2*sigma^2)), strictement équivalent avec gamma = 1/(2*sigma^2).
+// Auteurs : équipe (Antoine, YumYumae, Maxime Clément)
+// ============================================================================
 #include "RBF.hpp"
 #include "ImageLoader.hpp"
 #include "ModelPath.hpp"
@@ -5,6 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip>   // std::setprecision (sauvegarde sans perte)
 #include <stdexcept>
 #include <limits>
 #include <algorithm>
@@ -242,6 +252,22 @@ void RBF::fit_weights_least_squares(const std::vector<std::vector<double>>& Phi,
 std::vector<double> RBF::train(const std::vector<double>& inputs,
                                const std::vector<double>& labels,
                                int num_samples) {
+    // Garde-fous : tailles cohérentes avant d'entraîner.
+    // Le plus important : il faut au moins autant de samples que de centres,
+    // sinon l'initialisation du K-Means (tirage de centres SANS remise parmi
+    // les samples) tournerait en boucle infinie.
+    if (num_samples <= 0)
+        throw std::invalid_argument("train : num_samples doit etre > 0");
+    if (num_centers > num_samples)
+        throw std::invalid_argument("train : " + std::to_string(num_centers) + " centres demandes mais seulement " +
+                                    std::to_string(num_samples) + " samples (il faut num_centers <= num_samples)");
+    if (inputs.size() != static_cast<size_t>(num_samples) * static_cast<size_t>(input_size))
+        throw std::invalid_argument("train : inputs contient " + std::to_string(inputs.size()) +
+                                    " valeurs, attendu " + std::to_string(num_samples) + " x " + std::to_string(input_size));
+    if (labels.size() != static_cast<size_t>(num_samples) * static_cast<size_t>(output_size))
+        throw std::invalid_argument("train : labels contient " + std::to_string(labels.size()) +
+                                    " valeurs, attendu " + std::to_string(num_samples) + " x " + std::to_string(output_size));
+
     std::vector<double> loss_history;
     int labels_per_sample = output_size; // cohérence avec le format aplati des labels
 
@@ -339,6 +365,13 @@ std::vector<double> RBF::train_from_images(const std::vector<std::string>& image
                                             const std::vector<double>& labels,
                                             int target_w, int target_h) {
     int num_samples = static_cast<int>(image_paths.size());
+
+    // Garde-fou : output_size labels par image, sinon l'accès labels[i * output_size + k] déborde.
+    if (labels.size() != image_paths.size() * static_cast<size_t>(output_size))
+        throw std::invalid_argument("train_from_images : " + std::to_string(image_paths.size()) +
+                                    " images mais " + std::to_string(labels.size()) +
+                                    " labels (attendu " + std::to_string(output_size) + " par image)");
+
     std::vector<double> flattened_inputs;
     flattened_inputs.reserve(num_samples * target_w * target_h * 3);
 
@@ -366,6 +399,12 @@ std::vector<double> RBF::train_from_images(const std::vector<std::string>& image
 
 // Prédiction "brute" : on calcule les phi puis on fait weights * phi.
 std::vector<double> RBF::predict_raw(const std::vector<double>& inputs) const {
+    // Garde-fou : une entrée de mauvaise taille provoquerait une lecture hors
+    // limites dans compute_phi ; pybind11 la convertit en erreur Python lisible.
+    if (static_cast<int>(inputs.size()) != input_size)
+        throw std::invalid_argument("predict : l'entree a " + std::to_string(inputs.size()) +
+                                    " valeurs mais le modele en attend " + std::to_string(input_size));
+
     // Activation de la couche cachée
     std::vector<double> phi = compute_phi(inputs);
 
@@ -402,6 +441,9 @@ void RBF::save(const char* filename) const {
 
     std::ofstream file(path);
     if (!file.is_open()) throw std::runtime_error("Erreur save RBF : impossible d'ouvrir " + path);
+    // 17 chiffres significatifs : un double est restitue a l\'identique au load()
+    // (la precision par defaut de C++ est de 6 chiffres -> poids legerement degrades)
+    file << std::setprecision(17);
 
     // Métadonnées
     file << is_classification << "\n";

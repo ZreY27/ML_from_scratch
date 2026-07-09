@@ -1,7 +1,13 @@
+// ============================================================================
+// main_test.cpp — Cas de tests C++ des 4 modèles (validation avant application
+// au dataset réel, comme exigé par le syllabus).
+// Auteur : Maxime Clément (cas de tests) ; modèles testés : LinearModel & SVM
+// (Maxime Clément), MLP (Antoine), RBF (équipe).
+// ============================================================================
 #include <iostream>
 #include "LinearModel.hpp"
 #include "MLP.hpp"
-#include "SVM.h"
+#include "SVM.hpp"
 #include "RBF.hpp"
 
 int main() {
@@ -157,7 +163,7 @@ int main() {
     std::cout << "  (les predictions doivent etre proches des attendus)\n\n";
 
     // ==========================================
-    // TESTS SVM / SVR
+    // TESTS SVM
     // ==========================================
     std::vector<std::vector<double>> X_svm = {
         { 1.0,  1.0},
@@ -180,14 +186,6 @@ int main() {
         double x1 = X_xor_2d[i][1];
         X_xor_trans_2d.push_back({x0, x1, x0 * x1});
     }
-
-    std::vector<std::vector<double>> X_reg_2d;
-    for (int i = 0; i < 5; i++)
-        X_reg_2d.push_back({X_reg[i]});
-
-    std::vector<std::vector<double>> X_quad_2d;
-    for (int i = 0; i < 5; i++)
-        X_quad_2d.push_back({X_quad[i]});
 
     // TEST 6 : SVM separable
     SVM svm(2, 1.0);
@@ -220,8 +218,9 @@ int main() {
     std::cout << "  Accuracy : " << correct_7 << "/4 (attendu : < 4/4)\n\n";
 
     // TEST 8 : SVM XOR transforme
-    // FIX : C=1.0 -> C=0.001. Avec C=1.0, la regularisation (2*lr*C*w a chaque pas)
-    // ecrasait les poids avant que le gradient de la hinge loss ne puisse les faire grandir.
+    // lambda_reg = 0.001 : avec une regularisation forte (ex: 1.0), le terme
+    // 2*lr*lambda*w ecrasait les poids avant que le sous-gradient de la hinge
+    // loss ne puisse les faire grandir -> il faut un lambda faible ici.
     SVM svm_xor_t(3, 0.001);
     svm_xor_t.train(X_xor_trans_2d, Y_xor, 0.1, 5000);
 
@@ -235,32 +234,6 @@ int main() {
                   << (ok ? "  OK" : "  ERREUR") << "\n";
     }
     std::cout << "  Accuracy : " << correct_8 << "/4 (attendu : 4/4)\n\n";
-
-    // TEST 9 : SVR lineaire y = 2x + 1
-    SVM svr(1, 0.00001, 0.00001, SVM::REGRESSION);  // C=0 (aucune regularisation), epsilon quasi nul
-    svr.train(X_reg_2d, Y_reg, 0.00005, 500000);   // lr tres petit, beaucoup d'epochs pour compenser
-
-    std::cout << "=== TEST 9 : SVR lineaire (y = 2x + 1) ===\n";
-    for (int i = 0; i < static_cast<int>(X_reg_2d.size()); i++) {
-        double pred = svr.predict(X_reg_2d[i]);
-        std::cout << "  x=" << X_reg_2d[i][0]
-                  << "  pred=" << pred
-                  << "  attendu=" << Y_reg[i] << "\n";
-    }
-    std::cout << "  (predictions proches des attendus)\n\n";
-
-    // TEST 10 : SVR y = x2 (echec attendu)
-    SVM svr_quad(1, 1.0, 0.1, SVM::REGRESSION);
-    svr_quad.train(X_quad_2d, Y_quad, 0.01, 1000);
-
-    std::cout << "=== TEST 10 : SVR y=x2 (echec attendu) ===\n";
-    for (int i = 0; i < static_cast<int>(X_quad_2d.size()); i++) {
-        double pred = svr_quad.predict(X_quad_2d[i]);
-        std::cout << "  x=" << X_quad_2d[i][0]
-                  << "  pred=" << pred
-                  << "  attendu=" << Y_quad[i] << "\n";
-    }
-    std::cout << "  (predictions mauvaises -- SVR trop simple pour x2)\n\n";
 
     // ==========================================
     // TESTS RBF
