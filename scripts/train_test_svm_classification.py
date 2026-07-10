@@ -11,6 +11,7 @@ par classe en réutilisant le même tableau d'images.
 
 import os
 import sys
+import time
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
@@ -81,6 +82,7 @@ def main():
     # Un SVM binaire par classe (One-vs-Rest)
     models = {}
     losses_by_class = {}
+    t0 = time.perf_counter()
     for cls in classes:
         print(f"\n--- {cls} vs RESTE ---")
         Y = [1.0 if c == cls else -1.0 for c in train_classes]
@@ -90,6 +92,8 @@ def main():
         losses_by_class[cls] = list(svm.loss_history)
         if SHOW_PLOT:
             plt.plot(losses_by_class[cls], label=f"{cls} vs Rest")
+    elapsed = time.perf_counter() - t0
+    print(f"\n⏱  Temps d'entraînement (One-vs-Rest, {len(classes)} SVM) : {tu.format_duration(elapsed)}")
 
     # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
     predictor = reg.Predictor({"type": "onevsrest", "classes": classes},

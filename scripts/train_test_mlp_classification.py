@@ -9,6 +9,7 @@ Entraînement d'un MLP multi-classe (one-hot ±1) pour classer les images par ge
 
 import os
 import sys
+import time
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
@@ -67,8 +68,11 @@ def main():
     # MLP : entrée 3072 -> couche cachée -> 1 sortie par classe
     model = ML_ESGI.MLP([INPUT_SIZE, HIDDEN, len(classes)], is_classification=True)
     print("\nEntraînement du MLP...")
+    t0 = time.perf_counter()
     loss = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT,
                                    TRAINING_STEPS, LEARNING_RATE, DECAY)
+    elapsed = time.perf_counter() - t0
+    print(f"⏱  Temps d'entraînement (MLP, {TRAINING_STEPS} étapes) : {tu.format_duration(elapsed)}")
 
     # Évaluation sur le test
     predictor = reg.Predictor({"type": "mlp", "classes": classes}, model=model)

@@ -11,6 +11,15 @@ import os
 import glob
 import random
 
+
+def format_duration(seconds):
+    """Formate une durée (secondes) en texte lisible : '12.3 s' ou '2 min 05 s'."""
+    if seconds < 60:
+        return f"{seconds:.1f} s"
+    minutes, secs = divmod(int(round(seconds)), 60)
+    return f"{minutes} min {secs:02d} s"
+
+
 # Dossiers candidats pour les DLL du runtime gcc (libstdc++, libgcc...) — requis
 # sous Windows avant d'importer ML_ESGI. Surchargables via la variable
 # d'environnement ML_ESGI_DLL_DIR (utile pour la démo sur une autre machine).
