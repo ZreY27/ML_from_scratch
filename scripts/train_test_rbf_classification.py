@@ -14,6 +14,7 @@ Auteurs : équipe (modèle RBF) — script harmonisé avec les autres entraînem
 
 import os
 import sys
+import time
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
@@ -68,7 +69,10 @@ def main():
 
     print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto)...")
     # loss_history = [MSE finale] + [taux d'erreur train] (pas d'epochs : une seule passe)
+    t0 = time.perf_counter()
     loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
+    elapsed = time.perf_counter() - t0
+    print(f"⏱  Temps d'entraînement (RBF, {NUM_CENTERS} centres) : {tu.format_duration(elapsed)}")
     mse = loss_history[0]
     erreur_train = loss_history[1] if len(loss_history) > 1 else None
 
