@@ -96,6 +96,9 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
 
                 // Règle de Rosenblatt (slide 65) : W <- W + alpha * (Yk - g(Xk)) * Xk
                 // Si l'exemple est bien classé, (Yk - g(Xk)) = 0 : aucune mise à jour.
+                // Ex concret : Y=+1 mais g(X)=-1 -> error=+2 -> on AJOUTE 2*alpha*X aux
+                // poids : le score de cette image remonte, l'hyperplan pivote vers elle.
+                // (Y=-1 mais g(X)=+1 -> error=-2 -> on soustrait : le score descend.)
                 if (error != 0.0) {
                     errors++;
                     for (int j = 0; j < input_size; j++)

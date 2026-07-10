@@ -117,6 +117,49 @@ def log_to_tensorboard(run_name, losses=None, scalars=None, logdir="runs"):
     print(f"[TensorBoard] run loggé : {os.path.join(logdir, run_name)}  (visualiser : tensorboard --logdir {logdir})")
 
 
+def entrainer_variants(n_variants, entrainer, evaluer):
+    """Entraîne n variants du même modèle (initialisations différentes) et mesure chacun.
+
+    Pourquoi : un seul entraînement ne prouve rien — notre MLP a fait 58,8 % puis 82,7 %
+    sur les mêmes données, seule l'initialisation aléatoire changeait. On rapporte donc
+    la MOYENNE ± ÉCART-TYPE des accuracies (résultat robuste, pour le rapport) et on
+    garde le MEILLEUR variant (c'est lui qui est sauvegardé et servi par l'app).
+
+    NB : on moyenne des MESURES, jamais les POIDS des modèles (les neurones cachés d'un
+    MLP sont interchangeables : moyenner poids à poids deux réseaux corrects peut donner
+    un réseau cassé). Le split train/test reste fixe : on mesure la variabilité de
+    l'ENTRAÎNEMENT, pas celle du split.
+
+    entrainer() -> objet modèle entraîné (nouvelle init aléatoire à chaque appel)
+    evaluer(m)  -> accuracy test de ce variant
+    Retourne (resultats, stats) : resultats = [(accuracy, modele), ...] — on garde TOUS
+    les variants : le meilleur sert de référence, et l'ensemble complet sert au bagging
+    (moyenne des SORTIES des N variants, comme dans le script de cross-validation du cours).
+    """
+    import statistics
+
+    resultats = []
+    for i in range(n_variants):
+        print(f"\n--- Variant {i + 1}/{n_variants} ---")
+        modele = entrainer()
+        acc = evaluer(modele)
+        print(f"  -> accuracy test du variant {i + 1} : {acc:.1%}")
+        resultats.append((acc, modele))
+
+    accuracies = [acc for acc, _ in resultats]
+
+    stats = {
+        "n_variants": n_variants,
+        "accuracy_mean": statistics.mean(accuracies),
+        "accuracy_std": statistics.pstdev(accuracies),
+        "accuracy_runs": accuracies,                # les valeurs brutes : transparence totale
+        "accuracy_best": max(accuracies),           # meilleur variant individuel
+    }
+    print(f"\n[Variants] moyenne = {stats['accuracy_mean']:.1%} "
+          f"± {stats['accuracy_std']:.1%} | meilleur = {stats['accuracy_best']:.1%}")
+    return resultats, stats
+
+
 def evaluate(predictor, test_by_class, width, height):
     """Accuracy globale + par classe sur le set de test.
 

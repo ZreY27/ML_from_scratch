@@ -26,6 +26,7 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 LEARNING_RATE = 0.01
 EPOCHS = 500
+N_VARIANTS = 3        # entraînements complets avec inits différentes ; rapport = moyenne ± écart-type, app = meilleur
 MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
@@ -54,24 +55,48 @@ def main():
             train_classes.append(cls)
     print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
 
-    # Un perceptron binaire par classe (One-vs-Rest)
-    models = {}
-    losses_by_class = {}
-    for cls in classes:
-        print(f"\n--- {cls} vs RESTE ---")
-        labels = [1.0 if c == cls else -1.0 for c in train_classes]
-        model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
-        loss = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
-                                       LEARNING_RATE, EPOCHS)
-        models[cls] = model
-        losses_by_class[cls] = loss
-        if SHOW_PLOT:
+    # Un variant = un classifieur One-vs-Rest complet (1 perceptron binaire par classe).
+    # Chaque appel repart d'initialisations aléatoires différentes.
+    def entrainer_un_variant():
+        models, losses = {}, {}
+        for cls in classes:
+            print(f"  {cls} vs RESTE")
+            labels = [1.0 if c == cls else -1.0 for c in train_classes]
+            model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
+            losses[cls] = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
+                                                  LEARNING_RATE, EPOCHS)
+            models[cls] = model
+        return models, losses
+
+    def evaluer_un_variant(variant):
+        models, _ = variant
+        predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
+                                  sub_models=[models[c] for c in classes])
+        acc, _ = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return acc
+
+    # N variants -> moyenne ± écart-type (rapport), puis BAGGING : à l'inférence on
+    # moyenne les scores des N variants (moyenne des SORTIES, comme le
+    # bag_y_pred = np.mean(folds_y_pred) du cours), et argmax.
+    resultats, variant_stats = tu.entrainer_variants(
+        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+
+    variants_models = [models for _, (models, _) in resultats]     # les N dicts {classe: modèle}
+    _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])   # courbes du meilleur variant
+
+    if SHOW_PLOT:
+        for cls, loss in losses_by_class.items():
             plt.plot(loss, label=f"{cls} vs Rest")
 
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
-                              sub_models=[models[c] for c in classes])
+    # Le bag est le modèle déployé : évaluation détaillée (globale + par classe)
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "onevsrest", "classes": classes},
+        variants=[reg.Predictor({"type": "onevsrest", "classes": classes},
+                                sub_models=[m[c] for c in classes])
+                  for m in variants_models])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
     print(f"\nAccuracy test (One-vs-Rest) : {accuracy:.1%}")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
@@ -79,14 +104,16 @@ def main():
     # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
-        "learning_rate": LEARNING_RATE, "epochs": EPOCHS,
+        "learning_rate": LEARNING_RATE, "epochs": EPOCHS, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO, "strategy": "onevsrest",
     }
-    version, manifest = reg.save_onevsrest(
-        models, "linear_genres", "Perceptron - Genres (One-vs-Rest)",
-        base_type="linear", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+    version, manifest = reg.save_bag(
+        variants_models, "linear_genres", f"Perceptron - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="onevsrest", sub_base_type="linear",
+        classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
         metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+                 "variants": variant_stats,   # moyenne ± écart-type des N runs (pour le rapport)
                  "counts": tu.counts(data)},
     )
     print(f"\nClassifieur One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")

@@ -29,6 +29,7 @@ LAMBDA_REG = 0.001    # force de régularisation L2 (w -= lr·2·λ·w à chaque
                       # NB : ne pas confondre avec le C du soft-margin du cours (C ~ 1/λ : il pénalise les violations de marge, pas les poids)
 LEARNING_RATE = 0.001
 EPOCHS = 500
+N_VARIANTS = 3        # inits différentes ; rapport = moyenne ± écart-type, app = bagging des variants
 MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False     # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
@@ -78,23 +79,47 @@ def main():
     train_classes = [train_classes[i] for i in valid_idx]  # labels alignés sur les images valides
     print(f"Train : {len(X_train)} images | Test : {sum(len(v) for v in test.values())} images")
 
-    # Un SVM binaire par classe (One-vs-Rest)
-    models = {}
-    losses_by_class = {}
-    for cls in classes:
-        print(f"\n--- {cls} vs RESTE ---")
-        Y = [1.0 if c == cls else -1.0 for c in train_classes]
-        svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG)
-        svm.train(X_train, Y, LEARNING_RATE, EPOCHS)
-        models[cls] = svm
-        losses_by_class[cls] = list(svm.loss_history)
-        if SHOW_PLOT:
-            plt.plot(losses_by_class[cls], label=f"{cls} vs Rest")
+    # Un variant = un classifieur One-vs-Rest complet (1 SVM binaire par classe).
+    # Les images (X_train) restent en RAM : chaque variant ne fait que ré-instancier
+    # des SVM neufs (inits différentes) et ré-entraîner dessus — AUCUN rechargement disque.
+    def entrainer_un_variant():
+        models, losses = {}, {}
+        for cls in classes:
+            print(f"  {cls} vs RESTE")
+            Y = [1.0 if c == cls else -1.0 for c in train_classes]
+            svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG)
+            svm.train(X_train, Y, LEARNING_RATE, EPOCHS)
+            models[cls] = svm
+            losses[cls] = list(svm.loss_history)
+        return models, losses
 
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
-                              sub_models=[models[c] for c in classes])
+    def evaluer_un_variant(variant):
+        models, _ = variant
+        p = reg.Predictor({"type": "onevsrest", "classes": classes},
+                          sub_models=[models[c] for c in classes])
+        acc, _ = tu.evaluate(p, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return acc
+
+    # N variants -> moyenne ± écart-type (rapport), puis BAGGING (moyenne des sorties)
+    resultats, variant_stats = tu.entrainer_variants(
+        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+
+    variants_models = [models for _, (models, _) in resultats]
+    _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])
+
+    if SHOW_PLOT:
+        for cls, l in losses_by_class.items():
+            plt.plot(l, label=f"{cls} vs Rest")
+
+    # Le bag est le modèle déployé : évaluation détaillée
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "onevsrest", "classes": classes},
+        variants=[reg.Predictor({"type": "onevsrest", "classes": classes},
+                                sub_models=[m[c] for c in classes])
+                  for m in variants_models])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
     print(f"\nAccuracy test (SVM One-vs-Rest) : {accuracy:.1%}")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
@@ -103,13 +128,16 @@ def main():
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
         "lambda_reg": LAMBDA_REG, "learning_rate": LEARNING_RATE, "epochs": EPOCHS,
+        "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO, "strategy": "onevsrest",
     }
-    version, manifest = reg.save_onevsrest(
-        models, "svm_genres", "SVM - Genres (One-vs-Rest)",
-        base_type="svm", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+    version, manifest = reg.save_bag(
+        variants_models, "svm_genres", f"SVM - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="onevsrest", sub_base_type="svm",
+        classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
         metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+                 "variants": variant_stats,
                  "counts": tu.counts(data)},
     )
     print(f"\nSVM One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")

@@ -67,9 +67,13 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
         double total_loss = 0.0;
         for (int i : order) {
             // Hinge Loss
-            // margin = y * (W.X + b)
-            // si margin >= 1 : bien classifie avec marge suffisante
-            // si margin <  1 : mal classifie ou dans la marge
+            // margin = y * (W.X + b) : positif = bon cote de la frontiere,
+            // et sa valeur = "a quelle distance" du bon cote on se trouve.
+            // si margin >= 1 : bien classifie avec marge suffisante -> hinge = 0
+            // si 0 < margin < 1 : bien classifie mais DANS le couloir -> petite penalite
+            // si margin < 0 : mal classifie -> grosse penalite
+            // Ex : Y=+1, score=+2.3 -> margin=+2.3 (parfait, hors couloir)
+            //      Y=-1, score=+0.4 -> margin=-0.4 (mal classe : penalite 1.4)
             double score = predict_raw(X[i]);
             double margin = score * Y[i];
             double hinge = std::max(0.0, 1 - margin);

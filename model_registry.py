@@ -141,6 +141,49 @@ def save_onevsrest(models_by_class, model_id, name, base_type, width, height,
     return version, _write_manifest(models_dir, model_id, version, manifest)
 
 
+def save_bag(variants, model_id, name, base_type, classes, width, height,
+             models_dir=DEFAULT_MODELS_DIR, sub_base_type=None, metrics=None, hyperparams=None):
+    """Sauve un ensemble (bagging) de N variants du même modèle + son manifeste.
+
+    variants : liste de N modèles entraînés. Chaque variant est soit un modèle simple
+    (mlp/rbf), soit un dict {classe: modèle_binaire} (One-vs-Rest linear/svm).
+    À l'inférence, le Predictor moyennera les SORTIES des N variants (cf. Predictor.scores).
+
+    base_type     : "mlp" | "rbf" | "onevsrest"
+    sub_base_type : type des binaires si base_type == "onevsrest" ("linear" | "svm")
+    Retourne (version, chemin_du_manifeste).
+    """
+    version = next_version(model_id, models_dir)
+    weights = []
+    for k, variant in enumerate(variants, start=1):
+        if isinstance(variant, dict):  # One-vs-Rest : un fichier par classe
+            entry = {}
+            for cls, model in variant.items():
+                safe = str(cls).lower().replace(" ", "_")
+                f = f"{model_id}_v{version}_var{k}_{safe}.txt"
+                model.save(os.path.join(models_dir, f))
+                entry[cls] = f
+            weights.append(entry)
+        else:                          # modèle simple : un fichier par variant
+            f = f"{model_id}_v{version}_var{k}.txt"
+            variant.save(os.path.join(models_dir, f))
+            weights.append(f)
+
+    manifest = {
+        "id": model_id, "name": name, "version": version, "created": _now(),
+        "type": "bag", "base_type": base_type,
+        "width": width, "height": height,
+        "classes": list(classes), "weights": weights,
+    }
+    if sub_base_type:
+        manifest["sub_base_type"] = sub_base_type
+    if hyperparams:
+        manifest["hyperparameters"] = hyperparams
+    if metrics:
+        manifest["metrics"] = metrics
+    return version, _write_manifest(models_dir, model_id, version, manifest)
+
+
 def register_existing(model_id, name, model_type, classes, width, height, weights,
                       models_dir=DEFAULT_MODELS_DIR, base_type=None, version=None,
                       metrics=None, hyperparams=None):
@@ -189,35 +232,76 @@ class Predictor:
     et retourne le NOM de la classe prédite.
     """
 
-    def __init__(self, manifest, model=None, sub_models=None):
+    def __init__(self, manifest, model=None, sub_models=None, variants=None):
         self.manifest = manifest
         self.model = model            # modèle simple
         self.sub_models = sub_models  # One-vs-Rest : liste alignée sur classes
+        self.variants = variants      # bag : liste de Predictor (un par variant)
 
     @property
     def classes(self):
         return self.manifest["classes"]
 
+    def scores(self, x):
+        """Vecteur de scores bruts, un par classe (avant argmax).
+
+        C'est la brique du bagging : pour un "bag", on moyenne les vecteurs de
+        scores des N variants (moyenne des SORTIES, jamais des poids — comme le
+        `bag_y_pred = np.mean(folds_y_pred)` du cours), puis predict() fait l'argmax.
+        """
+        t = self.manifest["type"]
+        if t == "bag":
+            vecteurs = [v.scores(x) for v in self.variants]
+            n = len(vecteurs)
+            return [sum(v[i] for v in vecteurs) / n for i in range(len(vecteurs[0]))]
+        if t == "onevsrest":
+            return [m.predict_raw(x) for m in self.sub_models]
+        if t == "rbf":
+            return list(self.model.predict_raw(x))
+        if t == "mlp":
+            return list(self.model.predict(x))  # sorties tanh brutes = scores
+        raise ValueError(f"scores() non défini pour le type {t!r}")
+
     def predict(self, x):
         classes = self.classes
 
-        # One-vs-Rest : argmax sur le score brut de chaque binaire
-        if self.manifest["type"] == "onevsrest":
-            scores = [m.predict_raw(x) for m in self.sub_models]
-            return classes[scores.index(max(scores))]
+        # Types multi-classes (bag, One-vs-Rest, mlp, rbf) : argmax des scores
+        if self.manifest["type"] in ("bag", "onevsrest", "mlp", "rbf"):
+            s = self.scores(x)
+            if len(s) > 1:
+                return classes[s.index(max(s))]
+            return classes[0] if s[0] >= 0 else classes[1]  # binaire à 1 sortie
 
+        # Modèle simple binaire (linear/svm) : signe de la sortie
         out = self.model.predict(x)
-        # MLP/RBF renvoient un vecteur ; LinearModel/SVM un scalaire (+1/-1)
         if isinstance(out, (list, tuple)):
-            if len(out) == 1:  # sortie binaire (signe)
-                return classes[0] if out[0] >= 0 else classes[1]
-            return classes[out.index(max(out))]  # multi-classe : argmax
+            out = out[0]
         return classes[0] if out >= 0 else classes[1]
 
 
 def load_predictor(manifest, models_dir=DEFAULT_MODELS_DIR):
     """Construit un Predictor depuis un manifeste (charge les poids C++)."""
     import ML_ESGI as ml  # import tardif : suppose os.add_dll_directory déjà fait côté appelant
+
+    if manifest["type"] == "bag":
+        # Un bag = N variants ; chaque variant devient un Predictor interne,
+        # et le Predictor "bag" moyenne leurs scores à l'inférence.
+        variants = []
+        for entry in manifest["weights"]:
+            if isinstance(entry, dict):  # variant One-vs-Rest
+                subs = []
+                for cls in manifest["classes"]:
+                    model = _new_model(ml, manifest["sub_base_type"])
+                    model.load(os.path.join(models_dir, entry[cls]))
+                    subs.append(model)
+                variants.append(Predictor({"type": "onevsrest", "classes": manifest["classes"]},
+                                          sub_models=subs))
+            else:                        # variant simple (mlp/rbf)
+                model = _new_model(ml, manifest["base_type"])
+                model.load(os.path.join(models_dir, entry))
+                variants.append(Predictor({"type": manifest["base_type"], "classes": manifest["classes"]},
+                                          model=model))
+        return Predictor(manifest, variants=variants)
 
     if manifest["type"] == "onevsrest":
         subs = []

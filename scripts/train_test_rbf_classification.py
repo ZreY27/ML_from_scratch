@@ -29,6 +29,7 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 NUM_CENTERS = 50      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
 SIGMA = 0.0           # 0.0 = estimation automatique depuis les centres (d_max / sqrt(2K))
+N_VARIANTS = 3        # inits K-Means différentes ; rapport = moyenne ± écart-type, app = bagging
 MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 
@@ -62,19 +63,38 @@ def main():
         print(f"NUM_CENTERS ({NUM_CENTERS}) > images de train ({len(train_paths)}) : impossible.")
         return
 
-    # Un seul RBF multi-sorties (une sortie par classe, prédiction = argmax)
-    model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=len(classes),
-                        sigma=SIGMA, is_classification=True)
+    # Un variant = un RBF multi-sorties complet ; la variabilité vient de
+    # l'initialisation du K-Means (choix aléatoire des centres de départ).
+    def entrainer_un_variant():
+        model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=len(classes),
+                            sigma=SIGMA, is_classification=True)
+        # loss_history = [MSE finale] + [taux d'erreur train] (une seule passe, pas d'epochs)
+        loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return model, loss_history
 
-    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto)...")
-    # loss_history = [MSE finale] + [taux d'erreur train] (pas d'epochs : une seule passe)
-    loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
+    def evaluer_un_variant(variant):
+        model, _ = variant
+        p = reg.Predictor({"type": "rbf", "classes": classes}, model=model)
+        acc, _ = tu.evaluate(p, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return acc
+
+    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto, {N_VARIANTS} variants)...")
+    resultats, variant_stats = tu.entrainer_variants(
+        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+
+    variants_rbf = [m for _, (m, _) in resultats]
+    _, (_, loss_history) = max(resultats, key=lambda r: r[0])  # métriques du meilleur variant
     mse = loss_history[0]
     erreur_train = loss_history[1] if len(loss_history) > 1 else None
 
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "rbf", "classes": classes}, model=model)
+    # Le bag est le modèle déployé : évaluation détaillée
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "rbf", "classes": classes},
+        variants=[reg.Predictor({"type": "rbf", "classes": classes}, model=m)
+                  for m in variants_rbf])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
     print(f"\nAccuracy test (RBF) : {accuracy:.1%}")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
@@ -82,17 +102,18 @@ def main():
     # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
-        "num_centers": NUM_CENTERS, "sigma": SIGMA,
+        "num_centers": NUM_CENTERS, "sigma": SIGMA, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
     }
     metrics = {"accuracy": accuracy, "accuracy_per_class": per_class,
+               "variants": variant_stats,
                "mse_train": mse, "counts": tu.counts(data)}
     if erreur_train is not None:
         metrics["error_rate_train"] = erreur_train
 
-    version, manifest = reg.save_single(
-        model, "rbf_genres", "RBF - Genres (K-Means + moindres carrés)",
-        model_type="rbf", classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT,
+    version, manifest = reg.save_bag(
+        variants_rbf, "rbf_genres", f"RBF - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="rbf", classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT,
         models_dir=MODELS_DIR, hyperparams=hyperparams, metrics=metrics,
     )
     print(f"\nRBF sauvegardé : version v{version}\n  -> {manifest}")
