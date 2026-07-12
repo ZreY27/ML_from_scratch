@@ -30,7 +30,7 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 NUM_CENTERS = 50      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
 SIGMA = 0.0           # 0.0 = estimation automatique depuis les centres (d_max / sqrt(2K))
 N_VARIANTS = 3        # inits K-Means différentes ; rapport = moyenne ± écart-type, app = bagging
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 
 DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
@@ -95,7 +95,12 @@ def main():
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
     print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
           f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
-    print(f"\nAccuracy test (RBF) : {accuracy:.1%}")
+
+    # Accuracy sur le TRAIN : l'écart train - test mesure le sur-apprentissage.
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
@@ -105,7 +110,8 @@ def main():
         "num_centers": NUM_CENTERS, "sigma": SIGMA, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
     }
-    metrics = {"accuracy": accuracy, "accuracy_per_class": per_class,
+    metrics = {"accuracy": accuracy, "accuracy_train": accuracy_train,
+               "accuracy_per_class": per_class,
                "variants": variant_stats,
                "mse_train": mse, "counts": tu.counts(data)}
     if erreur_train is not None:

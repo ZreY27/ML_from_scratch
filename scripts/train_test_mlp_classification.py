@@ -26,9 +26,9 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 HIDDEN = 128
 LEARNING_RATE = 0.01
 DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
-TRAINING_STEPS = 450000  # ~83 passes sur 2160 images (60000 n'en ferait plus que ~28 avec le plafond à 900)
+TRAINING_STEPS = 850000  # ~42 passes sur ~20 400 images de train (plafond 8500/classe, split 80%)
 N_VARIANTS = 5       # le MLP est LE plus sensible à l'init (58,8 % vs 82,7 % observés à code égal !)
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -94,7 +94,13 @@ def main():
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
     print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
           f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
-    print(f"\nAccuracy test (MLP) : {accuracy:.1%}")
+
+    # Accuracy sur le TRAIN : l'écart train - test mesure le sur-apprentissage
+    # (particulièrement parlant pour le MLP, qui a ~400 000 poids).
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
@@ -111,7 +117,8 @@ def main():
         base_type="mlp", classes=classes,
         width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
-        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+        metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,
+                 "accuracy_per_class": per_class,
                  "variants": variant_stats,
                  "counts": tu.counts(data),
                  "final_loss": loss[-1] if loss else None},

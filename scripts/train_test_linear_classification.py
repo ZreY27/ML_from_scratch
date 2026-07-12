@@ -27,7 +27,7 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 LEARNING_RATE = 0.01
 EPOCHS = 500
 N_VARIANTS = 3        # entraînements complets avec inits différentes ; rapport = moyenne ± écart-type, app = meilleur
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -97,7 +97,14 @@ def main():
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
     print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
           f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
-    print(f"\nAccuracy test (One-vs-Rest) : {accuracy:.1%}")
+
+    # Accuracy sur le TRAIN (mêmes images que l'entraînement) : l'écart train - test
+    # révèle le sur-apprentissage (train >> test = par-coeur) ou le sous-apprentissage
+    # (les deux basses = modèle trop simple). C'est la mesure clé pour le rapport.
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
@@ -112,7 +119,8 @@ def main():
         base_type="onevsrest", sub_base_type="linear",
         classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
-        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+        metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,
+                 "accuracy_per_class": per_class,
                  "variants": variant_stats,   # moyenne ± écart-type des N runs (pour le rapport)
                  "counts": tu.counts(data)},
     )
