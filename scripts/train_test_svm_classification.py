@@ -51,7 +51,62 @@ def load_images_2d(paths):
             X.append(list(ML_ESGI.load_and_resize_image(path, IMAGE_WIDTH, IMAGE_HEIGHT)))
             valid_idx.append(i)
         except Exception as e:
-            print(f"Temps d'entrainement ({N_VARIANTS} variants One-vs-Rest) : {tu.format_duration(elapsed)}")
+            print(f"  Image ignorée : {path} ({e})")
+    return X, valid_idx
+
+
+def main():
+    classes = tu.discover_classes(DATASETS_DIR)
+    if len(classes) < 2:
+        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
+        return
+
+    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
+    print(f"Classes : {classes}")
+    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
+
+    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
+
+    # Liste ordonnée (chemin, classe réelle) pour le train
+    train_paths, train_classes = [], []
+    for cls in classes:
+        for path in train[cls]:
+            train_paths.append(path)
+            train_classes.append(cls)
+
+    # Chargement des images d'entraînement EN UNE FOIS (réutilisées pour chaque SVM binaire)
+    print("Chargement des images d'entraînement en mémoire (SVM = entrée 2D)...")
+    X_train, valid_idx = load_images_2d(train_paths)
+    train_classes = [train_classes[i] for i in valid_idx]  # labels alignés sur les images valides
+    print(f"Train : {len(X_train)} images | Test : {sum(len(v) for v in test.values())} images")
+
+    # Un variant = un classifieur One-vs-Rest complet (1 SVM binaire par classe).
+    # Les images (X_train) restent en RAM : chaque variant ne fait que ré-instancier
+    # des SVM neufs (inits différentes) et ré-entraîner dessus — AUCUN rechargement disque.
+    def entrainer_un_variant():
+        models, losses = {}, {}
+        for cls in classes:
+            print(f"  {cls} vs RESTE")
+            Y = [1.0 if c == cls else -1.0 for c in train_classes]
+            svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG)
+            svm.train(X_train, Y, LEARNING_RATE, EPOCHS)
+            models[cls] = svm
+            losses[cls] = list(svm.loss_history)
+        return models, losses
+
+    def evaluer_un_variant(variant):
+        models, _ = variant
+        p = reg.Predictor({"type": "onevsrest", "classes": classes},
+                          sub_models=[models[c] for c in classes])
+        acc, _ = tu.evaluate(p, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return acc
+
+    # N variants -> moyenne ± écart-type (rapport), puis BAGGING (moyenne des sorties)
+    t0 = time.perf_counter()
+    resultats, variant_stats = tu.entrainer_variants(
+        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+    elapsed = time.perf_counter() - t0
+    print(f"Temps d'entrainement ({N_VARIANTS} variants) : {tu.format_duration(elapsed)}")
 
     variants_models = [models for _, (models, _) in resultats]
     _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])

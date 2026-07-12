@@ -23,9 +23,14 @@ MLP::MLP(const std::vector<int>& npl, bool is_classification) : is_classificatio
     L = d.size() - 1;
 
     // Générateur de nombres aléatoires pour initialiser les poids entre -1.0 et 1.0.
-    // Graine fixe (42) -> initialisation reproductible d'une exécution à l'autre
-    // (même convention que LinearModel/SVM : permet de comparer les runs TensorBoard).
-    std::mt19937 gen(42);
+    // Graine = 42 + compteur d'instances : chaque MLP construit reçoit une graine
+    // DIFFÉRENTE (42, 43, 44...) mais la séquence est REPRODUCTIBLE d'une exécution
+    // à l'autre. Indispensable pour le seeder/bagging : les N variants doivent partir
+    // d'initialisations différentes (sinon ils seraient identiques et la moyenne des
+    // sorties n'apporterait rien). Une graine fixe unique rendrait tous les variants
+    // identiques -> variance nulle, bagging inutile.
+    static unsigned int compteur_instances = 0;
+    std::mt19937 gen(42 + compteur_instances++);
     std::uniform_real_distribution<> dis(-1.0, 1.0);
 
     // Allocation des 3 structures principales du réseau (de la couche 0 à L)
