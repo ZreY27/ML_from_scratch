@@ -48,7 +48,44 @@ def smooth(points, factor=0.99):
 def main():
     classes = tu.discover_classes(DATASETS_DIR)
     if len(classes) < 2:
-        print(f"Temps d'entrainement ({N_VARIANTS} variants MLP) : {tu.format_duration(elapsed)}")
+        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
+        return
+
+    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
+    print(f"Classes : {classes}")
+    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
+
+    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
+
+    # Chemins + labels one-hot (±1) aplatis, alignés
+    train_paths, labels_flat = [], []
+    for cls in classes:
+        onehot = [1.0 if c == cls else -1.0 for c in classes]
+        for path in train[cls]:
+            train_paths.append(path)
+            labels_flat.extend(onehot)
+    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
+
+    # Un variant = un MLP complet (3072 -> couche cachée -> 1 sortie par classe),
+    # avec une initialisation aléatoire différente à chaque appel.
+    def entrainer_un_variant():
+        model = ML_ESGI.MLP([INPUT_SIZE, HIDDEN, len(classes)], is_classification=True)
+        loss = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT,
+                                       TRAINING_STEPS, LEARNING_RATE, DECAY)
+        return model, loss
+
+    def evaluer_un_variant(variant):
+        model, _ = variant
+        p = reg.Predictor({"type": "mlp", "classes": classes}, model=model)
+        acc, _ = tu.evaluate(p, test, IMAGE_WIDTH, IMAGE_HEIGHT)
+        return acc
+
+    # N variants -> moyenne ± écart-type (rapport), puis BAGGING (moyenne des sorties)
+    t0 = time.perf_counter()
+    resultats, variant_stats = tu.entrainer_variants(
+        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+    elapsed = time.perf_counter() - t0
+    print(f"Temps d'entrainement ({N_VARIANTS} variants) : {tu.format_duration(elapsed)}")
 
     variants_mlp = [m for _, (m, _) in resultats]
     _, (_, loss) = max(resultats, key=lambda r: r[0])  # courbe de loss du meilleur variant
