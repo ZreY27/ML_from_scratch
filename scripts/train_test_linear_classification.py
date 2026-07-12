@@ -10,6 +10,7 @@ Entraînement One-vs-Rest de perceptrons linéaires pour classer les images par 
 
 import os
 import sys
+import time
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT_DIR)  # pour importer model_registry (situé à la racine)
@@ -38,48 +39,7 @@ MODELS_DIR = os.path.join(ROOT_DIR, "models")
 def main():
     classes = tu.discover_classes(DATASETS_DIR)
     if len(classes) < 2:
-        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
-        return
-
-    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
-    print(f"Classes : {classes}")
-    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
-
-    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
-
-    # Liste ordonnée (chemin, classe réelle) pour le train
-    train_paths, train_classes = [], []
-    for cls in classes:
-        for path in train[cls]:
-            train_paths.append(path)
-            train_classes.append(cls)
-    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
-
-    # Un variant = un classifieur One-vs-Rest complet (1 perceptron binaire par classe).
-    # Chaque appel repart d'initialisations aléatoires différentes.
-    def entrainer_un_variant():
-        models, losses = {}, {}
-        for cls in classes:
-            print(f"  {cls} vs RESTE")
-            labels = [1.0 if c == cls else -1.0 for c in train_classes]
-            model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
-            losses[cls] = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
-                                                  LEARNING_RATE, EPOCHS)
-            models[cls] = model
-        return models, losses
-
-    def evaluer_un_variant(variant):
-        models, _ = variant
-        predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
-                                  sub_models=[models[c] for c in classes])
-        acc, _ = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
-        return acc
-
-    # N variants -> moyenne ± écart-type (rapport), puis BAGGING : à l'inférence on
-    # moyenne les scores des N variants (moyenne des SORTIES, comme le
-    # bag_y_pred = np.mean(folds_y_pred) du cours), et argmax.
-    resultats, variant_stats = tu.entrainer_variants(
-        N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
+        print(f"Temps d'entrainement ({N_VARIANTS} variants One-vs-Rest) : {tu.format_duration(elapsed)}")
 
     variants_models = [models for _, (models, _) in resultats]     # les N dicts {classe: modèle}
     _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])   # courbes du meilleur variant

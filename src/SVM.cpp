@@ -64,6 +64,19 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
 
     for (int e = 0; e < epochs; e++) {
         std::shuffle(order.begin(), order.end(), rng);
+
+        // Barre de progression (même style que LinearModel/MLP/RBF)
+        if (e % (epochs / 100 > 0 ? epochs / 100 : 1) == 0 || e == epochs - 1) {
+            int progress = (int)((float)e / epochs * 100.0);
+            std::cout << "\rTraining: [";
+            for (int p = 0; p < 50; ++p) {
+                if (p < progress / 2) std::cout << "=";
+                else if (p == progress / 2) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << progress << "% " << std::flush;
+        }
+
         double total_loss = 0.0;
         for (int i : order) {
             // Hinge Loss
@@ -97,6 +110,7 @@ void SVM::train(const std::vector<std::vector<double> > &X, const std::vector<do
         total_loss /= static_cast<double>(X.size());
         loss_history.push_back(total_loss);
     }
+    std::cout << "\rTraining: [==================================================] 100% \n" << std::flush;
 }
 
 void SVM::save(const char *filename) {

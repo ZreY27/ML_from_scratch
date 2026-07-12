@@ -22,9 +22,10 @@ MLP::MLP(const std::vector<int>& npl, bool is_classification) : is_classificatio
     d = npl;
     L = d.size() - 1;
 
-    // Générateur de nombres aléatoires pour initialiser les poids entre -1.0 et 1.0
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    // Générateur de nombres aléatoires pour initialiser les poids entre -1.0 et 1.0.
+    // Graine fixe (42) -> initialisation reproductible d'une exécution à l'autre
+    // (même convention que LinearModel/SVM : permet de comparer les runs TensorBoard).
+    std::mt19937 gen(42);
     std::uniform_real_distribution<> dis(-1.0, 1.0);
 
     // Allocation des 3 structures principales du réseau (de la couche 0 à L)
@@ -115,8 +116,8 @@ std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const 
         throw std::invalid_argument("train : outputs contient " + std::to_string(dataset_expected_outputs.size()) +
                                     " valeurs, attendu " + std::to_string(num_samples) + " x " + std::to_string(d[L]));
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    // Graine fixe (42) -> même séquence d'échantillons SGD à chaque exécution (reproductible)
+    std::mt19937 gen(42);
     std::uniform_int_distribution<> dist_k(0, num_samples - 1);
     std::vector<double> loss_history;
 
