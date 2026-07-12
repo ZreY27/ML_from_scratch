@@ -27,7 +27,8 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 LEARNING_RATE = 0.01
 EPOCHS = 500
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+N_VARIANTS = 3        # entraînements complets avec inits différentes ; rapport = moyenne ± écart-type, app = meilleur
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -38,59 +39,49 @@ MODELS_DIR = os.path.join(ROOT_DIR, "models")
 def main():
     classes = tu.discover_classes(DATASETS_DIR)
     if len(classes) < 2:
-        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
-        return
+        print(f"Temps d'entrainement ({N_VARIANTS} variants One-vs-Rest) : {tu.format_duration(elapsed)}")
 
-    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
-    print(f"Classes : {classes}")
-    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
+    variants_models = [models for _, (models, _) in resultats]     # les N dicts {classe: modèle}
+    _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])   # courbes du meilleur variant
 
-    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
-
-    # Liste ordonnée (chemin, classe réelle) pour le train
-    train_paths, train_classes = [], []
-    for cls in classes:
-        for path in train[cls]:
-            train_paths.append(path)
-            train_classes.append(cls)
-    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
-
-    # Un perceptron binaire par classe (One-vs-Rest)
-    models = {}
-    losses_by_class = {}
-    t0 = time.perf_counter()
-    for cls in classes:
-        print(f"\n--- {cls} vs RESTE ---")
-        labels = [1.0 if c == cls else -1.0 for c in train_classes]
-        model = ML_ESGI.LinearModel(INPUT_SIZE, is_classification=True)
-        loss = model.train_from_images(train_paths, labels, IMAGE_WIDTH, IMAGE_HEIGHT,
-                                       LEARNING_RATE, EPOCHS)
-        models[cls] = model
-        losses_by_class[cls] = loss
-        if SHOW_PLOT:
+    if SHOW_PLOT:
+        for cls, loss in losses_by_class.items():
             plt.plot(loss, label=f"{cls} vs Rest")
-    elapsed = time.perf_counter() - t0
-    print(f"\n⏱  Temps d'entraînement (One-vs-Rest, {len(classes)} perceptrons) : {tu.format_duration(elapsed)}")
 
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
-                              sub_models=[models[c] for c in classes])
+    # Le bag est le modèle déployé : évaluation détaillée (globale + par classe)
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "onevsrest", "classes": classes},
+        variants=[reg.Predictor({"type": "onevsrest", "classes": classes},
+                                sub_models=[m[c] for c in classes])
+                  for m in variants_models])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
-    print(f"\nAccuracy test (One-vs-Rest) : {accuracy:.1%}")
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
+
+    # Accuracy sur le TRAIN (mêmes images que l'entraînement) : l'écart train - test
+    # révèle le sur-apprentissage (train >> test = par-coeur) ou le sous-apprentissage
+    # (les deux basses = modèle trop simple). C'est la mesure clé pour le rapport.
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
     # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
-        "learning_rate": LEARNING_RATE, "epochs": EPOCHS,
+        "learning_rate": LEARNING_RATE, "epochs": EPOCHS, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO, "strategy": "onevsrest",
     }
-    version, manifest = reg.save_onevsrest(
-        models, "linear_genres", "Perceptron - Genres (One-vs-Rest)",
-        base_type="linear", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+    version, manifest = reg.save_bag(
+        variants_models, "linear_genres", f"Perceptron - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="onevsrest", sub_base_type="linear",
+        classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
-        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+        metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,
+                 "accuracy_per_class": per_class,
+                 "variants": variant_stats,   # moyenne ± écart-type des N runs (pour le rapport)
                  "counts": tu.counts(data)},
     )
     print(f"\nClassifieur One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")

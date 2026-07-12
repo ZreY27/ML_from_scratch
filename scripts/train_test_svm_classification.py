@@ -30,7 +30,8 @@ LAMBDA_REG = 0.001    # force de régularisation L2 (w -= lr·2·λ·w à chaque
                       # NB : ne pas confondre avec le C du soft-margin du cours (C ~ 1/λ : il pénalise les violations de marge, pas les poids)
 LEARNING_RATE = 0.001
 EPOCHS = 500
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+N_VARIANTS = 3        # inits différentes ; rapport = moyenne ± écart-type, app = bagging des variants
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False     # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -50,56 +51,30 @@ def load_images_2d(paths):
             X.append(list(ML_ESGI.load_and_resize_image(path, IMAGE_WIDTH, IMAGE_HEIGHT)))
             valid_idx.append(i)
         except Exception as e:
-            print(f"  Image ignorée : {path} ({e})")
-    return X, valid_idx
+            print(f"Temps d'entrainement ({N_VARIANTS} variants One-vs-Rest) : {tu.format_duration(elapsed)}")
 
+    variants_models = [models for _, (models, _) in resultats]
+    _, (_, losses_by_class) = max(resultats, key=lambda r: r[0])
 
-def main():
-    classes = tu.discover_classes(DATASETS_DIR)
-    if len(classes) < 2:
-        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
-        return
+    if SHOW_PLOT:
+        for cls, l in losses_by_class.items():
+            plt.plot(l, label=f"{cls} vs Rest")
 
-    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
-    print(f"Classes : {classes}")
-    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
-
-    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
-
-    # Liste ordonnée (chemin, classe réelle) pour le train
-    train_paths, train_classes = [], []
-    for cls in classes:
-        for path in train[cls]:
-            train_paths.append(path)
-            train_classes.append(cls)
-
-    # Chargement des images d'entraînement EN UNE FOIS (réutilisées pour chaque SVM binaire)
-    print("Chargement des images d'entraînement en mémoire (SVM = entrée 2D)...")
-    X_train, valid_idx = load_images_2d(train_paths)
-    train_classes = [train_classes[i] for i in valid_idx]  # labels alignés sur les images valides
-    print(f"Train : {len(X_train)} images | Test : {sum(len(v) for v in test.values())} images")
-
-    # Un SVM binaire par classe (One-vs-Rest)
-    models = {}
-    losses_by_class = {}
-    t0 = time.perf_counter()
-    for cls in classes:
-        print(f"\n--- {cls} vs RESTE ---")
-        Y = [1.0 if c == cls else -1.0 for c in train_classes]
-        svm = ML_ESGI.SVM(INPUT_SIZE, lambda_reg=LAMBDA_REG)
-        svm.train(X_train, Y, LEARNING_RATE, EPOCHS)
-        models[cls] = svm
-        losses_by_class[cls] = list(svm.loss_history)
-        if SHOW_PLOT:
-            plt.plot(losses_by_class[cls], label=f"{cls} vs Rest")
-    elapsed = time.perf_counter() - t0
-    print(f"\n⏱  Temps d'entraînement (One-vs-Rest, {len(classes)} SVM) : {tu.format_duration(elapsed)}")
-
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "onevsrest", "classes": classes},
-                              sub_models=[models[c] for c in classes])
+    # Le bag est le modèle déployé : évaluation détaillée
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "onevsrest", "classes": classes},
+        variants=[reg.Predictor({"type": "onevsrest", "classes": classes},
+                                sub_models=[m[c] for c in classes])
+                  for m in variants_models])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
-    print(f"\nAccuracy test (SVM One-vs-Rest) : {accuracy:.1%}")
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
+
+    # Accuracy sur le TRAIN : l'écart train - test mesure le sur-apprentissage.
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
@@ -107,13 +82,17 @@ def main():
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
         "lambda_reg": LAMBDA_REG, "learning_rate": LEARNING_RATE, "epochs": EPOCHS,
+        "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO, "strategy": "onevsrest",
     }
-    version, manifest = reg.save_onevsrest(
-        models, "svm_genres", "SVM - Genres (One-vs-Rest)",
-        base_type="svm", width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
+    version, manifest = reg.save_bag(
+        variants_models, "svm_genres", f"SVM - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="onevsrest", sub_base_type="svm",
+        classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
-        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+        metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,
+                 "accuracy_per_class": per_class,
+                 "variants": variant_stats,
                  "counts": tu.counts(data)},
     )
     print(f"\nSVM One-vs-Rest sauvegardé : version v{version}\n  -> {manifest}")

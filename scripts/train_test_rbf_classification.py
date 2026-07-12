@@ -30,7 +30,8 @@ IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 NUM_CENTERS = 50      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
 SIGMA = 0.0           # 0.0 = estimation automatique depuis les centres (d_max / sqrt(2K))
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+N_VARIANTS = 3        # inits K-Means différentes ; rapport = moyenne ± écart-type, app = bagging
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 
 DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
@@ -40,63 +41,46 @@ MODELS_DIR = os.path.join(ROOT_DIR, "models")
 def main():
     classes = tu.discover_classes(DATASETS_DIR)
     if len(classes) < 2:
-        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
-        return
+        print(f"Temps d'entrainement ({N_VARIANTS} variants RBF) : {tu.format_duration(elapsed)}")
 
-    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
-    print(f"Classes : {classes}")
-    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
-
-    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
-
-    # Chemins + labels one-hot (±1) alignés, aplatis comme attendu par le C++
-    train_paths, labels_flat = [], []
-    for k, cls in enumerate(classes):
-        onehot = [-1.0] * len(classes)
-        onehot[k] = 1.0
-        for path in train[cls]:
-            train_paths.append(path)
-            labels_flat.extend(onehot)
-    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
-
-    if NUM_CENTERS > len(train_paths):
-        print(f"NUM_CENTERS ({NUM_CENTERS}) > images de train ({len(train_paths)}) : impossible.")
-        return
-
-    # Un seul RBF multi-sorties (une sortie par classe, prédiction = argmax)
-    model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=len(classes),
-                        sigma=SIGMA, is_classification=True)
-
-    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto)...")
-    # loss_history = [MSE finale] + [taux d'erreur train] (pas d'epochs : une seule passe)
-    t0 = time.perf_counter()
-    loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
-    elapsed = time.perf_counter() - t0
-    print(f"⏱  Temps d'entraînement (RBF, {NUM_CENTERS} centres) : {tu.format_duration(elapsed)}")
+    variants_rbf = [m for _, (m, _) in resultats]
+    _, (_, loss_history) = max(resultats, key=lambda r: r[0])  # métriques du meilleur variant
     mse = loss_history[0]
     erreur_train = loss_history[1] if len(loss_history) > 1 else None
 
-    # Évaluation sur le test (réutilise la logique d'inférence du Predictor, comme l'app)
-    predictor = reg.Predictor({"type": "rbf", "classes": classes}, model=model)
+    # Le bag est le modèle déployé : évaluation détaillée
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "rbf", "classes": classes},
+        variants=[reg.Predictor({"type": "rbf", "classes": classes}, model=m)
+                  for m in variants_rbf])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
-    print(f"\nAccuracy test (RBF) : {accuracy:.1%}")
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
+
+    # Accuracy sur le TRAIN : l'écart train - test mesure le sur-apprentissage.
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
     # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
-        "num_centers": NUM_CENTERS, "sigma": SIGMA,
+        "num_centers": NUM_CENTERS, "sigma": SIGMA, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
     }
-    metrics = {"accuracy": accuracy, "accuracy_per_class": per_class,
+    metrics = {"accuracy": accuracy, "accuracy_train": accuracy_train,
+               "accuracy_per_class": per_class,
+               "variants": variant_stats,
                "mse_train": mse, "counts": tu.counts(data)}
     if erreur_train is not None:
         metrics["error_rate_train"] = erreur_train
 
-    version, manifest = reg.save_single(
-        model, "rbf_genres", "RBF - Genres (K-Means + moindres carrés)",
-        model_type="rbf", classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT,
+    version, manifest = reg.save_bag(
+        variants_rbf, "rbf_genres", f"RBF - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="rbf", classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT,
         models_dir=MODELS_DIR, hyperparams=hyperparams, metrics=metrics,
     )
     print(f"\nRBF sauvegardé : version v{version}\n  -> {manifest}")

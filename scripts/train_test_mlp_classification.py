@@ -27,8 +27,9 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 HIDDEN = 128
 LEARNING_RATE = 0.01
 DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
-TRAINING_STEPS = 450000  # ~83 passes sur 2160 images (60000 n'en ferait plus que ~28 avec le plafond à 900)
-MAX_PER_CLASS = 4500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+TRAINING_STEPS = 850000  # ~42 passes sur ~20 400 images de train (plafond 8500/classe, split 80%)
+N_VARIANTS = 5       # le MLP est LE plus sensible à l'init (58,8 % vs 82,7 % observés à code égal !)
+MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
@@ -47,37 +48,26 @@ def smooth(points, factor=0.99):
 def main():
     classes = tu.discover_classes(DATASETS_DIR)
     if len(classes) < 2:
-        print(f"Il faut au moins 2 classes (sous-dossiers d'images) dans {DATASETS_DIR}. Trouvé : {classes}")
-        return
+        print(f"Temps d'entrainement ({N_VARIANTS} variants MLP) : {tu.format_duration(elapsed)}")
 
-    data = tu.load_dataset(DATASETS_DIR, classes, max_per_class=MAX_PER_CLASS)
-    print(f"Classes : {classes}")
-    print(f"Images par classe (plafond {MAX_PER_CLASS}) : {tu.counts(data)}")
+    variants_mlp = [m for _, (m, _) in resultats]
+    _, (_, loss) = max(resultats, key=lambda r: r[0])  # courbe de loss du meilleur variant
 
-    train, test = tu.train_test_split(data, test_ratio=TEST_RATIO)
-
-    # Chemins + labels one-hot (±1) aplatis, alignés
-    train_paths, labels_flat = [], []
-    for cls in classes:
-        onehot = [1.0 if c == cls else -1.0 for c in classes]
-        for path in train[cls]:
-            train_paths.append(path)
-            labels_flat.extend(onehot)
-    print(f"Train : {len(train_paths)} images | Test : {sum(len(v) for v in test.values())} images")
-
-    # MLP : entrée 3072 -> couche cachée -> 1 sortie par classe
-    model = ML_ESGI.MLP([INPUT_SIZE, HIDDEN, len(classes)], is_classification=True)
-    print("\nEntraînement du MLP...")
-    t0 = time.perf_counter()
-    loss = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT,
-                                   TRAINING_STEPS, LEARNING_RATE, DECAY)
-    elapsed = time.perf_counter() - t0
-    print(f"⏱  Temps d'entraînement (MLP, {TRAINING_STEPS} étapes) : {tu.format_duration(elapsed)}")
-
-    # Évaluation sur le test
-    predictor = reg.Predictor({"type": "mlp", "classes": classes}, model=model)
+    # Le bag est le modèle déployé : évaluation détaillée
+    predictor = reg.Predictor(
+        {"type": "bag", "base_type": "mlp", "classes": classes},
+        variants=[reg.Predictor({"type": "mlp", "classes": classes}, model=m)
+                  for m in variants_mlp])
     accuracy, per_class = tu.evaluate(predictor, test, IMAGE_WIDTH, IMAGE_HEIGHT)
-    print(f"\nAccuracy test (MLP) : {accuracy:.1%}")
+    print(f"\nBagging ({N_VARIANTS} variants) : {accuracy:.1%} "
+          f"(meilleur variant seul : {variant_stats['accuracy_best']:.1%})")
+
+    # Accuracy sur le TRAIN : l'écart train - test mesure le sur-apprentissage
+    # (particulièrement parlant pour le MLP, qui a ~400 000 poids).
+    accuracy_train, _ = tu.evaluate(predictor, train, IMAGE_WIDTH, IMAGE_HEIGHT)
+
+    print(f"\nAccuracy TRAIN : {accuracy_train:.1%} | TEST : {accuracy:.1%} "
+          f"(écart = {accuracy_train - accuracy:+.1%})")
     for c, a in per_class.items():
         print(f"  {c} : {a:.1%}" if a is not None else f"  {c} : (pas d'image de test)")
 
@@ -86,13 +76,17 @@ def main():
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
         "architecture": [INPUT_SIZE, HIDDEN, len(classes)], "hidden": HIDDEN,
         "learning_rate": LEARNING_RATE, "decay": DECAY, "training_steps": TRAINING_STEPS,
+        "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
     }
-    version, manifest = reg.save_single(
-        model, "mlp_genres", "MLP - Genres", "mlp", classes,
-        IMAGE_WIDTH, IMAGE_HEIGHT, models_dir=MODELS_DIR,
+    version, manifest = reg.save_bag(
+        variants_mlp, "mlp_genres", f"MLP - Genres (Bagging {N_VARIANTS} variants)",
+        base_type="mlp", classes=classes,
+        width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
-        metrics={"accuracy": accuracy, "accuracy_per_class": per_class,
+        metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,
+                 "accuracy_per_class": per_class,
+                 "variants": variant_stats,
                  "counts": tu.counts(data),
                  "final_loss": loss[-1] if loss else None},
     )
