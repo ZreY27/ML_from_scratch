@@ -1,7 +1,7 @@
 """
 visualize_resized.py — Visualise ce que les modèles "voient" réellement :
 l'image originale à côté de sa version passée par le pipeline C++
-(`ML_ESGI.load_and_resize_image` : resize nearest-neighbor + normalisation /255).
+(`ML_ESGI.load_and_resize_image` : resize area averaging + normalisation /255).
 
 Utilise le VRAI loader C++ (pas une réimplémentation Python) : ce qui s'affiche
 est exactement le vecteur 32x32x3 donné aux modèles.
@@ -109,7 +109,7 @@ def main():
     n_cols = 1 + len(args.sizes)
     fig, axes = plt.subplots(len(rows), n_cols,
                              figsize=(2.6 * n_cols, 2.6 * len(rows)), squeeze=False)
-    fig.suptitle("Pipeline C++ load_and_resize_image — nearest-neighbor + normalisation /255",
+    fig.suptitle("Pipeline C++ load_and_resize_image — resize area averaging + normalisation /255",
                  fontsize=11)
 
     for r, (label, path, original, dims, resized) in enumerate(rows):
