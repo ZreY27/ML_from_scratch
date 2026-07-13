@@ -7,7 +7,7 @@ private:
     int input_size;    // Dimension des entrées (ex: 32*32*3 pour une image)
     int num_centers;   // Nombre de neurones RBF dans la couche cachée (= nombre de centres)
     int output_size;   // Nombre de sorties (1 pour binaire, N pour multi-classe)
-    double sigma;      // Largeur des gaussiennes (partagée entre tous les centres)
+    double gamma;      // Paramètre de la gaussienne (contrôle la zone d'influence de chaque centre)
     bool is_classification;
 
     std::vector<std::vector<double>> centers;  // [num_centers][input_size] : positions des centres (k-means)
@@ -18,7 +18,7 @@ private:
     std::vector<int> kmeans(const std::vector<double>& flat_inputs, int num_samples, int max_iter = 300);
 
     // Calcule les activations de la couche cachée pour un seul sample.
-    // phi[k] = exp(-||x - c_k||^2 / (2 * sigma^2)) : proche de 1 si x est près du centre k, proche de 0 sinon.
+    // phi[k] = exp(-gamma * ||x - c_k||^2) : proche de 1 si x est près du centre k, proche de 0 sinon.
     std::vector<double> compute_phi(const std::vector<double>& x) const;
 
     // Calcule les poids de sortie par moindres carrés.
@@ -27,17 +27,14 @@ private:
     void fit_weights_least_squares(const std::vector<std::vector<double>>& Phi,
                                    const std::vector<std::vector<double>>& Y);
 
-    // Si sigma n'est pas fourni, on en choisit un automatiquement à partir des centres :
-    // sigma = d_max / sqrt(2 * num_centers), où d_max est la plus grande distance entre deux centres.
-    double estimate_sigma() const;
 
 public:
     // input_size   : Taille du vecteur d'entrée
     // num_centers  : Nombre de centres RBF (hyperparamètre clé)
     // output_size  : Nombre de sorties (1 = binaire, N = multi-classe one-hot)
-    // sigma        : Largeur des gaussiennes (0.0 = estimation automatique)
+    // gamma        : Paramètre de la gaussienne (slide cours : e^(-gamma * ||x-c||²))
     RBF(int input_size, int num_centers, int output_size = 1,
-        double sigma = 0.0, bool is_classification = true);
+        double gamma = 0.1, bool is_classification = true);
 
     // Entraînement complet en deux phases :
     //   1. K-Means sur les inputs → centres

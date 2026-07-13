@@ -74,9 +74,9 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("input_size"),
              py::arg("num_centers"),
              py::arg("output_size") = 1,
-             py::arg("sigma") = 0.0,
+             py::arg("gamma") = 0.1,
              py::arg("is_classification") = true,
-             "Initialise le reseau RBF (taille entree, nombre de centres, taille sortie, sigma, mode classif)")
+             "Initialise le reseau RBF (taille entree, nombre de centres, taille sortie, gamma, mode classif)")
         .def("train", &RBF::train,
              py::arg("inputs"),
              py::arg("labels"),
