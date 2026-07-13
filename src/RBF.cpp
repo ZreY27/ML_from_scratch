@@ -1,11 +1,10 @@
 // ============================================================================
-// RBF — Radial Basis Function Network, version "K centres" du cours :
+// RBF — Radial Basis Function Network :
 //   Phase 1 : K-Means (algorithme de Lloyd, slide 111) pour placer les centres.
 //   Phase 2 : moindres carrés W = (Phi^T Phi)^-1 Phi^T Y (slide 112), résolus
-//             par élimination de Gauss maison (aucune bibliothèque externe).
-//   NB : le cours écrit phi = exp(-gamma * ||x - mu||^2) ; ici on utilise
-//   exp(-d^2 / (2*sigma^2)), strictement équivalent avec gamma = 1/(2*sigma^2).
-// Auteurs : équipe (Antoine, YumYumae, Maxime Clément)
+//             par élimination de Gauss maison.
+//   Formule : phi = exp(-gamma * ||x - mu||^2), conforme au cours (slide 99).
+// Auteurs : équipe (Antoine, Jordan, Maxime)
 // ============================================================================
 #include "RBF.hpp"
 #include "ImageLoader.hpp"
@@ -21,11 +20,11 @@
 
 // Constructeur : on garde les hyperparamètres et on prépare les tableaux.
 // Les centres et les poids sont mis à zéro ici, ils seront remplis pendant train().
-RBF::RBF(int input_size, int num_centers, int output_size, double sigma, bool is_classification)
+RBF::RBF(int input_size, int num_centers, int output_size, double gamma, bool is_classification)
     : input_size(input_size),
       num_centers(num_centers),
       output_size(output_size),
-      sigma(sigma),
+      gamma(gamma),
       is_classification(is_classification)
 {
     // Les centres et poids sont alloués au moment du train()
@@ -128,36 +127,12 @@ std::vector<int> RBF::kmeans(const std::vector<double>& flat_inputs, int num_sam
     return assignments;
 }
 
-// Estimation automatique de sigma
-// Choisit automatiquement une valeur de sigma quand l'utilisateur n'en donne pas.
-// On prend la plus grande distance entre deux centres et on la met à l'échelle.
-double RBF::estimate_sigma() const {
-    // sigma = d_max / sqrt(2 * num_centers), avec d_max = plus grande distance entre deux centres
-    double d_max = 0.0;
-    for (int i = 0; i < num_centers; i++) {
-        for (int j = i + 1; j < num_centers; j++) {
-            double dist = 0.0;
-            for (int k = 0; k < input_size; k++) {
-                double diff = centers[i][k] - centers[j][k];
-                dist += diff * diff;
-            }
-            dist = std::sqrt(dist);
-            if (dist > d_max) d_max = dist;
-        }
-    }
-    // Garde-fou : si tous les centres sont confondus (dataset trop petit)
-    if (d_max < 1e-10) d_max = 1.0;
-    return d_max / std::sqrt(2.0 * num_centers);
-}
-
 // Calcule les activations de la couche cachée (les "phi") pour un sample.
+// Formule du cours (slide 99) : phi[k] = exp(-gamma * ||x - c_k||^2)
+// On ajoute un biais en position 0 : phi[0] = 1.0
 std::vector<double> RBF::compute_phi(const std::vector<double>& x) const {
-    // phi[k] = exp( -||x - c_k||^2 / (2 * sigma^2) )
-    // On ajoute un biais en position 0 : phi[0] = 1.0
     std::vector<double> phi(num_centers + 1);
     phi[0] = 1.0; // biais
-
-    double two_sigma_sq = 2.0 * sigma * sigma;
 
     for (int k = 0; k < num_centers; k++) {
         double dist_sq = 0.0;
@@ -165,7 +140,7 @@ std::vector<double> RBF::compute_phi(const std::vector<double>& x) const {
             double diff = x[j] - centers[k][j];
             dist_sq += diff * diff;
         }
-        phi[k + 1] = std::exp(-dist_sq / two_sigma_sq);
+        phi[k + 1] = std::exp(-gamma * dist_sq);
     }
     return phi;
 }
@@ -276,13 +251,7 @@ std::vector<double> RBF::train(const std::vector<double>& inputs,
     // --- Phase 1 : K-Means ---
     kmeans(inputs, num_samples);
 
-    // --- Estimation / fixation de sigma ---
-    if (sigma <= 0.0) {
-        sigma = estimate_sigma();
-        std::cout << "  [RBF] Sigma estimé automatiquement : " << sigma << "\n";
-    }
-
-    std::cout << "[RBF] Phase 2 : Calcul de la matrice Phi et moindres carrés...\n";
+    std::cout << "[RBF] Phase 2 : Calcul de la matrice Phi et moindres carrés (gamma=" << gamma << ")...\n";
 
     // --- Construction de la matrice Phi [num_samples x (num_centers + 1)] ---
     std::vector<std::vector<double>> Phi(num_samples);
@@ -448,7 +417,7 @@ void RBF::save(const char* filename) const {
     // Métadonnées
     file << is_classification << "\n";
     file << input_size << " " << num_centers << " " << output_size << "\n";
-    file << sigma << "\n";
+    file << gamma << "\n";
 
     // Centres [num_centers x input_size]
     for (int k = 0; k < num_centers; k++) {
@@ -479,7 +448,7 @@ void RBF::load(const char* filename) {
     is_classification = mode_val;
 
     file >> input_size >> num_centers >> output_size;
-    file >> sigma;
+    file >> gamma;
 
     // Centres
     centers.assign(num_centers, std::vector<double>(input_size));
@@ -495,5 +464,5 @@ void RBF::load(const char* filename) {
 
     file.close();
     std::cout << "[RBF] Modèle chargé : " << path
-              << " (" << num_centers << " centres, sigma=" << sigma << ")\n";
+              << " (" << num_centers << " centres, gamma=" << gamma << ")\n";
 }

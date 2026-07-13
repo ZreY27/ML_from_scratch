@@ -28,8 +28,8 @@ import model_registry as reg
 # --- Hyperparamètres ---
 IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
-NUM_CENTERS = 50      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
-SIGMA = 0.0           # 0.0 = estimation automatique depuis les centres (d_max / sqrt(2K))
+NUM_CENTERS = 150      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
+GAMMA = 0.01           # paramètre de la gaussienne : phi(x) = exp(-gamma * ||x - c||²) (slide 99)
 N_VARIANTS = 3        # inits K-Means différentes ; rapport = moyenne ± écart-type, app = bagging
 MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
@@ -68,7 +68,7 @@ def main():
     # l'initialisation du K-Means (choix aléatoire des centres de départ).
     def entrainer_un_variant():
         model = ML_ESGI.RBF(INPUT_SIZE, NUM_CENTERS, output_size=len(classes),
-                            sigma=SIGMA, is_classification=True)
+                            gamma=GAMMA, is_classification=True)
         # loss_history = [MSE finale] + [taux d'erreur train] (une seule passe, pas d'epochs)
         loss_history = model.train_from_images(train_paths, labels_flat, IMAGE_WIDTH, IMAGE_HEIGHT)
         return model, loss_history
@@ -79,7 +79,7 @@ def main():
         acc, _ = tu.evaluate(p, test, IMAGE_WIDTH, IMAGE_HEIGHT)
         return acc
 
-    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, sigma auto, {N_VARIANTS} variants)...")
+    print(f"\nEntraînement RBF ({NUM_CENTERS} centres, gamma={GAMMA}, {N_VARIANTS} variants)...")
     t0 = time.perf_counter()
     resultats, variant_stats = tu.entrainer_variants(
         N_VARIANTS, entrainer_un_variant, evaluer_un_variant)
@@ -111,7 +111,7 @@ def main():
     # Sauvegarde versionnée : hyperparamètres (réglés) + métriques (mesurées) dans le manifeste
     hyperparams = {
         "input_size": INPUT_SIZE, "image_width": IMAGE_WIDTH, "image_height": IMAGE_HEIGHT,
-        "num_centers": NUM_CENTERS, "sigma": SIGMA, "n_variants": N_VARIANTS,
+        "num_centers": NUM_CENTERS, "gamma": GAMMA, "n_variants": N_VARIANTS,
         "max_per_class": MAX_PER_CLASS, "test_ratio": TEST_RATIO,
     }
     metrics = {"accuracy": accuracy, "accuracy_train": accuracy_train,
