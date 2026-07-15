@@ -6,11 +6,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # --- 1. Python : détection cross-platform (Windows vs Mac/Linux) ---
 if(WIN32)
-    find_program(Python3_EXECUTABLE NAMES python python3)
+    if(NOT Python3_EXECUTABLE)
+        find_program(Python3_EXECUTABLE NAMES python python3)
+    endif()
 else()
-    set(Python3_EXECUTABLE "/usr/bin/python3")
-    if(NOT EXISTS "${Python3_EXECUTABLE}")
-        find_program(Python3_EXECUTABLE NAMES python3.9 python3)
+    # Respecte un interpréteur fourni explicitement (ex: -DPython3_EXECUTABLE=venv/bin/python
+    # pour builder dans un venv). Sinon, fallback sur le python système.
+    if(NOT Python3_EXECUTABLE)
+        set(Python3_EXECUTABLE "/usr/bin/python3")
+        if(NOT EXISTS "${Python3_EXECUTABLE}")
+            find_program(Python3_EXECUTABLE NAMES python3.9 python3)
+        endif()
     endif()
 endif()
 

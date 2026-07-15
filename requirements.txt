@@ -6,6 +6,7 @@ python-multipart
 jinja2
 
 # --- Outils C++ & Entraînement ---
+cmake
 pybind11
 numpy
 matplotlib

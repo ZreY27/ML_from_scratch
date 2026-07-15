@@ -107,8 +107,10 @@ std::vector<double> MLP::predict(const std::vector<double>& inputs) {
 // Utilise la Descente de Gradient Stochastique (Stochastic Gradient Descent - SGD).
 // Prends des listes 1D aplaties pour des performances optimales (évite les copies mémoire).
 std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const std::vector<double>& dataset_expected_outputs,
-                               int training_steps, double learning_rate, double decay) {
-                
+                               int training_steps, double learning_rate, double decay,
+                               const std::vector<double>& test_inputs, const std::vector<double>& test_outputs,
+                               int eval_every) {
+
     int num_samples = static_cast<int>(dataset_inputs.size()) / d[0];
 
     // Garde-fous : tailles cohérentes avant d'entraîner (sinon accès hors limites)
@@ -121,12 +123,46 @@ std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const 
         throw std::invalid_argument("train : outputs contient " + std::to_string(dataset_expected_outputs.size()) +
                                     " valeurs, attendu " + std::to_string(num_samples) + " x " + std::to_string(d[L]));
 
+    // Set de test optionnel (pour la courbe de loss de test). eval_every <= 0 -> désactivé.
+    // On repart d'un historique vide à chaque appel (sinon les courbes se cumuleraient).
+    test_loss_history.clear();
+    eval_steps.clear();
+    int num_test = 0;
+    if (eval_every > 0 && !test_inputs.empty()) {
+        if (test_inputs.size() % d[0] != 0)
+            throw std::invalid_argument("train : test_inputs contient " + std::to_string(test_inputs.size()) +
+                                        " valeurs, non divisible par la taille d'entree " + std::to_string(d[0]));
+        num_test = static_cast<int>(test_inputs.size()) / d[0];
+        if (test_outputs.size() != static_cast<size_t>(num_test) * static_cast<size_t>(d[L]))
+            throw std::invalid_argument("train : test_outputs contient " + std::to_string(test_outputs.size()) +
+                                        " valeurs, attendu " + std::to_string(num_test) + " x " + std::to_string(d[L]));
+    }
+
     // Graine fixe (42) -> même séquence d'échantillons SGD à chaque exécution (reproductible)
     std::mt19937 gen(42);
     std::uniform_int_distribution<> dist_k(0, num_samples - 1);
     std::vector<double> loss_history;
 
     for (int step = 0; step < training_steps; ++step) {
+        // Évaluation périodique du set de test (MSE moyenne). Faite AVANT l'étape
+        // d'entraînement : propagate() écrase les buffers X, mais l'étape re-propage
+        // son propre échantillon juste après -> aucun effet de bord.
+        if (num_test > 0 && (step % eval_every == 0 || step == training_steps - 1)) {
+            double test_loss = 0.0;
+            std::vector<double> test_in(d[0]);
+            for (int t = 0; t < num_test; ++t) {
+                for (int j = 0; j < d[0]; ++j)
+                    test_in[j] = test_inputs[t * d[0] + j];
+                propagate(test_in);
+                for (int j = 1; j <= d[L]; ++j) {
+                    double err = X[L][j] - test_outputs[t * d[L] + (j - 1)];
+                    test_loss += err * err;
+                }
+            }
+            test_loss_history.push_back(test_loss / (num_test * d[L]));
+            eval_steps.push_back(step);
+        }
+
         if (step % (training_steps / 100 > 0 ? training_steps / 100 : 1) == 0 || step == training_steps - 1) {
             int progress = (int)((float)step / training_steps * 100.0);
             std::cout << "\rTraining: [";
@@ -201,7 +237,9 @@ std::vector<double> MLP::train(const std::vector<double>& dataset_inputs, const 
 
 // Entraînement direct depuis des chemins d'images : Charge, redimensionne et prépare la donnée avant d'entraîner.
 std::vector<double> MLP::train_from_images(const std::vector<std::string>& image_paths, const std::vector<double>& expected_outputs,
-                                           int target_w, int target_h, int training_steps, double learning_rate, double decay) {
+                                           int target_w, int target_h, int training_steps, double learning_rate, double decay,
+                                           const std::vector<double>& test_inputs, const std::vector<double>& test_outputs,
+                                           int eval_every) {
     std::vector<double> flattened_inputs;
     std::vector<double> valid_expected_outputs;
     int output_size = d[L];
@@ -232,7 +270,8 @@ std::vector<double> MLP::train_from_images(const std::vector<std::string>& image
         throw std::runtime_error("Aucune image valide n'a pu être chargée pour l'entraînement.");
     }
 
-    return train(flattened_inputs, valid_expected_outputs, training_steps, learning_rate, decay);
+    return train(flattened_inputs, valid_expected_outputs, training_steps, learning_rate, decay,
+                 test_inputs, test_outputs, eval_every);
 }
 
 // Sauvegarde l'architecture complète du modèle (npl) et ses poids dans un fichier texte.
