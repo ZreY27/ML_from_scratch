@@ -126,6 +126,37 @@ def log_to_tensorboard(run_name, losses=None, scalars=None, logdir="runs"):
     print(f"[TensorBoard] run loggé : {os.path.join(logdir, run_name)}  (visualiser : tensorboard --logdir {logdir})")
 
 
+def log_run_curves(run_name, series, scalars=None, logdir="runs"):
+    """Logge plusieurs courbes dans UN run TensorBoard, chacune sur ses vrais steps.
+
+    Contrairement à log_to_tensorboard (qui indexe par position 0,1,2...), ici chaque
+    point porte son step réel -> train et test se superposent sur le même axe x même
+    s'ils ont un nombre de points différent.
+
+    run_name : ex. 'mlp_h128' -> sous-dossier runs/mlp_h128/.
+    series   : dict {tag: [(step, value), ...]}. Le '/' dans le tag crée un groupe
+               dans l'UI TensorBoard (ex. 'train/clone_1', 'test/clone_1').
+    scalars  : dict {nom: nombre} de valeurs finales (ex. {'accuracy_bag': 0.82}).
+
+    Si tensorboardX n'est pas installé : avertit et ne fait rien (non bloquant).
+    """
+    try:
+        from tensorboardX import SummaryWriter
+    except ImportError:
+        print("[TensorBoard] tensorboardX non installé (pip install tensorboardX) — log ignoré.")
+        return
+
+    writer = SummaryWriter(os.path.join(logdir, run_name))
+    for tag, points in (series or {}).items():
+        for step, value in points:
+            writer.add_scalar(tag, value, step)
+    for key, value in (scalars or {}).items():
+        if isinstance(value, (int, float)):
+            writer.add_scalar(key, value, 0)
+    writer.close()
+    print(f"[TensorBoard] run loggé : {os.path.join(logdir, run_name)}  (visualiser : tensorboard --logdir {logdir})")
+
+
 def entrainer_variants(n_variants, entrainer, evaluer):
     """Entraîne n variants du même modèle (initialisations différentes) et mesure chacun.
 
