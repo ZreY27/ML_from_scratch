@@ -130,7 +130,7 @@ def courbe_rbf(classes, tr_imgs, tr_v, te_imgs, te_v):
     centres = [c for c in [5, 10, 20, 40, 80, 150, 300, 500, n_samples] if c <= n_samples]
     xs, at, ae = [], [], []
     for c in centres:
-        model = ML_ESGI.RBF(INPUT_SIZE, c, output_size=len(classes), sigma=0.0, is_classification=True)
+        model = ML_ESGI.RBF(INPUT_SIZE, c, output_size=len(classes), gamma=0.01, is_classification=True)
         model.train(flat, flab, n_samples)
         xs.append(c)
         at.append(acc_multi(model, tr_imgs, tr_v))
