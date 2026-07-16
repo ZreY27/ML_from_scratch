@@ -112,7 +112,7 @@ std::vector<double> LinearModel::train(const std::vector<double>& inputs,
             loss_history.push_back(static_cast<double>(errors) / num_samples);
         } else {
             // Régression : on minimise l'erreur quadratique moyenne par descente de
-            // gradient (règle delta). Le cours (slide 66) présente la pseudo-inverse
+            // gradient (règle delta). Le cours présente la pseudo-inverse
             // W = (X^T X)^-1 X^T Y qui donne la solution exacte "en un coup" ; on a
             // choisi la version itérative car elle évite d'inverser une matrice
             // 3073x3073 pour des images, sans bibliothèque d'algèbre linéaire externe.
