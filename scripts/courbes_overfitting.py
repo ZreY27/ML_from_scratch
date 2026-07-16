@@ -130,6 +130,7 @@ def courbe_rbf(classes, tr_imgs, tr_v, te_imgs, te_v):
     centres = [c for c in [5, 10, 20, 40, 80, 150, 300, 500, n_samples] if c <= n_samples]
     xs, at, ae = [], [], []
     for c in centres:
+        # gamma=0.01 : valeur validée sur le dataset réel (cf. train_test_rbf, 79,7 % à 150 centres)
         model = ML_ESGI.RBF(INPUT_SIZE, c, output_size=len(classes), gamma=0.01, is_classification=True)
         model.train(flat, flab, n_samples)
         xs.append(c)

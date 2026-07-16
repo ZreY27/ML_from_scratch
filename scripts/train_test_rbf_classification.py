@@ -31,7 +31,7 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 NUM_CENTERS = 300      # nombre de centres K-Means (= neurones cachés) ; doit rester <= nb d'images de train
 GAMMA = 0.01           # paramètre de la gaussienne : phi(x) = exp(-gamma * ||x - c||²) (slide 99)
 N_VARIANTS = 3        # inits K-Means différentes ; rapport = moyenne ± écart-type, app = bagging
-MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 12000   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 
 DATASETS_DIR = os.path.join(ROOT_DIR, "datasets")
