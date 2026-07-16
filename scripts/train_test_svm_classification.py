@@ -31,7 +31,7 @@ LAMBDA_REG = 0.001    # force de régularisation L2 (w -= lr·2·λ·w à chaque
 LEARNING_RATE = 0.001
 EPOCHS = 500
 N_VARIANTS = 3        # inits différentes ; rapport = moyenne ± écart-type, app = bagging des variants
-MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 12000   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False     # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 

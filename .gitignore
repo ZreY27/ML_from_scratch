@@ -31,6 +31,9 @@ cmake-build-release/
 # Environnement virtuel créé par CLion
 .venv/
 
+# Environnement Python 3.12 dédié à TensorFlow (comparaison Keras, cf. scripts/compare_keras.py)
+.venv-tf/
+
 *.pdf
 *.png
 *.txt
@@ -47,3 +50,5 @@ models/*.json
 runs/
 
 .claude/
+
+rapport/

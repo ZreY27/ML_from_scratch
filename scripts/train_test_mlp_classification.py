@@ -27,9 +27,9 @@ INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
 HIDDEN = 128
 LEARNING_RATE = 0.01
 DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
-TRAINING_STEPS = 850000  # ~42 passes sur ~20 400 images de train (plafond 8500/classe, split 80%)
+TRAINING_STEPS = 1200000  # ~42 passes sur ~20 400 images de train (plafond 8500/classe, split 80%)
 N_VARIANTS = 5       # le MLP est LE plus sensible à l'init (58,8 % vs 82,7 % observés à code égal !)
-MAX_PER_CLASS = 8500   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
+MAX_PER_CLASS = 12000   # plafond par classe (équilibrage, ~max de Fighter) ; None pour tout prendre
 TEST_RATIO = 0.2
 SHOW_PLOT = False  # True = affiche la courbe matplotlib (BLOQUANT). Les courbes sont déjà dans TensorBoard.
 
