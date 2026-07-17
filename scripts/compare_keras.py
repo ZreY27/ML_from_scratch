@@ -17,10 +17,13 @@ PROTOCOLE IDENTIQUE au script C++ : memes dossiers datasets/, meme plafond
 d'equilibrage, meme split 80/20 stratifie aux memes graines (42) -> les listes de
 fichiers train/test sont EXACTEMENT les memes que celles du run C++.
 
-Difference documentee : notre MLP fait du SGD pur (batch = 1 exemple) ; a batch=1,
-l'overhead TensorFlow rend l'entrainement prohibitif -> batch_size=32 ici, en
-gardant le meme nombre de PASSES sur les donnees (~42 epochs). A commenter dans
-le rapport. On compare SGD (a armes egales) puis Adam (apport d'un optimiseur moderne).
+Difference documentee : notre MLP fait du SGD pur (batch = 1 exemple) ; Keras
+tourne ici dans son mode normal (batch_size=32), a nombre de PASSES egal (~42
+epochs). Ce script compare l'ACCURACY ; la VITESSE fait l'objet de bancs dedies
+(bench_vitesse_keras.py + bench_vitesse_cpp.py) : a conditions strictement
+identiques (batch=1, 1 coeur, float64) notre C++ est ~2x PLUS RAPIDE que
+TensorFlow — l'avantage pratique de Keras (~x12) vient du mini-batch vectorise
+float32. On compare SGD puis Adam (apport d'un optimiseur moderne).
 
 COMMANDES POUR REPRODUIRE (depuis la racine du projet) :
     py -3.12 -m venv .venv-tf
