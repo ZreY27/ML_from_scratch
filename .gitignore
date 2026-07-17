@@ -49,6 +49,5 @@ models/*.json
 # Logs TensorBoard (générés à chaque entraînement)
 runs/
 
-.claude/
 
 rapport/
