@@ -49,7 +49,11 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("training_steps"),
              py::arg("learning_rate"),
              py::arg("decay") = 0.0,
-             "Entraine le modele MLP via Backpropagation SGD avec Decay et retourne l'historique des erreurs (Loss)")
+             py::arg("test_inputs") = std::vector<double>{},
+             py::arg("test_outputs") = std::vector<double>{},
+             py::arg("eval_every") = 0,
+             "Entraine le modele MLP via Backpropagation SGD avec Decay et retourne l'historique des erreurs (Loss). "
+             "test_inputs/test_outputs (aplatis) + eval_every > 0 -> remplit test_loss_history / eval_steps.")
         .def("train_from_images", &MLP::train_from_images,
              py::arg("image_paths"),
              py::arg("expected_outputs"),
@@ -58,7 +62,11 @@ PYBIND11_MODULE(ML_ESGI, m) {
              py::arg("training_steps"),
              py::arg("learning_rate"),
              py::arg("decay") = 0.0,
-             "Entraine le modele MLP directement depuis une liste d'images avec Decay et retourne la Loss")
+             py::arg("test_inputs") = std::vector<double>{},
+             py::arg("test_outputs") = std::vector<double>{},
+             py::arg("eval_every") = 0,
+             "Entraine le modele MLP directement depuis une liste d'images avec Decay et retourne la Loss. "
+             "test_inputs/test_outputs (aplatis) + eval_every > 0 -> remplit test_loss_history / eval_steps.")
         .def("predict", &MLP::predict,
              py::arg("inputs"),
              "Predit les valeurs pour une donnee et retourne la derniere couche")
@@ -67,7 +75,11 @@ PYBIND11_MODULE(ML_ESGI, m) {
              "Sauvegarde les poids du modele")
         .def("load", &MLP::load,
              py::arg("filename"),
-             "Charge les poids du modele");
+             "Charge les poids du modele")
+        .def_readonly("test_loss_history", &MLP::test_loss_history,
+             "Historique de la loss de test (MSE moyenne), rempli pendant train si eval_every > 0")
+        .def_readonly("eval_steps", &MLP::eval_steps,
+             "Steps auxquels test_loss_history a ete mesuree (meme longueur, pour aligner l'axe x)");
 
     py::class_<RBF>(m, "RBF")
         .def(py::init<int, int, int, double, bool>(),
