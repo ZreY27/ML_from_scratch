@@ -108,7 +108,7 @@ PYBIND11_MODULE(ML_ESGI, m) {
              "Retourne les sorties brutes avant signe/argmax")
         .def("save", &RBF::save,
              py::arg("filename"),
-             "Sauvegarde les centres, sigma et les poids du modele")
+             "Sauvegarde les centres, gamma et les poids du modele")
         .def("load", &RBF::load,
              py::arg("filename"),
              "Charge un modele RBF depuis un fichier");
