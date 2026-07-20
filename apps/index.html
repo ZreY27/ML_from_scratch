@@ -152,14 +152,14 @@
            pour générer un modèle + son manifeste, puis recharge cette page.</p>
     {% else %}
         <form id="form">
-            <label for="model_id">Modèle</label>
+            <label for="model_id">Algorithme</label>
             <select id="model_id" name="model_id">
                 {% for m in models %}
-                <option value="{{ m.id }}">{{ m.name }} ({{ m.type }})</option>
+                <option value="{{ m.id }}">{{ m.family }}</option>
                 {% endfor %}
             </select>
 
-            <label for="version">Version</label>
+            <label for="version">Modèle / version</label>
             <select id="version" name="version"></select>
 
             <!-- Zone cliquable ET compatible glisser-déposer ; l'input reste la source de vérité du formulaire -->
@@ -183,16 +183,19 @@
             const modelSel = document.getElementById('model_id');
             const versionSel = document.getElementById('version');
 
-            // Remplit le sélecteur de version selon le modèle choisi (la plus récente d'abord)
+            // Remplit le 2e sélecteur avec les modèles/versions de l'algo choisi.
+            // Tri par accuracy décroissante -> le meilleur modèle est proposé par défaut.
             function fillVersions() {
                 const m = MODELS.find(x => x.id === modelSel.value);
                 versionSel.innerHTML = '';
-                (m ? m.versions : []).forEach(v => {
+                const versions = (m ? m.versions.slice() : []);
+                versions.sort((a, b) => (b.accuracy ?? -1) - (a.accuracy ?? -1));
+                versions.forEach(v => {
                     const opt = document.createElement('option');
                     opt.value = v.version;
-                    const date = v.created ? ' (' + v.created.slice(0, 10) + ')' : '';
-                    const acc = (v.accuracy != null) ? ' — acc ' + (v.accuracy * 100).toFixed(1) + '%' : '';
-                    opt.textContent = 'v' + v.version + date + ' — ' + v.width + 'x' + v.height + acc;
+                    // v.name porte déjà la config + l'accuracy (ex: "MLP h32 — 12k/cl … (test 84%)")
+                    const nom = v.name || ('v' + v.version);
+                    opt.textContent = nom + ' · v' + v.version;
                     versionSel.appendChild(opt);
                 });
             }

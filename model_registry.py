@@ -149,8 +149,9 @@ def save_bag(variants, model_id, name, base_type, classes, width, height,
     (mlp/rbf), soit un dict {classe: modèle_binaire} (One-vs-Rest linear/svm).
     À l'inférence, le Predictor moyennera les SORTIES des N variants (cf. Predictor.scores).
 
-    base_type     : "mlp" | "rbf" | "onevsrest"
-    sub_base_type : type des binaires si base_type == "onevsrest" ("linear" | "svm")
+    base_type     : algo réel des variants -> "mlp" | "rbf" | "svm" | "linear"
+    sub_base_type : type des binaires si les variants sont des dicts One-vs-Rest
+                    ("linear" | "svm") ; c'est ce que lit load_predictor.
     Retourne (version, chemin_du_manifeste).
     """
     version = next_version(model_id, models_dir)

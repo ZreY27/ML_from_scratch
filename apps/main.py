@@ -40,8 +40,22 @@ def get_predictor(manifest):
     return _predictors[key]
 
 
+# Libellé d'algo pour le 1er sélecteur : base_type porte l'algo réel
+# (mlp/rbf/svm/linear) ; les modèles simples n'ont que 'type'.
+ALGO_LABELS = {"mlp": "MLP", "rbf": "RBF", "svm": "SVM", "linear": "Perceptron (linéaire)"}
+
+
+def family_of(manifest):
+    key = manifest.get("base_type") or manifest.get("type")
+    return ALGO_LABELS.get(key, key)
+
+
 def models_for_template():
-    """Modèles disponibles (groupés par id), chacun avec ses versions, pour l'UI."""
+    """Modèles disponibles (groupés par id), chacun avec sa famille et ses versions.
+
+    Le 1er sélecteur de l'UI liste les FAMILLES, le 2e les modèles/versions de la
+    famille choisie — d'où le champ 'family' ajouté ici.
+    """
     models = []
     for mid, versions in sorted(registry.list_models(MODELS_DIR).items()):
         most_recent = versions[-1]
@@ -49,12 +63,15 @@ def models_for_template():
             "id": mid,
             "name": most_recent["name"],
             "type": most_recent["type"],
+            "family": family_of(most_recent),
+            "accuracy": (most_recent.get("metrics") or {}).get("accuracy"),
             "versions": [
                 {
                     "version": m["version"],
                     "created": m.get("created", ""),
                     "width": m["width"],
                     "height": m["height"],
+                    "name": m.get("name", most_recent["name"]),
                     # accuracy (test) si présente dans les métriques du manifeste, sinon None
                     "accuracy": (m.get("metrics") or {}).get("accuracy"),
                 }

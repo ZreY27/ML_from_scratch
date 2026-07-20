@@ -120,7 +120,7 @@ def main():
     }
     version, manifest = reg.save_bag(
         variants_models, "linear_genres", f"Perceptron - Genres (Bagging {N_VARIANTS} variants)",
-        base_type="onevsrest", sub_base_type="linear",
+        base_type="linear", sub_base_type="linear",
         classes=classes, width=IMAGE_WIDTH, height=IMAGE_HEIGHT, models_dir=MODELS_DIR,
         hyperparams=hyperparams,
         metrics={"accuracy": accuracy, "accuracy_train": accuracy_train,

@@ -24,7 +24,8 @@ import matplotlib.pyplot as plt
 # --- Hyperparamètres ---
 IMAGE_WIDTH = IMAGE_HEIGHT = 32
 INPUT_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3  # 3072
-HIDDEN = 128
+HIDDEN = 32          # 32 > 128 en test (84,7 % vs 84,2 % à 8500 img/classe) avec 4x moins de poids
+                     # et un entraînement 3x plus rapide — cf. revision/Experience_Standardisation.md §5
 LEARNING_RATE = 0.01
 DECAY = 0.00002      # décroissance inverse lr·1/(1+decay·step) ; très douce pour garder le lr vivant sur toutes les étapes
 TRAINING_STEPS = 1200000  # ~42 passes sur ~20 400 images de train (plafond 8500/classe, split 80%)
@@ -129,8 +130,11 @@ def main():
     )
     print(f"\nMLP sauvegardé : version v{version}\n  -> {manifest}")
 
-    # Log TensorBoard (courbe de loss + accuracy)
-    tu.log_to_tensorboard(f"mlp_genres_v{version}", losses=loss, scalars={"accuracy": accuracy})
+    # Log TensorBoard : les courbes de loss de TOUS les variants, pas seulement le
+    # meilleur -> la dispersion entre inits (58,8 % vs 82,7 % !) se lit sur un même graphe.
+    losses_tb = {f"var{i + 1}": courbe for i, (_, (_, courbe)) in enumerate(resultats)}
+    tu.log_to_tensorboard(f"mlp_genres_v{version}", losses=losses_tb,
+                          scalars={"accuracy": accuracy, "accuracy_train": accuracy_train})
 
     if SHOW_PLOT:
         plt.plot(smooth(loss), color="blue", label="MSE lissé (99%)")
