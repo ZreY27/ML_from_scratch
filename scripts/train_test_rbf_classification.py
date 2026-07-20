@@ -9,7 +9,6 @@ les images par genre.
   (Phase 1 : K-Means pour placer les centres, Phase 2 : moindres carrés pour les poids).
   Pas de courbe de loss par epoch : on logge la MSE et le taux d'erreur finaux.
 
-Auteurs : équipe (modèle RBF) — script harmonisé avec les autres entraînements.
 """
 
 import os
